@@ -1,0 +1,120 @@
+export const fallbackProfile = {
+  name: 'Maurik Angelo L. Fernandez',
+  professionalTitle: 'Full Stack Developer',
+  headline: 'Building software with modern workflows.',
+  heroDescription: 'Full Stack Developer focused on React, Node.js, Express, and MySQL with an AI-assisted workflow that improves speed and quality.',
+  aboutMe: "I'm Maurik Angelo L. Fernandez, an Information Technology student from Pangasinan State University specializing in Web and Mobile Technologies. I build full stack applications with React, Node.js, Express, and MySQL, and I care about clean architecture, responsive UI, and reliable backend systems.",
+  profilePhoto: '',
+  resumeUrl: '',
+  location: 'Urdaneta City, Pangasinan',
+  availability: 'Open to opportunities',
+  socialLinks: {
+    linkedin: 'https://www.linkedin.com/in/maurik-angelo-ab835716a/',
+    github: '',
+    facebook: '',
+    jobstreet: 'https://ph.jobstreet.com/profiles/maurikangelo-fernandez-7mNlX0tM26',
+  },
+  contact: {
+    email: 'maurikfernandez123@gmail.com',
+    phone: '+63 9277975100',
+    portfolioUrl: '',
+  },
+};
+
+export const fallbackProjects = [
+  {
+    id: 'click2serve',
+    title: 'CLICK2SERVE: Smart Municipal Information Kiosk',
+    name: 'CLICK2SERVE: Smart Municipal Information Kiosk',
+    subtitle: 'AI-assisted municipal service platform',
+    shortDescription: 'Developed an AI-assisted municipal information kiosk to improve public access to government services.',
+    longDescription: 'An AI-assisted kiosk and web platform that helps residents discover services, book requests, track queue progress, and access municipal information through a clearer self-service experience.',
+    description: 'Developed an AI-assisted municipal information kiosk to improve public access to government services.',
+    summary: 'An AI-assisted kiosk and web platform that helps residents discover services, book requests, track queue progress, and access municipal information through a clearer self-service experience.',
+    category: 'Civic Tech',
+    status: 'Completed',
+    repositoryUrl: '',
+    liveDemoUrl: '',
+    startDate: '',
+    endDate: '',
+    featured: true,
+    displayOrder: 1,
+    thumbnailImage: '/projects/click2serve/Kiosk Homescreen.png',
+    technologies: ['PHP', 'Laravel', 'JavaScript', 'MySQL'],
+    galleryImages: [
+      '/projects/click2serve/Kiosk Splash Screen.png',
+      '/projects/click2serve/Kiosk Homescreen.png',
+      '/projects/click2serve/Kiosk 3Dmap Screen.png',
+      '/projects/click2serve/Kiosk Chatbot Screen.png',
+      '/projects/click2serve/Kiosk Tracker Screen.png',
+      '/projects/click2serve/Kiosk Services Screen.png',
+      '/projects/click2serve/Kiosk MunicipalInfo Screen.png',
+      '/projects/click2serve/Kiosk MunicipalInfo Screen 2.png',
+      '/projects/click2serve/Website Homescreen.png',
+      '/projects/click2serve/Website Booking.png',
+      '/projects/click2serve/Website Chatbot Screen.png',
+      '/projects/click2serve/Website Tracker Screen.png',
+      '/projects/click2serve/Officer Dashboard.png',
+      '/projects/click2serve/Super Admin Dashboard.png',
+    ],
+    screenshots: [
+      { src: '/projects/click2serve/Kiosk Splash Screen.png', alt: 'Click2Serve splash screen', title: 'Splash' },
+      { src: '/projects/click2serve/Kiosk Homescreen.png', alt: 'Click2Serve home dashboard', title: 'Home' },
+      { src: '/projects/click2serve/Kiosk 3Dmap Screen.png', alt: 'Click2Serve map interface', title: 'Map' },
+      { src: '/projects/click2serve/Kiosk Chatbot Screen.png', alt: 'Click2Serve chatbot interface', title: 'Chatbot' },
+      { src: '/projects/click2serve/Kiosk Tracker Screen.png', alt: 'Click2Serve service tracker', title: 'Tracker' },
+      { src: '/projects/click2serve/Kiosk Services Screen.png', alt: 'Click2Serve services page', title: 'Services' },
+      { src: '/projects/click2serve/Kiosk MunicipalInfo Screen.png', alt: 'Click2Serve municipal information screen', title: 'Info' },
+      { src: '/projects/click2serve/Kiosk MunicipalInfo Screen 2.png', alt: 'Click2Serve municipal tourism information screen', title: 'Info 2' },
+      { src: '/projects/click2serve/Website Homescreen.png', alt: 'Click2Serve website home screen', title: 'Website Home' },
+      { src: '/projects/click2serve/Website Booking.png', alt: 'Click2Serve website booking screen', title: 'Booking' },
+      { src: '/projects/click2serve/Website Chatbot Screen.png', alt: 'Click2Serve website chatbot screen', title: 'Web Chat' },
+      { src: '/projects/click2serve/Website Tracker Screen.png', alt: 'Click2Serve website tracker screen', title: 'Web Track' },
+      { src: '/projects/click2serve/Officer Dashboard.png', alt: 'Click2Serve officer dashboard', title: 'Officer' },
+      { src: '/projects/click2serve/Super Admin Dashboard.png', alt: 'Click2Serve super admin dashboard', title: 'Admin' },
+    ],
+    problem: 'Residents needed a faster and more approachable way to find municipal services, understand requirements, ask common questions, and track service requests without depending entirely on manual front-desk assistance.',
+    solution: 'I helped build a kiosk-first service experience with guided service modules, public information screens, AI-assisted chatbot support, queue tracking, and administrative dashboards for officers and super administrators.',
+    features: ['Service request modules', 'Queue management', 'Public information features', 'Administrative functions'],
+    challenges: ['Designing a kiosk interface that stays readable from a distance and remains simple for first-time users', 'Organizing municipal service flows into clear modules without overwhelming users', 'Connecting citizen-facing screens with administrative workflows and status tracking'],
+    contributions: ['Built and refined service request workflows for the kiosk and web experience', 'Implemented public information, chatbot, tracker, and queue-related interface modules', 'Worked on administrative screens for officer and super admin operations', 'Improved presentation, navigation, and screenshot-ready UI states across the platform'],
+  },
+];
+
+export const fallbackSkills = {
+  languages: ['PHP', 'JavaScript', 'Java'],
+  frontend: ['React', 'Tailwind CSS', 'Responsive UI'],
+  backend: ['Node.js', 'Express.js', 'Laravel'],
+  databases: ['MySQL', 'Firebase Firestore'],
+  tools: ['Git', 'GitHub', 'Postman', 'VS Code'],
+  cloud: ['Firebase'],
+  aiTools: ['Cursor', 'Claude', 'ChatGPT', 'GitHub Copilot'],
+  softSkills: ['Problem Solving', 'Team Collaboration'],
+};
+
+export const fallbackExperience = [
+  {
+    id: 'when-in-baguio',
+    company: 'When in Baguio Inc.',
+    position: 'Full Stack Web Developer Intern',
+    duration: 'January 2026 - April 2026',
+    description: 'Developed and maintained backend features and administrative modules using React, Node.js, and MySQL.',
+    responsibilities: ['Built and maintained backend features and administrative modules', 'Enhanced dashboard functionality with content management', 'Optimized payment and checkout workflows through API integration', 'Implemented file upload and data management functionality', 'Performed debugging, testing, and performance optimization', 'Utilized AI-assisted development tools for accelerated workflows'],
+    technologies: ['React', 'Node.js', 'MySQL', 'REST APIs', 'Git', 'Postman'],
+    logoUrl: '',
+    displayOrder: 1,
+  },
+];
+
+export const fallbackEducation = [
+  {
+    id: 'psu',
+    degree: 'BSIT - Web and Mobile Technologies',
+    institution: 'Pangasinan State University',
+    campus: 'Urdaneta Campus',
+    duration: 'Expected Graduation: July 2026',
+    displayOrder: 1,
+  },
+];
+
+export const fallbackCertificates = [];

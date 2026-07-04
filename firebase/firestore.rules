@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'maurikfernandez123@gmail.com';
+    }
+
+    match /siteContent/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /projects/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /experience/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /education/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /certificates/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
