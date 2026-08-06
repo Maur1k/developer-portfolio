@@ -11,7 +11,7 @@ const floatingVariants = { initial: { y: 0 }, animate: { y: -10, transition: { d
 export default function Hero() {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
   const wibeProject = fallbackProjects.find(p => p.id === 'wibav3');
-  const tags = ['React', 'Node.js', 'Agentic AI', 'Laravel PHP', 'Flutter', 'Firebase'];
+  const tags = ['React', 'Flutter', 'Node.js', 'Laravel PHP', 'MySQL', 'Firebase', 'REST APIs', 'AI-Assisted Dev'];
 
   return (
     <section className="min-h-screen relative overflow-hidden pt-20 md:pt-24 pb-16 md:pb-24 px-4 md:px-8">
@@ -38,7 +38,7 @@ export default function Hero() {
             </motion.div>
 
             <motion.p variants={itemVariants} className="text-lg text-gray-400 mb-6 max-w-md">{profile.heroDescription}</motion.p>
-            <motion.p variants={itemVariants} className="text-base text-gray-500 mb-8 max-w-md leading-relaxed">{profile.aboutMe}</motion.p>
+            <motion.p variants={itemVariants} className="text-base text-gray-500 mb-8 max-w-md leading-relaxed">I work with React, Flutter, Node.js, Laravel, PHP, MySQL, Firebase, and REST APIs, while leveraging AI-assisted development and agentic workflows to build, debug, and ship software more efficiently.</motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4">
               <Link to="/projects" className="btn-primary px-8 py-3 text-white font-semibold rounded-xl transition-all duration-300 text-center">See Work</Link>
@@ -53,7 +53,7 @@ export default function Hero() {
                 {profile.profilePhoto ? <img src={profile.profilePhoto} alt={profile.name} className="absolute inset-0 h-full w-full object-cover opacity-20" /> : null}
                 <div className="relative">
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-300">{profile.availability}</div>
-                  <div className="mt-8 space-y-1"><p className="text-3xl font-bold text-white leading-tight">{profile.professionalTitle}</p><p className="mt-4 text-sm leading-6 text-gray-400 max-w-sm">AI-assisted, product-minded, and focused on clean architecture, responsive UI, and reliable backend systems.</p></div>
+                  <div className="mt-8 space-y-1"><p className="text-3xl font-bold text-white leading-tight">{profile.professionalTitle}</p><p className="mt-4 text-sm leading-6 text-gray-400 max-w-sm">Full-stack and mobile developer focused on reliable software, modern development workflows, and AI-assisted engineering.</p></div>
                 </div>
                 <div className="relative space-y-4"><div className="h-px w-full bg-white/10"></div><div className="flex flex-wrap gap-2">{tags.map((tag) => <span key={tag} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-medium text-gray-200 transition-colors duration-200 hover:border-orange-400/40 hover:text-white">{tag}</span>)}</div></div>
               </div>

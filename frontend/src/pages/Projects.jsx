@@ -333,6 +333,16 @@ function ProjectCard({ project, index, onLearnMore }) {
                   Demo
                 </ActionButton>
               )}
+              {project.appStoreUrl && (
+                <ActionButton href={project.appStoreUrl} icon={<Icon name="external" />}>
+                  App Store
+                </ActionButton>
+              )}
+              {project.playStoreUrl && (
+                <ActionButton href={project.playStoreUrl} icon={<Icon name="external" />}>
+                  Play Store
+                </ActionButton>
+              )}
             </div>
           </div>
         </div>
@@ -437,6 +447,16 @@ function ProjectModal({ project, onClose }) {
                     Live Demo
                   </ActionButton>
                 )}
+                {project.appStoreUrl && (
+                  <ActionButton href={project.appStoreUrl} icon={<Icon name="external" />} variant="primary">
+                    App Store
+                  </ActionButton>
+                )}
+                {project.playStoreUrl && (
+                  <ActionButton href={project.playStoreUrl} icon={<Icon name="external" />} variant="primary">
+                    Play Store
+                  </ActionButton>
+                )}
               </div>
 
               <div className="mt-8 grid gap-4">
@@ -485,7 +505,7 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mb-12 grid gap-8 lg:mb-16 lg:grid-cols-[minmax(0,0.72fr)_minmax(280px,0.28fr)] lg:items-end"
+          className="mb-12 lg:mb-16"
         >
           <div>
             <div className="mb-6 inline-flex rounded-full border border-white/10 bg-white/[0.035] px-4 py-2 backdrop-blur">
@@ -494,13 +514,6 @@ export default function Projects() {
             <h2 className="max-w-3xl text-5xl font-bold leading-[0.95] text-white md:text-6xl">Projects & Impact</h2>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-400">
               Full-stack applications designed around useful workflows, maintainable systems, and clear outcomes for real users.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-200">Showcase system</p>
-            <p className="mt-3 text-sm leading-6 text-gray-400">
-              {projectCountLabel}. The grid auto-wraps from one to three columns and each card is generated from the project data.
             </p>
           </div>
         </motion.div>

@@ -1,13 +1,13 @@
 export const fallbackProfile = {
   name: 'Maurik Angelo L. Fernandez',
-  professionalTitle: 'Full Stack Developer',
+  professionalTitle: 'Software Developer',
   headline: 'Building software with modern workflows.',
-  heroDescription: 'Full Stack Developer focused on React, Node.js, Express, and MySQL with an AI-assisted workflow that improves speed and quality.',
-  aboutMe: "I'm Maurik Angelo L. Fernandez, an Information Technology student from Pangasinan State University specializing in Web and Mobile Technologies. I build full stack applications with React, Node.js, Express, and MySQL, and I care about clean architecture, responsive UI, and reliable backend systems.",
+  heroDescription: 'Software Developer specializing in full-stack web and mobile development, with professional experience building production web, Android, and iOS applications.',
+  aboutMe: "I'm Maurik Angelo L. Fernandez, a Bachelor of Science in Information Technology graduate specializing in Web and Mobile Technologies from Pangasinan State University – Urdaneta Campus.\n\nI'm a Software Developer with professional experience at When in Baguio Inc., where I progressed from Full Stack Web Developer Intern to Contractual Software Developer.\n\nI've worked on production web, Android, and iOS applications, developing backend services, REST APIs, administrative systems, payment integrations, database-driven features, and mobile functionality.\n\nI also incorporate AI-assisted development, prompt engineering, and agentic AI workflows into my development process to accelerate implementation, improve debugging, automate repetitive tasks, and enhance code quality.\n\nI enjoy solving technical problems, learning new technologies, and building reliable software that creates real-world value.",
   profilePhoto: '',
   resumeUrl: '',
   location: 'Urdaneta City, Pangasinan',
-  availability: 'Open to opportunities',
+  availability: 'Open to Opportunities',
   socialLinks: {
     linkedin: 'https://www.linkedin.com/in/maurik-angelo-ab835716a/',
     github: '',
@@ -34,7 +34,9 @@ export const fallbackProjects = [
     category: 'Mobile App / E-commerce',
     status: 'Production',
     repositoryUrl: '',
-    liveDemoUrl: 'https://play.google.com/store/apps/details?id=com.wheninbaguio.app', // Placeholder, the user didn't give exact URL but mentioned Play Store
+    liveDemoUrl: '',
+    appStoreUrl: 'https://apps.apple.com/ph/app/when-in-baguio-eat/id1524156193',
+    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.wheninbaguio.wibapp&hl=en',
     startDate: '',
     endDate: '',
     featured: true,
@@ -125,19 +127,30 @@ export const fallbackProjects = [
 ];
 
 export const fallbackSkills = {
-  languages: ['PHP', 'JavaScript', 'Java'],
-  frontend: ['React', 'Tailwind CSS', 'Responsive UI'],
-  backend: ['Node.js', 'Express.js', 'Laravel'],
-  databases: ['MySQL', 'Firebase Firestore'],
-  tools: ['Git', 'GitHub', 'Postman', 'VS Code'],
-  cloud: ['Firebase'],
-  aiTools: ['Cursor', 'Claude', 'ChatGPT', 'GitHub Copilot'],
-  softSkills: ['Problem Solving', 'Team Collaboration'],
+  react: ['React', 'React Native', 'Component Architecture', 'State Management'],
+  flutter: ['Flutter', 'Dart', 'Android Development', 'iOS Development'],
+  nodejs: ['Node.js', 'Express.js', 'REST API Development', 'Server-Side Logic'],
+  laravel: ['Laravel', 'PHP', 'Blade Templates', 'Eloquent ORM'],
+  mysql: ['MySQL', 'Database Design', 'Query Optimization', 'Data Modeling'],
+  firebase: ['Firebase', 'Firestore', 'Cloud Functions', 'Authentication'],
+  restapis: ['REST API Design', 'API Integration', 'Postman', 'Swagger'],
+  aidev: ['Prompt Engineering', 'Agentic AI', 'Cursor', 'Claude', 'ChatGPT', 'GitHub Copilot'],
 };
 
 export const fallbackExperience = [
   {
-    id: 'when-in-baguio',
+    id: 'when-in-baguio-contract',
+    company: 'When in Baguio Inc.',
+    position: 'Contractual Software Developer',
+    duration: 'April 2026 - Present',
+    description: 'Continued development of the WIBE food delivery platform as a contractual software developer, building features across web, Android, and iOS applications.',
+    responsibilities: ['Developed and maintained features across web, Android, and iOS applications', 'Built backend services and REST APIs for core delivery workflows', 'Integrated payment gateways and push notification systems', 'Developed administrative dashboards and database-driven services', 'Utilized AI-assisted development and agentic workflows for efficient delivery'],
+    technologies: ['React', 'React Native', 'Flutter', 'Node.js', 'MySQL', 'Firebase', 'REST APIs'],
+    logoUrl: '',
+    displayOrder: 1,
+  },
+  {
+    id: 'when-in-baguio-intern',
     company: 'When in Baguio Inc.',
     position: 'Full Stack Web Developer Intern',
     duration: 'January 2026 - April 2026',
@@ -145,7 +158,7 @@ export const fallbackExperience = [
     responsibilities: ['Built and maintained backend features and administrative modules', 'Enhanced dashboard functionality with content management', 'Optimized payment and checkout workflows through API integration', 'Implemented file upload and data management functionality', 'Performed debugging, testing, and performance optimization', 'Utilized AI-assisted development tools for accelerated workflows'],
     technologies: ['React', 'Node.js', 'MySQL', 'REST APIs', 'Git', 'Postman'],
     logoUrl: '',
-    displayOrder: 1,
+    displayOrder: 2,
   },
 ];
 
@@ -155,7 +168,7 @@ export const fallbackEducation = [
     degree: 'BSIT - Web and Mobile Technologies',
     institution: 'Pangasinan State University',
     campus: 'Urdaneta Campus',
-    duration: 'Expected Graduation: July 2026',
+    duration: 'Graduated: July 2026',
     displayOrder: 1,
   },
 ];
