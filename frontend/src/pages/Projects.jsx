@@ -325,9 +325,11 @@ function ProjectCard({ project, index, onLearnMore }) {
               <Icon name="arrow" />
             </button>
             <div className="flex gap-3">
-              <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />} disabledLabel="Repository not available">
-                <span className="sr-only sm:not-sr-only">GitHub</span>
-              </ActionButton>
+              {project.repositoryUrl && (
+                <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />} disabledLabel="Repository not available">
+                  <span className="sr-only sm:not-sr-only">GitHub</span>
+                </ActionButton>
+              )}
               {project.liveDemoUrl && (
                 <ActionButton href={project.liveDemoUrl} icon={<Icon name="external" />}>
                   Demo
@@ -439,9 +441,11 @@ function ProjectModal({ project, onClose }) {
               <p id={summaryId} className="mt-5 text-base leading-7 text-gray-300">{project.summary || project.description}</p>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />} disabledLabel="Repository not available">
-                  GitHub Repository
-                </ActionButton>
+                {project.repositoryUrl && (
+                  <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />} disabledLabel="Repository not available">
+                    GitHub Repository
+                  </ActionButton>
+                )}
                 {project.liveDemoUrl && (
                   <ActionButton href={project.liveDemoUrl} icon={<Icon name="external" />} variant="primary">
                     Live Demo
