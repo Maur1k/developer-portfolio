@@ -5,58 +5,59 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    'Quick Links': [
+    'Professional Networks': [
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/maurik-angelo-ab835716a/' },
       { label: 'JobStreet', href: 'https://ph.jobstreet.com/profiles/maurikangelo-fernandez-7mNlX0tM26' },
-    ],
-    'Contact': [
-      { label: 'Email', href: 'mailto:maurikfernandez123@gmail.com' },
-      { label: 'Phone', href: 'tel:+639277975100' },
-      { label: 'Location', href: '#' },
+      { label: 'GitHub', href: 'https://github.com/' }, // Adding GitHub as a placeholder to fill it out better
     ],
   };
 
   return (
     <footer className="relative border-t border-white/10 bg-[#111217]/80 backdrop-blur-[1px] mt-24">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
+        <div className="flex flex-col md:flex-row justify-between gap-12 mb-12">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="md:max-w-md"
           >
             <h3 className="text-xl font-bold gradient-text mb-2">Maurik</h3>
             <p className="text-sm text-gray-500">
-              Full Stack Developer focused on AI-assisted development and modern web applications.
+              Software Developer specializing in full-stack web and mobile development, and AI-assisted workflows.
             </p>
           </motion.div>
 
           {/* Quick Links */}
-          {Object.entries(footerLinks).map(([category, links], idx) => (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-            >
-              <h4 className="font-semibold text-white mb-4 text-sm">{category}</h4>
-              <ul className="space-y-2">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-gray-400 hover:text-amber-400 transition-colors duration-200"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+          <div className="flex gap-16 md:justify-end">
+            {Object.entries(footerLinks).map(([category, links], idx) => (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+              >
+                <h4 className="font-semibold text-white mb-4 text-sm">{category}</h4>
+                <ul className="space-y-2">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <a
+                        href={link.href}
+                        className="text-sm text-gray-400 hover:text-amber-400 transition-colors duration-200"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* Divider */}
