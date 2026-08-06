@@ -23,7 +23,7 @@ const emptyProject = {
   title: '', subtitle: '', shortDescription: '', longDescription: '', thumbnailImage: '', galleryImages: [], technologies: [], category: '', status: 'Draft', repositoryUrl: '', liveDemoUrl: '', startDate: '', endDate: '', featured: false, displayOrder: 0,
 };
 
-const fieldClass = 'w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/20';
+const fieldClass = 'w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none transition focus:border-amber-300/60 focus:ring-2 focus:ring-amber-300/20';
 const labelClass = 'mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-gray-400';
 const buttonClass = 'inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
 
@@ -62,12 +62,12 @@ function AdminLayout() {
     <div className="min-h-screen bg-[#09090b] text-gray-100">
       <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-white/10 bg-[#0d0f14]/95 p-5 lg:block">
         <div className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">Portfolio CMS</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">Portfolio CMS</p>
           <h1 className="mt-2 text-2xl font-bold text-white">Admin</h1>
         </div>
         <nav className="space-y-1">
           {navItems.map(([label, href]) => (
-            <NavLink key={href} to={href} className={({ isActive }) => `block rounded-lg px-3 py-2 text-sm font-semibold transition ${isActive ? 'bg-gradient-to-r from-emerald-400 to-cyan-300 text-[#071012]' : 'text-gray-400 hover:bg-white/[0.05] hover:text-white'}`}>
+            <NavLink key={href} to={href} className={({ isActive }) => `block rounded-lg px-3 py-2 text-sm font-semibold transition ${isActive ? 'bg-gradient-to-r from-orange-400 to-amber-300 text-[#090a0c]' : 'text-gray-400 hover:bg-white/[0.05] hover:text-white'}`}>
               {label}
             </NavLink>
           ))}
@@ -82,19 +82,19 @@ function AdminLayout() {
               <p className="font-semibold text-white">Private content management dashboard</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <div className={`rounded-lg border px-3 py-2 text-xs font-semibold ${isFirebaseConfigured ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-200' : 'border-amber-400/30 bg-amber-400/10 text-amber-200'}`}>
+              <div className={`rounded-lg border px-3 py-2 text-xs font-semibold ${isFirebaseConfigured ? 'border-orange-400/30 bg-orange-400/10 text-orange-200' : 'border-amber-400/30 bg-amber-400/10 text-amber-200'}`}>
                 {isFirebaseConfigured ? 'Firestore connected' : 'Firebase env missing'}
               </div>
-              <div className={`rounded-lg border px-3 py-2 text-xs font-semibold ${isStorageConfigured ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-200' : 'border-slate-400/30 bg-slate-400/10 text-slate-300'}`}>
+              <div className={`rounded-lg border px-3 py-2 text-xs font-semibold ${isStorageConfigured ? 'border-orange-400/30 bg-orange-400/10 text-orange-200' : 'border-slate-400/30 bg-slate-400/10 text-slate-300'}`}>
                 {isStorageConfigured ? 'Storage enabled' : 'Storage off (URL mode)'}
               </div>
               <button className={`${buttonClass} border border-white/10 text-gray-200 hover:bg-white/[0.06]`} onClick={() => navigate('/')}>View Site</button>
-              <button className={`${buttonClass} bg-white text-[#09090b] hover:bg-cyan-100`} onClick={logout}>Sign Out</button>
+              <button className={`${buttonClass} bg-white text-[#09090b] hover:bg-amber-100`} onClick={logout}>Sign Out</button>
             </div>
           </div>
           <nav className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
             {navItems.map(([label, href]) => (
-              <NavLink key={href} to={href} className={({ isActive }) => `shrink-0 rounded-lg px-3 py-2 text-xs font-semibold ${isActive ? 'bg-cyan-300 text-[#071012]' : 'bg-white/[0.05] text-gray-300'}`}>{label}</NavLink>
+              <NavLink key={href} to={href} className={({ isActive }) => `shrink-0 rounded-lg px-3 py-2 text-xs font-semibold ${isActive ? 'bg-amber-300 text-[#090a0c]' : 'bg-white/[0.05] text-gray-300'}`}>{label}</NavLink>
             ))}
           </nav>
         </header>
@@ -140,12 +140,12 @@ export function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#09090b] px-4 text-white">
       <Card className="w-full max-w-md">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">Private Dashboard</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">Private Dashboard</p>
         <h1 className="mt-3 text-3xl font-bold">Portfolio CMS</h1>
         <p className="mt-3 text-sm leading-6 text-gray-400">Sign in with Google or GitHub. Only {adminEmail} can access admin routes.</p>
         {!isFirebaseConfigured && <div className="mt-5 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-amber-100">Add Firebase values to your .env file before logging in.</div>}
         <div className="mt-6 space-y-3">
-          <button onClick={() => handleLogin('google')} disabled={loading || !isFirebaseConfigured} className="w-full rounded-lg bg-white px-4 py-3 font-bold text-[#071012] transition hover:bg-cyan-100 disabled:opacity-50">
+          <button onClick={() => handleLogin('google')} disabled={loading || !isFirebaseConfigured} className="w-full rounded-lg bg-white px-4 py-3 font-bold text-[#090a0c] transition hover:bg-amber-100 disabled:opacity-50">
             {loading ? 'Signing in...' : 'Continue with Google'}
           </button>
           <button onClick={() => handleLogin('github')} disabled={loading || !isFirebaseConfigured} className="w-full rounded-lg border border-white/15 bg-white/[0.04] px-4 py-3 font-bold text-white transition hover:bg-white/[0.08] disabled:opacity-50">
@@ -203,7 +203,7 @@ function FileField({ label, onUpload, folder }) {
     return (
       <div className="rounded-lg border border-slate-400/20 bg-white/[0.03] px-3 py-3 text-xs leading-5 text-gray-400">
         <p className="font-semibold text-gray-300">{label}</p>
-        <p className="mt-1">Uploads need Firebase Storage (paid Blaze plan). Leave the URL field above filled instead, or add files under <code className="text-cyan-200">frontend/public/</code> and use paths like <code className="text-cyan-200">/projects/my-image.png</code>.</p>
+        <p className="mt-1">Uploads need Firebase Storage (paid Blaze plan). Leave the URL field above filled instead, or add files under <code className="text-amber-200">frontend/public/</code> and use paths like <code className="text-amber-200">/projects/my-image.png</code>.</p>
       </div>
     );
   }
@@ -229,7 +229,7 @@ function FileField({ label, onUpload, folder }) {
           }
         }}
       />
-      {uploading && <p className="mt-2 text-xs text-cyan-200">Uploading...</p>}
+      {uploading && <p className="mt-2 text-xs text-amber-200">Uploading...</p>}
       {error && <p className="mt-2 text-xs text-red-200">{error}</p>}
     </label>
   );
@@ -282,7 +282,7 @@ function ContactEditor() {
 function DocumentForm({ title, description, onSave, children }) {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  return <div className="space-y-6"><PageTitle title={title} description={description} /><Card><form className="grid gap-5 md:grid-cols-2" onSubmit={async (event) => { event.preventDefault(); setSaving(true); setMessage(''); try { await onSave(); setMessage('Saved.'); } catch (error) { setMessage(error.message); } finally { setSaving(false); } }}>{children}<div className="md:col-span-2"><button disabled={saving || !db} className={`${buttonClass} bg-gradient-to-r from-emerald-400 to-cyan-300 text-[#071012]`}>{saving ? 'Saving...' : 'Save Changes'}</button>{message && <p className="mt-3 text-sm text-gray-300">{message}</p>}</div></form></Card></div>;
+  return <div className="space-y-6"><PageTitle title={title} description={description} /><Card><form className="grid gap-5 md:grid-cols-2" onSubmit={async (event) => { event.preventDefault(); setSaving(true); setMessage(''); try { await onSave(); setMessage('Saved.'); } catch (error) { setMessage(error.message); } finally { setSaving(false); } }}>{children}<div className="md:col-span-2"><button disabled={saving || !db} className={`${buttonClass} bg-gradient-to-r from-orange-400 to-amber-300 text-[#090a0c]`}>{saving ? 'Saving...' : 'Save Changes'}</button>{message && <p className="mt-3 text-sm text-gray-300">{message}</p>}</div></form></Card></div>;
 }
 
 function setNested(source, path, value) {
@@ -369,7 +369,7 @@ function SkillsManager() {
 
   return (
     <div className="space-y-6">
-      <PageTitle title="Skills" description="Drag skills to reorder them within each category. Changes appear on the public portfolio after saving." action={<button disabled={!db} onClick={save} className={`${buttonClass} bg-cyan-300 text-[#071012]`}>Save Skills</button>} />
+      <PageTitle title="Skills" description="Drag skills to reorder them within each category. Changes appear on the public portfolio after saving." action={<button disabled={!db} onClick={save} className={`${buttonClass} bg-amber-300 text-[#090a0c]`}>Save Skills</button>} />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {categories.map(([key, label]) => (
           <SkillCategoryEditor
@@ -389,9 +389,9 @@ function ProjectsManager() {
   const { items: projects } = useCollectionData('projects', fallbackProjects, { orderBy: 'displayOrder' });
   const [editing, setEditing] = useState(null);
 
-  return <div className="space-y-6"><PageTitle title="Projects" description="Create, edit, duplicate, feature, order, and delete public portfolio projects." action={<button className={`${buttonClass} bg-gradient-to-r from-emerald-400 to-cyan-300 text-[#071012]`} onClick={() => setEditing({ ...emptyProject })}>Add Project</button>} />
+  return <div className="space-y-6"><PageTitle title="Projects" description="Create, edit, duplicate, feature, order, and delete public portfolio projects." action={<button className={`${buttonClass} bg-gradient-to-r from-orange-400 to-amber-300 text-[#090a0c]`} onClick={() => setEditing({ ...emptyProject })}>Add Project</button>} />
     {editing && <ProjectForm project={editing} onClose={() => setEditing(null)} />}
-    <div className="grid gap-4">{projects.map((project) => <Card key={project.id}><div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between"><div><div className="flex flex-wrap gap-2"><span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-xs text-cyan-100">{project.category || 'Uncategorized'}</span>{project.featured && <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2 py-1 text-xs text-emerald-100">Featured</span>}</div><h2 className="mt-3 text-xl font-bold text-white">{project.title || project.name}</h2><p className="mt-1 max-w-3xl text-sm text-gray-400">{project.shortDescription || project.summary}</p></div><div className="flex flex-wrap gap-2"><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => setEditing(project)}>Edit</button><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => duplicateProject(project)}>Duplicate</button><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => updateDoc(doc(db, 'projects', project.id), { featured: !project.featured })}>{project.featured ? 'Unfeature' : 'Feature'}</button><button className={`${buttonClass} border border-red-400/30 text-red-200`} onClick={() => deleteDoc(doc(db, 'projects', project.id))}>Delete</button></div></div></Card>)}</div></div>;
+    <div className="grid gap-4">{projects.map((project) => <Card key={project.id}><div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between"><div><div className="flex flex-wrap gap-2"><span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-xs text-amber-100">{project.category || 'Uncategorized'}</span>{project.featured && <span className="rounded-full border border-orange-300/20 bg-orange-300/10 px-2 py-1 text-xs text-orange-100">Featured</span>}</div><h2 className="mt-3 text-xl font-bold text-white">{project.title || project.name}</h2><p className="mt-1 max-w-3xl text-sm text-gray-400">{project.shortDescription || project.summary}</p></div><div className="flex flex-wrap gap-2"><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => setEditing(project)}>Edit</button><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => duplicateProject(project)}>Duplicate</button><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => updateDoc(doc(db, 'projects', project.id), { featured: !project.featured })}>{project.featured ? 'Unfeature' : 'Feature'}</button><button className={`${buttonClass} border border-red-400/30 text-red-200`} onClick={() => deleteDoc(doc(db, 'projects', project.id))}>Delete</button></div></div></Card>)}</div></div>;
 }
 
 async function duplicateProject(project) {
@@ -405,7 +405,7 @@ function ProjectForm({ project, onClose }) {
   const update = (key, value) => setDraft((current) => ({ ...current, [key]: value }));
   const save = async (event) => { event.preventDefault(); setSaving(true); const payload = normalizeProject(draft); try { if (draft.id) await setDoc(doc(db, 'projects', draft.id), payload, { merge: true }); else await addDoc(collection(db, 'projects'), { ...payload, createdAt: serverTimestamp() }); onClose(); } finally { setSaving(false); } };
 
-  return <Card><form onSubmit={save} className="grid gap-5 md:grid-cols-2"><TextField label="Title" required value={draft.title || draft.name} onChange={(value) => update('title', value)} /><TextField label="Subtitle" value={draft.subtitle} onChange={(value) => update('subtitle', value)} /><TextField label="Short Description" textarea value={draft.shortDescription || draft.summary} onChange={(value) => update('shortDescription', value)} /><TextField label="Long Description" textarea value={draft.longDescription} onChange={(value) => update('longDescription', value)} /><TextField label="Thumbnail Image URL" value={draft.thumbnailImage} onChange={(value) => update('thumbnailImage', value)} /><FileField label="Upload Thumbnail" folder="projects/thumbnails" onUpload={(url) => update('thumbnailImage', url)} /><TextField label="Gallery Image URLs" textarea value={joinList(draft.galleryImages)} onChange={(value) => update('galleryImages', splitList(value))} /><FileField label="Upload Gallery Image" folder="projects/gallery" onUpload={(url) => update('galleryImages', [...splitList(draft.galleryImages), url])} /><TextField label="Technologies" textarea value={joinList(draft.technologies)} onChange={(value) => update('technologies', splitList(value))} /><TextField label="Category" value={draft.category} onChange={(value) => update('category', value)} /><TextField label="Status" value={draft.status} onChange={(value) => update('status', value)} /><TextField label="GitHub Repository URL" value={draft.repositoryUrl} onChange={(value) => update('repositoryUrl', value)} /><TextField label="Live Demo URL" value={draft.liveDemoUrl} onChange={(value) => update('liveDemoUrl', value)} /><TextField label="Start Date" type="date" value={draft.startDate} onChange={(value) => update('startDate', value)} /><TextField label="End Date" type="date" value={draft.endDate} onChange={(value) => update('endDate', value)} /><TextField label="Display Order" type="number" value={draft.displayOrder} onChange={(value) => update('displayOrder', value)} /><label className="flex items-center gap-3 text-sm text-gray-300"><input type="checkbox" checked={Boolean(draft.featured)} onChange={(event) => update('featured', event.target.checked)} /> Featured Project</label><div className="flex gap-2 md:col-span-2"><button disabled={saving || !db} className={`${buttonClass} bg-cyan-300 text-[#071012]`}>{saving ? 'Saving...' : 'Save Project'}</button><button type="button" onClick={onClose} className={`${buttonClass} border border-white/10 text-gray-300`}>Cancel</button></div></form></Card>;
+  return <Card><form onSubmit={save} className="grid gap-5 md:grid-cols-2"><TextField label="Title" required value={draft.title || draft.name} onChange={(value) => update('title', value)} /><TextField label="Subtitle" value={draft.subtitle} onChange={(value) => update('subtitle', value)} /><TextField label="Short Description" textarea value={draft.shortDescription || draft.summary} onChange={(value) => update('shortDescription', value)} /><TextField label="Long Description" textarea value={draft.longDescription} onChange={(value) => update('longDescription', value)} /><TextField label="Thumbnail Image URL" value={draft.thumbnailImage} onChange={(value) => update('thumbnailImage', value)} /><FileField label="Upload Thumbnail" folder="projects/thumbnails" onUpload={(url) => update('thumbnailImage', url)} /><TextField label="Gallery Image URLs" textarea value={joinList(draft.galleryImages)} onChange={(value) => update('galleryImages', splitList(value))} /><FileField label="Upload Gallery Image" folder="projects/gallery" onUpload={(url) => update('galleryImages', [...splitList(draft.galleryImages), url])} /><TextField label="Technologies" textarea value={joinList(draft.technologies)} onChange={(value) => update('technologies', splitList(value))} /><TextField label="Category" value={draft.category} onChange={(value) => update('category', value)} /><TextField label="Status" value={draft.status} onChange={(value) => update('status', value)} /><TextField label="GitHub Repository URL" value={draft.repositoryUrl} onChange={(value) => update('repositoryUrl', value)} /><TextField label="Live Demo URL" value={draft.liveDemoUrl} onChange={(value) => update('liveDemoUrl', value)} /><TextField label="Start Date" type="date" value={draft.startDate} onChange={(value) => update('startDate', value)} /><TextField label="End Date" type="date" value={draft.endDate} onChange={(value) => update('endDate', value)} /><TextField label="Display Order" type="number" value={draft.displayOrder} onChange={(value) => update('displayOrder', value)} /><label className="flex items-center gap-3 text-sm text-gray-300"><input type="checkbox" checked={Boolean(draft.featured)} onChange={(event) => update('featured', event.target.checked)} /> Featured Project</label><div className="flex gap-2 md:col-span-2"><button disabled={saving || !db} className={`${buttonClass} bg-amber-300 text-[#090a0c]`}>{saving ? 'Saving...' : 'Save Project'}</button><button type="button" onClick={onClose} className={`${buttonClass} border border-white/10 text-gray-300`}>Cancel</button></div></form></Card>;
 }
 
 function normalizeProject(project) {
@@ -421,14 +421,14 @@ const certificateFields = [ ['title', 'Title'], ['issuer', 'Issuer'], ['date', '
 function GenericManager({ title, collectionName, fallback, fields }) {
   const { items } = useCollectionData(collectionName, fallback, { orderBy: 'displayOrder' });
   const [editing, setEditing] = useState(null);
-  return <div className="space-y-6"><PageTitle title={title} description={`Manage ${title.toLowerCase()} entries shown on the portfolio.`} action={<button onClick={() => setEditing({ displayOrder: items.length + 1 })} className={`${buttonClass} bg-cyan-300 text-[#071012]`}>Add Entry</button>} />{editing && <GenericForm collectionName={collectionName} fields={fields} item={editing} onClose={() => setEditing(null)} />}{items.map((item) => <Card key={item.id}><div className="flex flex-col gap-4 md:flex-row md:justify-between"><div><h2 className="text-lg font-bold">{item.title || item.position || item.degree || item.company}</h2><p className="mt-1 text-sm text-gray-400">{item.issuer || item.company || item.institution || item.duration}</p></div><div className="flex gap-2"><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => setEditing(item)}>Edit</button><button className={`${buttonClass} border border-red-400/30 text-red-200`} onClick={() => deleteDoc(doc(db, collectionName, item.id))}>Delete</button></div></div></Card>)}</div>;
+  return <div className="space-y-6"><PageTitle title={title} description={`Manage ${title.toLowerCase()} entries shown on the portfolio.`} action={<button onClick={() => setEditing({ displayOrder: items.length + 1 })} className={`${buttonClass} bg-amber-300 text-[#090a0c]`}>Add Entry</button>} />{editing && <GenericForm collectionName={collectionName} fields={fields} item={editing} onClose={() => setEditing(null)} />}{items.map((item) => <Card key={item.id}><div className="flex flex-col gap-4 md:flex-row md:justify-between"><div><h2 className="text-lg font-bold">{item.title || item.position || item.degree || item.company}</h2><p className="mt-1 text-sm text-gray-400">{item.issuer || item.company || item.institution || item.duration}</p></div><div className="flex gap-2"><button className={`${buttonClass} border border-white/10 text-gray-200`} onClick={() => setEditing(item)}>Edit</button><button className={`${buttonClass} border border-red-400/30 text-red-200`} onClick={() => deleteDoc(doc(db, collectionName, item.id))}>Delete</button></div></div></Card>)}</div>;
 }
 
 function GenericForm({ collectionName, fields, item, onClose }) {
   const [draft, setDraft] = useState(item);
   const [saving, setSaving] = useState(false);
   const save = async (event) => { event.preventDefault(); setSaving(true); const payload = { ...draft, updatedAt: serverTimestamp() }; fields.forEach(([key, , type]) => { if (type === 'list') payload[key] = splitList(payload[key]); }); try { if (draft.id) await setDoc(doc(db, collectionName, draft.id), payload, { merge: true }); else await addDoc(collection(db, collectionName), { ...payload, createdAt: serverTimestamp() }); onClose(); } finally { setSaving(false); } };
-  return <Card><form onSubmit={save} className="grid gap-5 md:grid-cols-2">{fields.map(([key, label, type]) => <TextField key={key} label={label} type={type === 'number' ? 'number' : type === 'date' ? 'date' : 'text'} textarea={type === 'textarea' || type === 'list'} value={type === 'list' ? joinList(draft[key]) : draft[key]} onChange={(value) => setDraft((current) => ({ ...current, [key]: type === 'list' ? splitList(value) : value }))} />)}{collectionName === 'certificates' && <><FileField label="Upload PDF" folder="certificates/pdf" onUpload={(url) => setDraft((current) => ({ ...current, pdfUrl: url }))} /><FileField label="Upload Image" folder="certificates/images" onUpload={(url) => setDraft((current) => ({ ...current, imageUrl: url }))} /></>}{collectionName === 'experience' && <FileField label="Upload Company Logo" folder="experience/logos" onUpload={(url) => setDraft((current) => ({ ...current, logoUrl: url }))} />}<div className="flex gap-2 md:col-span-2"><button disabled={saving || !db} className={`${buttonClass} bg-cyan-300 text-[#071012]`}>{saving ? 'Saving...' : 'Save Entry'}</button><button type="button" onClick={onClose} className={`${buttonClass} border border-white/10 text-gray-300`}>Cancel</button></div></form></Card>;
+  return <Card><form onSubmit={save} className="grid gap-5 md:grid-cols-2">{fields.map(([key, label, type]) => <TextField key={key} label={label} type={type === 'number' ? 'number' : type === 'date' ? 'date' : 'text'} textarea={type === 'textarea' || type === 'list'} value={type === 'list' ? joinList(draft[key]) : draft[key]} onChange={(value) => setDraft((current) => ({ ...current, [key]: type === 'list' ? splitList(value) : value }))} />)}{collectionName === 'certificates' && <><FileField label="Upload PDF" folder="certificates/pdf" onUpload={(url) => setDraft((current) => ({ ...current, pdfUrl: url }))} /><FileField label="Upload Image" folder="certificates/images" onUpload={(url) => setDraft((current) => ({ ...current, imageUrl: url }))} /></>}{collectionName === 'experience' && <FileField label="Upload Company Logo" folder="experience/logos" onUpload={(url) => setDraft((current) => ({ ...current, logoUrl: url }))} />}<div className="flex gap-2 md:col-span-2"><button disabled={saving || !db} className={`${buttonClass} bg-amber-300 text-[#090a0c]`}>{saving ? 'Saving...' : 'Save Entry'}</button><button type="button" onClick={onClose} className={`${buttonClass} border border-white/10 text-gray-300`}>Cancel</button></div></form></Card>;
 }
 
 function Settings() {
@@ -448,19 +448,19 @@ function Settings() {
       <Card>
         <h2 className="text-xl font-bold">Seed Firebase Content</h2>
         <p className="mt-2 text-sm text-gray-400">Use this once after creating your Firebase project to copy the current portfolio content into Firestore.</p>
-        <button disabled={!db} onClick={seed} className={`${buttonClass} mt-5 bg-white text-[#071012]`}>Seed Current Content</button>
-        {message && <p className="mt-3 text-sm text-emerald-200">{message}</p>}
+        <button disabled={!db} onClick={seed} className={`${buttonClass} mt-5 bg-white text-[#090a0c]`}>Seed Current Content</button>
+        {message && <p className="mt-3 text-sm text-orange-200">{message}</p>}
       </Card>
       <Card>
         <h2 className="text-xl font-bold">Firebase CLI (Spark / free plan)</h2>
         <p className="mt-2 text-sm text-gray-400">Storage is optional and needs a paid Blaze plan. On the free plan, use URL fields for images and skip Storage entirely.</p>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-gray-300">
-          <li>Copy your web app config from Firebase Console into <code className="text-cyan-200">frontend/.env</code> (leave <code className="text-cyan-200">VITE_FIREBASE_STORAGE_BUCKET</code> blank).</li>
-          <li>Run <code className="text-cyan-200">firebase login</code> in a terminal.</li>
-          <li>Run <code className="text-cyan-200">firebase use --add</code> inside the <code className="text-cyan-200">firebase</code> folder and pick your project.</li>
-          <li>Deploy rules only: <code className="text-cyan-200">firebase deploy --only firestore:rules</code></li>
+          <li>Copy your web app config from Firebase Console into <code className="text-amber-200">frontend/.env</code> (leave <code className="text-amber-200">VITE_FIREBASE_STORAGE_BUCKET</code> blank).</li>
+          <li>Run <code className="text-amber-200">firebase login</code> in a terminal.</li>
+          <li>Run <code className="text-amber-200">firebase use --add</code> inside the <code className="text-amber-200">firebase</code> folder and pick your project.</li>
+          <li>Deploy rules only: <code className="text-amber-200">firebase deploy --only firestore:rules</code></li>
         </ol>
-        <p className="mt-4 text-sm text-gray-400">For images without Storage: put files in <code className="text-cyan-200">frontend/public/</code> and reference them like <code className="text-cyan-200">/projects/click2serve/Kiosk Homescreen.png</code>.</p>
+        <p className="mt-4 text-sm text-gray-400">For images without Storage: put files in <code className="text-amber-200">frontend/public/</code> and reference them like <code className="text-amber-200">/projects/click2serve/Kiosk Homescreen.png</code>.</p>
       </Card>
     </div>
   );

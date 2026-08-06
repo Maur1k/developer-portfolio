@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Maurik's Portfolio Website
 
 A responsive Node.js + React portfolio website showcasing professional experience, projects, and skills with mobile and desktop responsiveness.
@@ -169,3 +170,6 @@ Contributions are welcome! Feel free to submit issues or pull requests.
 ---
 
 **Made with ❤️ by Maurik Angelo L. Fernandez**
+=======
+# developer-portfolio
+>>>>>>> 8cc91c4d160e90063f92781a59bbcdace1d2fe4a

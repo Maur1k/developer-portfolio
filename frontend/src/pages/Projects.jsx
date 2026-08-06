@@ -86,8 +86,8 @@ function Icon({ name, className = 'h-4 w-4' }) {
 function Badge({ children, tone = 'neutral' }) {
   const tones = {
     neutral: 'border-white/10 bg-white/[0.035] text-gray-300',
-    accent: 'border-emerald-400/20 bg-emerald-400/[0.08] text-emerald-200',
-    cyan: 'border-cyan-300/20 bg-cyan-300/[0.08] text-cyan-100',
+    accent: 'border-orange-400/20 bg-orange-400/[0.08] text-orange-200',
+    amber: 'border-amber-300/20 bg-amber-300/[0.08] text-amber-100',
   };
 
   return (
@@ -98,9 +98,9 @@ function Badge({ children, tone = 'neutral' }) {
 }
 
 function ActionButton({ href, children, icon, variant = 'secondary', disabledLabel }) {
-  const base = 'inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70';
+  const base = 'inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70';
   const styles = variant === 'primary'
-    ? 'bg-gradient-to-r from-emerald-400 to-cyan-300 text-[#071012] shadow-[0_14px_35px_rgba(34,211,238,0.16)] hover:brightness-110'
+    ? 'bg-gradient-to-r from-orange-400 to-amber-300 text-[#090a0c] shadow-[0_14px_35px_rgba(34,211,238,0.16)] hover:brightness-110'
     : 'border border-white/10 bg-white/[0.035] text-gray-200 hover:border-white/20 hover:bg-white/[0.07] hover:text-white';
 
   if (!href) {
@@ -154,7 +154,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
   return (
     <div className="space-y-3">
       <div className="relative overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#0b0d12]">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-transparent to-cyan-300/10 opacity-70" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-400/10 via-transparent to-amber-300/10 opacity-70" />
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -180,9 +180,9 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
                 draggable="false"
               />
             ) : (
-              <div className={`${previewHeight} flex w-full items-center justify-center bg-gradient-to-br from-emerald-400/10 to-cyan-300/10 p-6 text-center`}>
+              <div className={`${previewHeight} flex w-full items-center justify-center bg-gradient-to-br from-orange-400/10 to-amber-300/10 p-6 text-center`}>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Preview coming soon</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">Preview coming soon</p>
                   <p className="mt-2 max-w-xs text-sm text-gray-400">Add screenshots to the project object and they will render here automatically.</p>
                 </div>
               </div>
@@ -228,7 +228,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
               key={screenshot.src || screenshot.title}
               type="button"
               onClick={() => setActiveIndex(index)}
-              className={`group/thumb relative overflow-hidden rounded-xl border transition-all duration-300 ${index === activeIndex ? 'border-emerald-300/70 ring-1 ring-emerald-300/25' : 'border-white/10 hover:border-white/20'}`}
+              className={`group/thumb relative overflow-hidden rounded-xl border transition-all duration-300 ${index === activeIndex ? 'border-orange-300/70 ring-1 ring-orange-300/25' : 'border-white/10 hover:border-white/20'}`}
             >
               {screenshot.src ? (
                 <img src={encodeURI(screenshot.src)} alt={screenshot.alt} className="aspect-[4/3] h-full w-full object-cover object-center" loading="lazy" draggable="false" />
@@ -250,7 +250,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
             <div className="flex h-full flex-col">
               <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 sm:px-6">
                 <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-200">Fullscreen viewer</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200">Fullscreen viewer</p>
                   <h3 className="mt-1 truncate text-base font-semibold text-white sm:text-xl">{activeScreenshot.title}</h3>
                 </div>
                 <button type="button" onClick={() => setIsFullscreenOpen(false)} className="inline-flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-gray-200 transition hover:bg-white/[0.08] hover:text-white">
@@ -289,15 +289,15 @@ function ProjectCard({ project, index, onLearnMore }) {
 
   return (
     <motion.article variants={itemVariants} className="group relative h-full">
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-emerald-300/20 via-white/0 to-cyan-300/20 opacity-0 blur transition-opacity duration-500 group-hover:opacity-100" />
-      <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#12141a]/80 shadow-[0_24px_70px_rgba(0,0,0,0.28)] backdrop-blur transition-all duration-500 group-hover:-translate-y-1 group-hover:border-emerald-300/25 group-hover:bg-[#151820]/90">
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-orange-300/20 via-white/0 to-amber-300/20 opacity-0 blur transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#12141a]/80 shadow-[0_24px_70px_rgba(0,0,0,0.28)] backdrop-blur transition-all duration-500 group-hover:-translate-y-1 group-hover:border-orange-300/25 group-hover:bg-[#151820]/90">
         <div className="border-b border-white/10 bg-black/20 p-3">
           <ScreenshotCarousel screenshots={screenshots} compact />
         </div>
 
         <div className="flex flex-1 flex-col p-5 sm:p-6">
           <div className="mb-4 flex flex-wrap gap-2">
-            <Badge tone="cyan">{project.category || 'Case Study'}</Badge>
+            <Badge tone="amber">{project.category || 'Case Study'}</Badge>
             <Badge tone="accent">{project.status || 'Completed'}</Badge>
           </div>
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Project {String(index + 1).padStart(2, '0')}</p>
@@ -319,7 +319,7 @@ function ProjectCard({ project, index, onLearnMore }) {
             <button
               type="button"
               onClick={() => onLearnMore(project)}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-white text-[#090d12] px-4 text-sm font-bold transition-all duration-300 hover:bg-cyan-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-white text-[#090d12] px-4 text-sm font-bold transition-all duration-300 hover:bg-amber-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70"
             >
               Learn More
               <Icon name="arrow" />
@@ -346,12 +346,12 @@ function DetailBlock({ title, children }) {
 
   return (
     <section className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-      <h4 className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">{title}</h4>
+      <h4 className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">{title}</h4>
       {Array.isArray(children) ? (
         <ul className="mt-4 space-y-3">
           {children.map((item) => (
             <li key={item} className="flex gap-3 text-sm leading-6 text-gray-300">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-300" />
               <span>{item}</span>
             </li>
           ))}
@@ -406,10 +406,10 @@ function ProjectModal({ project, onClose }) {
       >
         <div className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/10 bg-[#101217]/90 px-4 py-4 backdrop-blur sm:px-6">
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-200">Project details</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-orange-200">Project details</p>
             <h3 id={titleId} className="mt-1 truncate text-lg font-bold text-white sm:text-2xl">{project.name}</h3>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close project details" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70">
+          <button type="button" onClick={onClose} aria-label="Close project details" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70">
             <Icon name="close" />
           </button>
         </div>
@@ -422,7 +422,7 @@ function ProjectModal({ project, onClose }) {
 
             <div className="p-5 sm:p-6 lg:p-8">
               <div className="flex flex-wrap gap-2">
-                <Badge tone="cyan">{project.category || 'Case Study'}</Badge>
+                <Badge tone="amber">{project.category || 'Case Study'}</Badge>
                 <Badge tone="accent">{project.status || 'Completed'}</Badge>
               </div>
 
@@ -448,7 +448,7 @@ function ProjectModal({ project, onClose }) {
               </div>
 
               <section className="mt-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <h4 className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">Technologies Used</h4>
+                <h4 className="text-xs font-bold uppercase tracking-[0.18em] text-amber-200">Technologies Used</h4>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {(project.technologies || []).map((tech) => (
                     <span key={tech} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-gray-300">{tech}</span>
@@ -475,8 +475,8 @@ export default function Projects() {
   return (
     <section className="relative min-h-screen overflow-hidden px-4 py-24 md:px-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute right-[-10rem] top-32 h-[32rem] w-[32rem] rounded-full bg-cyan-400/[0.055] blur-3xl" />
-        <div className="absolute left-[-12rem] bottom-20 h-[28rem] w-[28rem] rounded-full bg-emerald-400/[0.045] blur-3xl" />
+        <div className="absolute right-[-10rem] top-32 h-[32rem] w-[32rem] rounded-full bg-amber-400/[0.055] blur-3xl" />
+        <div className="absolute left-[-12rem] bottom-20 h-[28rem] w-[28rem] rounded-full bg-orange-400/[0.045] blur-3xl" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl">
@@ -498,7 +498,7 @@ export default function Projects() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-200">Showcase system</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-200">Showcase system</p>
             <p className="mt-3 text-sm leading-6 text-gray-400">
               {projectCountLabel}. The grid auto-wraps from one to three columns and each card is generated from the project data.
             </p>

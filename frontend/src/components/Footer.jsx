@@ -48,7 +48,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-gray-400 hover:text-cyan-400 transition-colors duration-200"
+                      className="text-sm text-gray-400 hover:text-amber-400 transition-colors duration-200"
                     >
                       {link.label}
                     </a>
@@ -66,7 +66,7 @@ export default function Footer() {
               &copy; {currentYear} Maurik Angelo L. Fernandez. All rights reserved.
             </p>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span className="w-2 h-2 rounded-full bg-orange-400"></span>
               <span className="text-xs text-gray-500">Available for opportunities</span>
             </div>
           </div>

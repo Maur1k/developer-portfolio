@@ -96,7 +96,7 @@ export default function Navigation() {
                   className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium relative group"
                 >
                   {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-400 group-hover:w-full transition-all duration-300"></span>
                 </Link>
               </motion.div>
             ))}
