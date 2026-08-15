@@ -420,7 +420,16 @@ export default function Projects() {
   return (
     <section id="projects" className="py-16 border-b border-zinc-900">
       {/* Section Tag */}
-      <div className="section-tag mb-8">[Projects]</div>
+      <div className="section-tag mb-4">[Projects]</div>
+
+      <div className="mb-8 max-w-2xl">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Things I've Built
+        </h2>
+        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
+          Not every project started with a perfect specification. Some started as school projects. Some started as assessments. Some started because there was a problem worth solving. What they have in common is that each one taught me something new about building software.
+        </p>
+      </div>
 
       {/* Featured Main Project (WIBE) */}
       {featuredProject && (

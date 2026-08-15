@@ -56,8 +56,11 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
           </div>
-          <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-1">
-            {profile.professionalTitle} · <span className="text-zinc-500">Open to Opportunities</span>
+          <p className="text-xs sm:text-sm text-zinc-300 font-medium mt-1">
+            {profile.professionalTitle}
+          </p>
+          <p className="text-[11px] text-zinc-400 font-mono mt-0.5">
+            Full Stack · Web · Mobile
           </p>
         </div>
 

@@ -15,7 +15,16 @@ export default function Experience() {
   return (
     <section id="experience" className="py-16 border-b border-zinc-900">
       {/* Section Tag */}
-      <div className="section-tag mb-8">[Experience]</div>
+      <div className="section-tag mb-4">[Experience]</div>
+
+      <div className="mb-8 max-w-2xl">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Where I've Been Building
+        </h2>
+        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
+          My professional journey started with an internship and quickly turned into an opportunity to continue working on production software.
+        </p>
+      </div>
 
       <div className="space-y-3">
         {/* Experience Entries */}

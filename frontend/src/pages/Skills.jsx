@@ -19,7 +19,16 @@ export default function Skills() {
   return (
     <section id="skills" className="py-16 border-b border-zinc-900">
       {/* Section Tag */}
-      <div className="section-tag mb-8">[Tech Stack]</div>
+      <div className="section-tag mb-4">[Tech Stack]</div>
+
+      <div className="mb-8 max-w-2xl">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Tools I Use to Build
+        </h2>
+        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
+          I don't try to use every technology. I focus on understanding the tools I work with and choosing what fits the problem.
+        </p>
+      </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {coreSkillsMeta.map((category) => {

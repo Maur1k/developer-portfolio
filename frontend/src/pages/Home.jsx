@@ -52,7 +52,7 @@ export default function Home() {
       // If user is typing in an input/textarea, ignore
       if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return;
 
-      if (e.key === 'd' || e.key === 'D') {
+      if (e.key === 'm' || e.key === 'M' || e.key === 'd' || e.key === 'D') {
         e.preventDefault();
         setIsShortcutOpen((prev) => !prev);
       } else if (e.key === 'r' || e.key === 'R') {
@@ -103,7 +103,7 @@ export default function Home() {
         resumeUrl={profile.resumeUrl || '/files/Resume.jpg'}
       />
 
-      {/* Keyboard Shortcut / Developer Palette Modal (Press D) */}
+      {/* Keyboard Shortcut / Developer Palette Modal (Press M) */}
       <AnimatePresence>
         {isShortcutOpen && (
           <motion.div
@@ -122,9 +122,9 @@ export default function Home() {
             >
               <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
                 <div className="flex items-center gap-2">
-                  <kbd className="keycap">D</kbd>
+                  <kbd className="keycap">M</kbd>
                   <span className="text-sm font-mono font-semibold text-white">
-                    Developer Command Menu
+                    More & Quick Navigation
                   </span>
                 </div>
                 <button

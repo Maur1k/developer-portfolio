@@ -11,11 +11,34 @@ export default function About() {
     <section className="max-w-4xl mx-auto py-16 px-4 sm:px-6">
       <div className="section-tag mb-4">[About]</div>
       <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
-        Building practical software with modern engineering workflows.
+        {profile.aboutTitle || 'Building software, learning fast, and figuring things out along the way.'}
       </h1>
 
       <div className="space-y-4 text-base text-zinc-300 leading-relaxed">
         <p className="whitespace-pre-line">{profile.aboutMe}</p>
+      </div>
+
+      {/* What I Build Grid */}
+      <div className="mt-12 pt-8 border-t border-zinc-900">
+        <div className="section-tag mb-4">[What I Build]</div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl border border-zinc-900 bg-[#09090b]">
+            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">Frontend</p>
+            <p className="text-sm font-medium text-zinc-200 mt-1">React · React Native · JavaScript · TypeScript</p>
+          </div>
+          <div className="p-4 rounded-xl border border-zinc-900 bg-[#09090b]">
+            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">Mobile</p>
+            <p className="text-sm font-medium text-zinc-200 mt-1">Flutter · Dart · Android · iOS</p>
+          </div>
+          <div className="p-4 rounded-xl border border-zinc-900 bg-[#09090b]">
+            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">Backend</p>
+            <p className="text-sm font-medium text-zinc-200 mt-1">Node.js · Express · Laravel · PHP · REST APIs</p>
+          </div>
+          <div className="p-4 rounded-xl border border-zinc-900 bg-[#09090b]">
+            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">Data & Services</p>
+            <p className="text-sm font-medium text-zinc-200 mt-1">MySQL · Firebase · Firestore</p>
+          </div>
+        </div>
       </div>
 
       {/* Education */}
