@@ -413,6 +413,8 @@ function ProjectModal({ project, onClose }) {
 function PlaygroundCard({ project, onLearnMore }) {
   const technologies = project.technologies || [];
   const isPlaceholder = project.id === 'playground-placeholder';
+  const thumbnail = project.thumbnailImage || project.thumbnail_image;
+  const screenshots = project.screenshots || [];
 
   return (
     <article
@@ -425,6 +427,22 @@ function PlaygroundCard({ project, onLearnMore }) {
       {/* Top accent bar */}
       {!isPlaceholder && (
         <div className="h-0.5 w-full bg-gradient-to-r from-amber-500/0 via-amber-400/30 to-amber-500/0" />
+      )}
+
+      {/* Thumbnail image */}
+      {!isPlaceholder && (thumbnail || screenshots.length > 0) && (
+        <div className="relative w-full aspect-video overflow-hidden bg-zinc-950 border-b border-zinc-900">
+          <img
+            src={thumbnail || screenshots[0]?.src}
+            alt={project.name}
+            className="w-full h-full object-cover object-top"
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.parentElement.style.display = 'none';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/60 to-transparent pointer-events-none" />
+        </div>
       )}
 
       <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
