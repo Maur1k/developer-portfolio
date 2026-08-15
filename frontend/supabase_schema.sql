@@ -47,6 +47,9 @@ create table if not exists public.projects (
   contributions jsonb default '[]'::jsonb,
   problem text,
   solution text,
+  app_store_url text,
+  play_store_url text,
+  project_type text default 'main',
   created_at timestamptz default timezone('utc'::text, now()) not null,
   updated_at timestamptz default timezone('utc'::text, now()) not null
 );

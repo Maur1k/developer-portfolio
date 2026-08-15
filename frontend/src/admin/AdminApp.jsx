@@ -1352,8 +1352,9 @@ function normalizeProject(project) {
   const galleryImages = splitList(project.galleryImages || project.gallery_images);
   const title = project.title || project.name || '';
   const id = project.id || slugify(title) || `project-${Date.now()}`;
+  // Return ONLY the columns that exist in the Supabase projects table (snake_case).
+  // Never spread ...project — that injects unknown camelCase keys Supabase rejects.
   return {
-    ...project,
     id,
     title,
     name: title,
