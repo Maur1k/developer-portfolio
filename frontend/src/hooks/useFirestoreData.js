@@ -19,6 +19,19 @@ function normalizeRow(row) {
   };
 }
 
+function mergeDeep(source, fallback) {
+  if (!source || typeof source !== 'object') return fallback;
+  if (!fallback || typeof fallback !== 'object') return source;
+
+  return {
+    ...fallback,
+    ...source,
+    socialLinks: { ...fallback.socialLinks, ...source.socialLinks },
+    contact: { ...fallback.contact, ...source.contact },
+    stackBreakdown: { ...fallback.stackBreakdown, ...source.stackBreakdown },
+  };
+}
+
 export function useCollectionData(collectionName, fallback = [], options = {}) {
   const stableOptions = useMemo(() => options, [options.orderBy, options.direction]);
   const [items, setItems] = useState(fallback);
@@ -51,7 +64,7 @@ export function useCollectionData(collectionName, fallback = [], options = {}) {
         if (fetchError) throw fetchError;
 
         if (isMounted) {
-          if (data && data.length > 0) {
+          if (Array.isArray(data) && data.length > 0) {
             setItems(data.map(normalizeRow));
           } else {
             setItems(fallback);
@@ -69,17 +82,21 @@ export function useCollectionData(collectionName, fallback = [], options = {}) {
 
     fetchData();
 
-    // Subscribe to realtime updates if enabled
-    const channel = supabase
-      .channel(`public:${tableName}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: tableName }, () => {
-        fetchData();
-      })
-      .subscribe();
+    let channel = null;
+    try {
+      channel = supabase
+        .channel(`public:${tableName}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: tableName }, () => {
+          fetchData();
+        })
+        .subscribe();
+    } catch {
+      // Ignore realtime subscription errors
+    }
 
     return () => {
       isMounted = false;
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [collectionName, fallback, stableOptions]);
 
@@ -112,7 +129,11 @@ export function useDocumentData(collectionName, documentId, fallback = {}) {
           if (fetchError) throw fetchError;
 
           if (isMounted) {
-            setData(result?.data ? result.data : fallback);
+            if (result?.data && typeof result.data === 'object' && Object.keys(result.data).length > 0) {
+              setData(mergeDeep(result.data, fallback));
+            } else {
+              setData(fallback);
+            }
             setLoading(false);
           }
         } else {
@@ -125,7 +146,7 @@ export function useDocumentData(collectionName, documentId, fallback = {}) {
           if (fetchError) throw fetchError;
 
           if (isMounted) {
-            setData(result ? normalizeRow(result) : fallback);
+            setData(result ? mergeDeep(normalizeRow(result), fallback) : fallback);
             setLoading(false);
           }
         }
@@ -140,16 +161,21 @@ export function useDocumentData(collectionName, documentId, fallback = {}) {
 
     fetchData();
 
-    const channel = supabase
-      .channel(`public:site_content:${documentId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_content' }, () => {
-        fetchData();
-      })
-      .subscribe();
+    let channel = null;
+    try {
+      channel = supabase
+        .channel(`public:site_content:${documentId}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_content' }, () => {
+          fetchData();
+        })
+        .subscribe();
+    } catch {
+      // Ignore realtime subscription errors
+    }
 
     return () => {
       isMounted = false;
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [collectionName, documentId, fallback]);
 
