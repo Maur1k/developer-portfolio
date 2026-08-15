@@ -12,7 +12,7 @@ export default function Navigation() {
   };
 
   const sectionMap = {
-    '/': 'home',
+    '/': 'about',
     '/about': 'about',
     '/projects': 'projects',
     '/skills': 'skills',
@@ -34,11 +34,7 @@ export default function Navigation() {
     if (location.pathname === '/') {
       const sectionId = sectionMap[path];
       if (sectionId) {
-        if (sectionId === 'home') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          scrollToSection(sectionId);
-        }
+        scrollToSection(sectionId);
         return;
       }
     }
@@ -47,67 +43,44 @@ export default function Navigation() {
   };
 
   const links = [
-    { label: 'Home', path: '/' },
-    { label: 'About', path: '/about' },
-    { label: 'Projects', path: '/projects' },
-    { label: 'Skills', path: '/skills' },
-    { label: 'Experience', path: '/experience' },
-    { label: 'Contact', path: '/contact' },
+    { label: 'about', path: '/about' },
+    { label: 'experience', path: '/experience' },
+    { label: 'projects', path: '/projects' },
+    { label: 'tech stack', path: '/skills' },
+    { label: 'contact', path: '/contact' },
   ];
 
-  const navVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.3,
-      },
-    }),
-  };
-
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-[#111217]/80 backdrop-blur-[1px] border-b border-white/10"
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#050507]/90 backdrop-blur-md border-b border-zinc-900">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-3.5">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-xl md:text-2xl font-bold gradient-text">
-            Maurik
+          <Link to="/" className="text-sm font-mono font-bold text-white flex items-center gap-2">
+            <span>Maurik Angelo L. Fernandez</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1">
-            {links.map((link, i) => (
-              <motion.div
+          <div className="hidden md:flex items-center space-x-4 font-mono text-xs">
+            {links.map((link) => (
+              <Link
                 key={link.path}
-                custom={i}
-                initial="hidden"
-                animate="visible"
-                variants={navVariants}
+                to={link.path}
+                onClick={(event) => handleNavClick(event, link.path)}
+                className="text-zinc-400 hover:text-white transition-colors py-1"
               >
-                <Link
-                  to={link.path}
-                  onClick={(event) => handleNavClick(event, link.path)}
-                  className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium relative group"
-                >
-                  {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-400 group-hover:w-full transition-all duration-300"></span>
-                </Link>
-              </motion.div>
+                {link.label} ↗
+              </Link>
             ))}
           </div>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden text-white p-2"
+            type="button"
+            className="md:hidden text-zinc-400 hover:text-white p-1 rounded"
             onClick={toggleMenu}
+            aria-label="Toggle menu"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -121,24 +94,25 @@ export default function Navigation() {
         {/* Mobile Menu */}
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden mt-4 space-y-2 pb-4"
+            exit={{ opacity: 0, y: -5 }}
+            className="md:hidden pt-3 pb-2 space-y-1 font-mono text-xs"
           >
             {links.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 onClick={(event) => handleNavClick(event, link.path)}
-                className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors duration-200 text-sm"
+                className="block px-3 py-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded transition-colors"
               >
-                {link.label}
+                {link.label} ↗
               </Link>
             ))}
           </motion.div>
         )}
       </div>
-    </motion.nav>
+    </nav>
   );
 }
+

@@ -16,7 +16,7 @@ const Login = React.lazy(() => import('./admin/AdminApp').then((module) => ({ de
 
 function AdminFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#09090b] text-gray-300">
+    <div className="flex min-h-screen items-center justify-center bg-[#050507] text-zinc-400 font-mono text-xs">
       Loading dashboard...
     </div>
   );
@@ -25,10 +25,11 @@ function AdminFallback() {
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#09090b] via-[#111217] to-[#09090b] flex flex-col">
-      {!isAdminRoute && <Navigation />}
+    <div className="min-h-screen bg-[#050507] text-[#ededed] flex flex-col selection:bg-orange-500 selection:text-black">
+      {!isAdminRoute && !isHomePage && <Navigation />}
       <main className="flex-grow">
         <Suspense fallback={<AdminFallback />}>
           <Routes>
@@ -45,7 +46,11 @@ function App() {
           </Routes>
         </Suspense>
       </main>
-      {!isAdminRoute && location.pathname !== '/' && <Footer />}
+      {!isAdminRoute && !isHomePage && (
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 w-full">
+          <Footer />
+        </div>
+      )}
     </div>
   );
 }
@@ -59,3 +64,4 @@ export default function AppShell() {
     </Router>
   );
 }
+
