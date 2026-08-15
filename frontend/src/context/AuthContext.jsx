@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { auth, githubProvider, googleProvider, adminEmail, isFirebaseConfigured } from '../firebase/config';
+import { supabase, adminEmail, isSupabaseConfigured } from '../supabase/client';
 
 const AuthContext = createContext(null);
 
@@ -10,23 +9,45 @@ function isAuthorizedEmail(email) {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(isFirebaseConfigured);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
 
   useEffect(() => {
-    if (!auth) {
+    if (!supabase || !isSupabaseConfigured) {
       setLoading(false);
       return undefined;
     }
 
-    return onAuthStateChanged(auth, async (nextUser) => {
-      if (nextUser && !isAuthorizedEmail(nextUser.email)) {
-        await signOut(auth);
-        setUser(null);
-      } else {
-        setUser(nextUser);
+    // Check current active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        if (isAuthorizedEmail(session.user.email)) {
+          setUser(session.user);
+        } else {
+          supabase.auth.signOut();
+          setUser(null);
+        }
       }
       setLoading(false);
     });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        if (isAuthorizedEmail(session.user.email)) {
+          setUser(session.user);
+        } else {
+          await supabase.auth.signOut();
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const value = useMemo(() => {
@@ -37,21 +58,42 @@ export function AuthProvider({ children }) {
       loading,
       isAdmin,
       adminEmail,
-      isFirebaseConfigured,
-      login: async (provider = 'google') => {
-        if (!auth) {
-          throw new Error('Firebase is not configured. Add your Vite Firebase environment variables first.');
+      isSupabaseConfigured,
+      isFirebaseConfigured: isSupabaseConfigured, // Backward compatibility alias
+      login: async (emailOrProvider, password) => {
+        if (!supabase) {
+          throw new Error('Supabase is not configured. Add your Vite Supabase environment variables first.');
         }
 
-        const selectedProvider = provider === 'github' ? githubProvider : googleProvider;
-        const credential = await signInWithPopup(auth, selectedProvider);
+        // If password is provided, perform email/password sign-in
+        if (password !== undefined) {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: emailOrProvider,
+            password,
+          });
 
-        if (!isAuthorizedEmail(credential.user.email)) {
-          await signOut(auth);
-          throw new Error('This account is not authorized for the dashboard.');
+          if (error) throw error;
+
+          if (!isAuthorizedEmail(data.user?.email)) {
+            await supabase.auth.signOut();
+            throw new Error('This account is not authorized for the admin dashboard.');
+          }
+          return data;
         }
+
+        // Otherwise OAuth provider (google or github)
+        const provider = emailOrProvider === 'github' ? 'github' : 'google';
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: `${window.location.origin}/admin`,
+          },
+        });
+
+        if (error) throw error;
+        return data;
       },
-      logout: () => (auth ? signOut(auth) : Promise.resolve()),
+      logout: () => (supabase ? supabase.auth.signOut() : Promise.resolve()),
     };
   }, [loading, user]);
 
