@@ -10,13 +10,13 @@ export const fallbackProfile = {
     "I also use AI-assisted development tools and agentic workflows as part of my engineering process to accelerate implementation, debugging, research, and repetitive development tasks while keeping engineering decisions and code quality under my control.",
   aboutMe:
     "I'm Maurik Angelo L. Fernandez, a Bachelor of Science in Information Technology graduate specializing in Web and Mobile Technologies from Pangasinan State University – Urdaneta Campus.\n\nI'm a Software Developer with professional experience at When in Baguio Inc., where I worked across full-stack web and mobile development for production applications.\n\nMy experience includes developing backend services, REST APIs, administrative systems, database-driven features, payment integrations, push notification systems, and mobile functionality across Android and iOS.\n\nI also use AI-assisted development tools and agentic workflows as part of my engineering process to accelerate implementation, debugging, research, and repetitive development tasks while keeping engineering decisions and code quality under my control.\n\nI enjoy solving technical problems, learning new technologies, and turning real-world requirements into reliable software.",
-  profilePhoto: '',
-  resumeUrl: '',
+  profilePhoto: '/img/Fernandez_Maurik_Angelo_L.jpg',
+  resumeUrl: '/files/Resume.jpg',
   location: 'Urdaneta City, Pangasinan',
   availability: 'Open to Opportunities',
   tagline: 'growth starts where comfort ends.',
   socialLinks: {
-    linkedin: 'https://www.linkedin.com/in/maurik-angelo-ab835716a/',
+    linkedin: 'https://www.linkedin.com/in/maurik-angelo-fernandez-ab835716a/',
     github: 'https://github.com/Maur1k',
     jobstreet: 'https://ph.jobstreet.com/profiles/maurikangelo-fernandez-7mNlX0tM26',
   },

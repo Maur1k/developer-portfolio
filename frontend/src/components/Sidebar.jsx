@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Sidebar({ profile, activeSection, onNavigate }) {
+export default function Sidebar({ profile, activeSection, onNavigate, onOpenResume }) {
   const navLinks = [
     { label: 'about', id: 'about' },
     { label: 'experience', id: 'experience' },
@@ -9,28 +9,33 @@ export default function Sidebar({ profile, activeSection, onNavigate }) {
     { label: 'contact', id: 'contact' },
   ];
 
+  const photoSrc = profile.profilePhoto || '/img/Fernandez_Maurik_Angelo_L.jpg';
+  const linkedinUrl =
+    profile.socialLinks?.linkedin ||
+    'https://www.linkedin.com/in/maurik-angelo-fernandez-ab835716a/';
+
   return (
     <aside className="w-full lg:w-[280px] xl:w-[320px] lg:shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between p-6 lg:py-10 z-20">
       <div className="space-y-6">
         {/* Profile Image & Status */}
         <div className="relative group inline-block">
           <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 flex items-center justify-center shadow-xl relative">
-            {profile.profilePhoto ? (
-              <img
-                src={profile.profilePhoto}
-                alt={profile.name}
-                className="w-full h-full object-cover object-top"
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-[#14151b] text-zinc-400 font-mono text-xl font-bold">
-                <span>MF</span>
-                <span className="text-[10px] text-zinc-600 font-sans mt-0.5 tracking-wider">DEV</span>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+            <img
+              src={photoSrc}
+              alt={profile.name}
+              className="w-full h-full object-cover object-top"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/img/Fernandez_Maurik_Angelo_L.jpg';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
           </div>
           {/* Online / Open Indicator */}
-          <div className="absolute -bottom-1 -right-1 bg-[#09090b] border border-zinc-800 rounded-full p-1 shadow-lg" title="Open to opportunities">
+          <div
+            className="absolute -bottom-1 -right-1 bg-[#09090b] border border-zinc-800 rounded-full p-1 shadow-lg"
+            title="Open to opportunities"
+          >
             <span className="block w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
           </div>
         </div>
@@ -133,45 +138,29 @@ export default function Sidebar({ profile, activeSection, onNavigate }) {
 
       {/* Bottom Footer Bar */}
       <div className="pt-6 border-t border-zinc-900 flex items-center justify-between gap-2.5">
-        {profile.resumeUrl ? (
-          <a
-            href={profile.resumeUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition-colors"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Resume
-          </a>
-        ) : (
-          <button
-            type="button"
-            onClick={() => onNavigate('contact')}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition-colors"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Resume
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onOpenResume}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition-colors cursor-pointer"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Resume
+        </button>
 
         {/* LinkedIn */}
-        {profile.socialLinks?.linkedin && (
-          <a
-            href={profile.socialLinks.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn"
-            className="p-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-          >
-            <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.75-1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-            </svg>
-          </a>
-        )}
+        <a
+          href={linkedinUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="LinkedIn"
+          className="p-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+        >
+          <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24">
+            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+          </svg>
+        </a>
 
         {/* GitHub */}
         {profile.socialLinks?.github && (
@@ -191,3 +180,4 @@ export default function Sidebar({ profile, activeSection, onNavigate }) {
     </aside>
   );
 }
+
