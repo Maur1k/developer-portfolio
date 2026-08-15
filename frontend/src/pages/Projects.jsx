@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCollectionData } from '../hooks/useFirestoreData';
-import { fallbackProjects } from '../data/fallbackPortfolio';
+import { fallbackProjects, fallbackPlaygroundProjects } from '../data/fallbackPortfolio';
 
 function Icon({ name, className = 'h-4 w-4' }) {
   const paths = {
@@ -410,12 +410,102 @@ function ProjectModal({ project, onClose }) {
   );
 }
 
+function PlaygroundCard({ project, onLearnMore }) {
+  const technologies = project.technologies || [];
+  const isPlaceholder = project.id === 'playground-placeholder';
+
+  return (
+    <article
+      className={`relative rounded-xl border bg-[#09090b]/60 flex flex-col transition-all duration-200 overflow-hidden
+        ${isPlaceholder
+          ? 'border-dashed border-zinc-800 opacity-60'
+          : 'border-zinc-900 hover:border-zinc-700'
+        }`}
+    >
+      {/* Top accent bar */}
+      {!isPlaceholder && (
+        <div className="h-0.5 w-full bg-gradient-to-r from-amber-500/0 via-amber-400/30 to-amber-500/0" />
+      )}
+
+      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400/70">
+                {project.category || 'Playground'}
+              </span>
+            </div>
+            <h4 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
+              {project.name}
+            </h4>
+          </div>
+          {!isPlaceholder && (
+            <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded border border-zinc-800 text-zinc-500 bg-zinc-900">
+              {project.status || 'Done'}
+            </span>
+          )}
+        </div>
+
+        {/* Description */}
+        <p className="text-xs text-zinc-500 leading-relaxed flex-1">
+          {project.summary || project.shortDescription || project.description}
+        </p>
+
+        {/* Tech tags */}
+        {technologies.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {technologies.map((tech) => (
+              <span
+                key={tech}
+                className="px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800/60 text-[10px] font-mono text-zinc-400"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Actions */}
+        {!isPlaceholder && (
+          <div className="flex flex-wrap gap-2 pt-1 border-t border-zinc-900/60">
+            <button
+              type="button"
+              onClick={() => onLearnMore(project)}
+              className="inline-flex h-7 items-center gap-1 rounded-lg border border-zinc-800 bg-transparent hover:bg-zinc-900 text-[11px] font-mono text-zinc-300 px-2.5 transition-colors"
+            >
+              Details ↗
+            </button>
+            {project.repositoryUrl && (
+              <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />}>
+                GitHub
+              </ActionButton>
+            )}
+            {project.liveDemoUrl && (
+              <ActionButton href={project.liveDemoUrl} icon={<Icon name="external" />} variant="primary">
+                Demo
+              </ActionButton>
+            )}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
 export default function Projects() {
-  const { items: projects, loading } = useCollectionData('projects', fallbackProjects, { orderBy: 'displayOrder' });
+  const { items: allProjects, loading } = useCollectionData('projects', [...fallbackProjects, ...fallbackPlaygroundProjects], { orderBy: 'displayOrder' });
   const [selectedProject, setSelectedProject] = useState(null);
 
-  const featuredProject = projects.find((p) => p.id === 'wibav3') || projects[0];
-  const otherProjects = projects.filter((p) => p.id !== featuredProject?.id);
+  // Separate main projects vs playground projects by projectType field
+  const mainProjects = allProjects.filter((p) => !p.projectType || p.projectType === 'main');
+  const playgroundProjects = allProjects.filter((p) => p.projectType === 'playground');
+
+  // If no playground projects from DB, use fallback placeholder
+  const playgroundItems = playgroundProjects.length > 0 ? playgroundProjects : fallbackPlaygroundProjects;
+
+  const featuredProject = mainProjects.find((p) => p.id === 'wibav3') || mainProjects[0];
+  const otherProjects = mainProjects.filter((p) => p.id !== featuredProject?.id);
 
   return (
     <section id="projects" className="py-16 border-b border-zinc-900">
@@ -530,6 +620,34 @@ export default function Projects() {
           ))}
         </div>
       )}
+
+      {/* ── Playground Section ─────────────────────────────────── */}
+      <div className="mt-16 pt-10 border-t border-zinc-900/60">
+        <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400/60">Playground</span>
+              <span className="h-px flex-1 min-w-[24px] bg-amber-400/10" />
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+              Small Projects & Experiments
+            </h3>
+            <p className="text-xs text-zinc-500 mt-1 max-w-lg leading-relaxed">
+              Side builds, school projects, and quick experiments I've worked on for fun or learning — not production-grade, but each one taught me something.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {playgroundItems.map((project) => (
+            <PlaygroundCard
+              key={project.id || project.name}
+              project={project}
+              onLearnMore={setSelectedProject}
+            />
+          ))}
+        </div>
+      </div>
 
       <AnimatePresence>
         {selectedProject && (

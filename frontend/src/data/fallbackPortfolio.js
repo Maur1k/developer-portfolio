@@ -250,6 +250,29 @@ export const fallbackProjects = [
   },
 ];
 
+export const fallbackPlaygroundProjects = [
+  {
+    id: 'playground-placeholder',
+    title: 'More coming soon',
+    name: 'More coming soon',
+    subtitle: 'Playground · Personal',
+    shortDescription: 'Small experiments, school projects, and side builds will appear here as I continue building.',
+    description: 'Small experiments, school projects, and side builds.',
+    summary: 'Small experiments, school projects, and side builds will appear here.',
+    category: 'Playground',
+    status: 'In Progress',
+    projectType: 'playground',
+    displayOrder: 1,
+    technologies: [],
+    highlights: [],
+    galleryImages: [],
+    screenshots: [],
+    repositoryUrl: '',
+    liveDemoUrl: '',
+    featured: false,
+  },
+];
+
 export const fallbackSkills = {
   react: [
     'Interfaces, component systems, and state management',

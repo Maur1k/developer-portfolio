@@ -437,6 +437,321 @@ function TextField({ label, value, onChange, type = 'text', textarea = false, re
   );
 }
 
+function ImageDropzone({ label, value, onChange, folder = 'projects/thumbnails' }) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const fileInputRef = React.useRef(null);
+
+  const handleFiles = async (files) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    setUploading(true);
+    setError('');
+    try {
+      const url = await uploadFile(file, folder);
+      onChange(url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="block">
+      <div className="flex items-center justify-between mb-2">
+        <span className={labelClass}>{label}</span>
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(!showUrlInput)}
+          className="text-xs text-amber-300 hover:text-amber-200 underline font-mono"
+        >
+          {showUrlInput ? 'Hide URL' : 'Manual URL'}
+        </button>
+      </div>
+
+      {showUrlInput && (
+        <div className="mb-2">
+          <input
+            className={fieldClass}
+            type="text"
+            placeholder="/projects/... or https://..."
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
+      )}
+
+      {value ? (
+        <div className="rounded-xl border border-white/10 bg-[#09090b] p-3 flex items-center gap-4">
+          <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-[#121318] flex items-center justify-center">
+            <img
+              src={value}
+              alt="Preview"
+              className="w-full h-full object-cover object-top"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-mono text-zinc-300 truncate">{value}</p>
+            <div className="flex gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className={`${buttonClass} border border-white/10 px-2.5 py-1 text-xs text-zinc-200 hover:bg-white/5`}
+              >
+                {uploading ? 'Uploading...' : 'Replace'}
+              </button>
+              <button
+                type="button"
+                onClick={() => onChange('')}
+                className={`${buttonClass} border border-red-500/20 px-2.5 py-1 text-xs text-red-300 hover:bg-red-500/10`}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+            handleFiles(e.dataTransfer.files);
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed transition-all cursor-pointer ${
+            isDragging
+              ? 'border-amber-400 bg-amber-400/10 text-amber-200'
+              : 'border-white/15 bg-white/[0.02] text-zinc-400 hover:border-amber-300/40 hover:bg-white/[0.04]'
+          }`}
+        >
+          <svg className="w-8 h-8 mb-2 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <p className="text-xs font-semibold text-zinc-200">
+            {uploading ? 'Uploading to Supabase...' : 'Drag & drop image here, or click to browse'}
+          </p>
+          <p className="text-[11px] font-mono text-zinc-500 mt-1">PNG, JPG, WebP up to 10MB</p>
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => handleFiles(e.target.files)}
+      />
+      {error && <p className="mt-2 text-xs text-red-300">{error}</p>}
+    </div>
+  );
+}
+
+function MultiImageDropzone({ label, images = [], onChange, folder = 'projects/gallery' }) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [manualUrl, setManualUrl] = useState('');
+  const fileInputRef = React.useRef(null);
+
+  const handleFiles = async (files) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setError('');
+    try {
+      const uploadPromises = Array.from(files).map((file) => uploadFile(file, folder));
+      const newUrls = await Promise.all(uploadPromises);
+      onChange([...images, ...newUrls.filter(Boolean)]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (indexToRemove) => {
+    onChange(images.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const moveImage = (fromIdx, toIdx) => {
+    const next = [...images];
+    const [moved] = next.splice(fromIdx, 1);
+    next.splice(toIdx, 0, moved);
+    onChange(next);
+  };
+
+  const addManual = (e) => {
+    e.preventDefault();
+    if (!manualUrl.trim()) return;
+    onChange([...images, manualUrl.trim()]);
+    setManualUrl('');
+  };
+
+  return (
+    <div className="md:col-span-2 block">
+      <div className="flex items-center justify-between mb-2">
+        <span className={labelClass}>
+          {label} ({images.length} {images.length === 1 ? 'image' : 'images'})
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(!showUrlInput)}
+          className="text-xs text-amber-300 hover:text-amber-200 underline font-mono"
+        >
+          {showUrlInput ? 'Hide manual URL' : '+ Add URL manually'}
+        </button>
+      </div>
+
+      {showUrlInput && (
+        <div className="flex gap-2 mb-3">
+          <input
+            className={`${fieldClass} flex-1`}
+            type="text"
+            placeholder="/projects/... or https://..."
+            value={manualUrl}
+            onChange={(e) => setManualUrl(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={addManual}
+            className={`${buttonClass} bg-zinc-800 text-zinc-200 hover:bg-zinc-700`}
+          >
+            Add
+          </button>
+        </div>
+      )}
+
+      {/* Drag & Drop Zone */}
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragging(false);
+          handleFiles(e.dataTransfer.files);
+        }}
+        onClick={() => fileInputRef.current?.click()}
+        className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed transition-all cursor-pointer ${
+          isDragging
+            ? 'border-amber-400 bg-amber-400/10 text-amber-200'
+            : 'border-white/15 bg-white/[0.02] text-zinc-400 hover:border-amber-300/40 hover:bg-white/[0.04]'
+        }`}
+      >
+        <svg className="w-8 h-8 mb-2 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>
+        <p className="text-xs font-semibold text-zinc-200">
+          {uploading ? 'Uploading multiple screenshots...' : 'Drag & drop screenshots here, or click to browse'}
+        </p>
+        <p className="text-[11px] font-mono text-zinc-500 mt-1">Select or drop multiple files simultaneously</p>
+      </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => handleFiles(e.target.files)}
+      />
+
+      {error && <p className="mt-2 text-xs text-red-300">{error}</p>}
+
+      {/* Visual Thumbnails Grid */}
+      {images.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
+          {images.map((imgUrl, index) => (
+            <div
+              key={`${imgUrl}-${index}`}
+              className="relative group rounded-lg overflow-hidden border border-zinc-800 bg-[#09090b] aspect-video flex flex-col justify-between"
+            >
+              <img
+                src={imgUrl}
+                alt={`Screenshot ${index + 1}`}
+                className="w-full h-full object-cover object-top"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-between">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-mono bg-black/80 text-zinc-300 px-1.5 py-0.5 rounded border border-zinc-700">
+                    #{index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(index);
+                    }}
+                    className="w-5 h-5 rounded bg-red-500/90 text-white hover:bg-red-600 text-xs flex items-center justify-center transition"
+                    title="Remove"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="flex gap-1 justify-center">
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        moveImage(index, index - 1);
+                      }}
+                      className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 text-[10px] font-mono hover:bg-zinc-700"
+                      title="Move left"
+                    >
+                      ←
+                    </button>
+                  )}
+                  {index < images.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        moveImage(index, index + 1);
+                      }}
+                      className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 text-[10px] font-mono hover:bg-zinc-700"
+                      title="Move right"
+                    >
+                      →
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FileField({ label, onUpload, folder }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -505,12 +820,12 @@ function ProfileEditor() {
         textarea
       />
       <TextField label="About Me" value={draft.aboutMe} onChange={(value) => update('aboutMe', value)} textarea />
-      <TextField
-        label="Profile Photo URL"
+      <ImageDropzone
+        label="Profile Photo"
         value={draft.profilePhoto}
-        onChange={(value) => update('profilePhoto', value)}
+        onChange={(url) => update('profilePhoto', url)}
+        folder="profile"
       />
-      <FileField label="Upload Profile Photo" folder="profile" onUpload={(url) => update('profilePhoto', url)} />
       <TextField label="Resume URL" value={draft.resumeUrl} onChange={(value) => update('resumeUrl', value)} />
       <TextField label="Location" value={draft.location} onChange={(value) => update('location', value)} />
       <TextField label="Availability" value={draft.availability} onChange={(value) => update('availability', value)} />
@@ -723,14 +1038,14 @@ function SkillsManager() {
   const [message, setMessage] = useState('');
   React.useEffect(() => setDraft(data || fallbackSkills), [data]);
   const categories = [
-    ['react', 'React / Frontend'],
-    ['flutter', 'Flutter / Mobile'],
-    ['nodejs', 'Node.js / Backend'],
-    ['laravel', 'Laravel / PHP'],
-    ['databases', 'Databases'],
-    ['tools', 'Tools & Workflow'],
-    ['aiWorkflows', 'AI & Agentic Workflows'],
-    ['core', 'Core Fundamentals'],
+    ['react', 'React / Frontend Development'],
+    ['flutter', 'Flutter / Mobile Development'],
+    ['nodejs', 'Node.js / Backend Development'],
+    ['laravel', 'Laravel / PHP Development'],
+    ['mysql', 'MySQL / Database Development'],
+    ['firebase', 'Firebase / Cloud Services'],
+    ['restapis', 'REST APIs & Integrations'],
+    ['aidev', 'AI-Assisted Development'],
   ];
 
   const save = async () => {
@@ -929,28 +1244,18 @@ function ProjectForm({ project, onClose }) {
           value={draft.longDescription || draft.long_description}
           onChange={(value) => update('longDescription', value)}
         />
-        <TextField
-          label="Thumbnail Image URL"
+        <ImageDropzone
+          label="Thumbnail / Cover Image"
           value={draft.thumbnailImage || draft.thumbnail_image}
-          onChange={(value) => update('thumbnailImage', value)}
-        />
-        <FileField
-          label="Upload Thumbnail"
+          onChange={(url) => update('thumbnailImage', url)}
           folder="projects/thumbnails"
-          onUpload={(url) => update('thumbnailImage', url)}
         />
-        <TextField
-          label="Gallery Image URLs (one per line)"
-          textarea
-          value={joinList(draft.galleryImages || draft.gallery_images)}
-          onChange={(value) => update('galleryImages', splitList(value))}
-        />
-        <FileField
-          label="Upload Gallery Image"
+        <div className="hidden md:block" />
+        <MultiImageDropzone
+          label="Gallery & Screenshots"
+          images={splitList(draft.galleryImages || draft.gallery_images)}
+          onChange={(imgs) => update('galleryImages', imgs)}
           folder="projects/gallery"
-          onUpload={(url) =>
-            update('galleryImages', [...splitList(draft.galleryImages || draft.gallery_images), url])
-          }
         />
         <TextField
           label="Technologies (comma or newline separated)"
@@ -981,6 +1286,39 @@ function ProjectForm({ project, onClose }) {
           value={draft.displayOrder ?? draft.display_order ?? 0}
           onChange={(value) => update('displayOrder', value)}
         />
+        {/* Project Type Selector */}
+        <div className="md:col-span-2">
+          <span className={labelClass}>Project Type</span>
+          <div className="flex gap-3 mt-1.5">
+            {[
+              { value: 'main', label: '🏗️ Main Project', desc: 'Featured in the main projects grid' },
+              { value: 'playground', label: '🧪 Playground', desc: 'School projects, experiments & side builds' },
+            ].map(({ value, label, desc }) => (
+              <label
+                key={value}
+                className={`flex-1 flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                  (draft.projectType || 'main') === value
+                    ? 'border-amber-400/50 bg-amber-400/5'
+                    : 'border-white/10 bg-[#09090b] hover:border-white/20'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="projectType"
+                  value={value}
+                  checked={(draft.projectType || 'main') === value}
+                  onChange={() => update('projectType', value)}
+                  className="mt-0.5 accent-amber-400"
+                />
+                <div>
+                  <p className="text-xs font-semibold text-zinc-200">{label}</p>
+                  <p className="text-[11px] font-mono text-zinc-500 mt-0.5">{desc}</p>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
         <label className="flex items-center gap-3 text-sm text-gray-300 md:col-span-2">
           <input
             type="checkbox"
@@ -1015,6 +1353,7 @@ function normalizeProject(project) {
   const title = project.title || project.name || '';
   const id = project.id || slugify(title) || `project-${Date.now()}`;
   return {
+    ...project,
     id,
     title,
     name: title,
@@ -1028,6 +1367,8 @@ function normalizeProject(project) {
     status: project.status || 'Completed',
     repository_url: project.repositoryUrl || project.repository_url || '',
     live_demo_url: project.liveDemoUrl || project.live_demo_url || '',
+    app_store_url: project.appStoreUrl || project.app_store_url || '',
+    play_store_url: project.playStoreUrl || project.play_store_url || '',
     start_date: project.startDate || project.start_date || '',
     end_date: project.endDate || project.end_date || '',
     featured: Boolean(project.featured),
@@ -1036,15 +1377,21 @@ function normalizeProject(project) {
     technologies: splitList(project.technologies),
     highlights: splitList(project.highlights),
     gallery_images: galleryImages,
-    screenshots: galleryImages.map((src, index) => ({
-      src,
-      alt: `${title} screenshot ${index + 1}`,
-      title: `Image ${index + 1}`,
-    })),
+    screenshots:
+      galleryImages.length > 0
+        ? galleryImages.map((src, index) => ({
+            src,
+            alt: `${title} screenshot ${index + 1}`,
+            title: `Image ${index + 1}`,
+          }))
+        : Array.isArray(project.screenshots)
+        ? project.screenshots
+        : [],
     features: splitList(project.features),
     contributions: splitList(project.contributions),
     problem: project.problem || '',
     solution: project.solution || '',
+    project_type: project.projectType || project.project_type || 'main',
     updated_at: new Date().toISOString(),
   };
 }

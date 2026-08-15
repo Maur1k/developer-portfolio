@@ -9,6 +9,8 @@ function normalizeRow(row) {
     longDescription: row.longDescription ?? row.long_description,
     repositoryUrl: row.repositoryUrl ?? row.repository_url,
     liveDemoUrl: row.liveDemoUrl ?? row.live_demo_url,
+    appStoreUrl: row.appStoreUrl ?? row.app_store_url,
+    playStoreUrl: row.playStoreUrl ?? row.play_store_url,
     displayOrder: row.displayOrder ?? row.display_order ?? 0,
     thumbnailImage: row.thumbnailImage ?? row.thumbnail_image,
     galleryImages: row.galleryImages ?? row.gallery_images ?? [],
@@ -16,6 +18,7 @@ function normalizeRow(row) {
     credentialUrl: row.credentialUrl ?? row.credential_url,
     pdfUrl: row.pdfUrl ?? row.pdf_url,
     imageUrl: row.imageUrl ?? row.image_url,
+    projectType: row.projectType ?? row.project_type ?? 'main',
   };
 }
 
