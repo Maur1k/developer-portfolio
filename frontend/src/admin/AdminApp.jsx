@@ -784,6 +784,151 @@ function FileField({ label, onUpload, folder }) {
   );
 }
 
+function ResumeDropzone({ value, onChange }) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState('');
+  const [error, setError] = useState('');
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const fileInputRef = React.useRef(null);
+
+  const isPdf = value && (value.endsWith('.pdf') || value.includes('.pdf'));
+  const isImage = value && !isPdf;
+
+  const handleFiles = async (files) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+      setError('Only PDF, JPG, PNG, or WebP files are supported.');
+      return;
+    }
+    setUploading(true);
+    setProgress('Uploading...');
+    setError('');
+    try {
+      const url = await uploadFile(file, 'resume');
+      onChange(url);
+      setProgress('');
+    } catch (err) {
+      setError(err.message);
+      setProgress('');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="md:col-span-2 block">
+      <div className="flex items-center justify-between mb-2">
+        <span className={labelClass}>Resume File</span>
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(!showUrlInput)}
+          className="text-xs text-amber-300 hover:text-amber-200 underline font-mono"
+        >
+          {showUrlInput ? 'Hide URL' : 'Manual URL'}
+        </button>
+      </div>
+
+      {showUrlInput && (
+        <div className="mb-2">
+          <input
+            className={fieldClass}
+            type="text"
+            placeholder="/files/Resume.pdf or https://..."
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
+      )}
+
+      {value ? (
+        <div className="rounded-xl border border-white/10 bg-[#09090b] p-4 flex items-center gap-4">
+          {/* File type icon */}
+          <div className="w-14 h-16 shrink-0 rounded-lg border border-zinc-800 bg-[#121318] flex flex-col items-center justify-center gap-1">
+            {isPdf ? (
+              <>
+                <svg className="w-6 h-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                <span className="text-[9px] font-mono text-red-400 font-bold">PDF</span>
+              </>
+            ) : isImage ? (
+              <img src={value} alt="Resume preview" className="w-full h-full object-cover rounded-lg" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            ) : (
+              <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-zinc-200 mb-0.5">
+              {isPdf ? 'PDF Resume' : isImage ? 'Image Resume' : 'Resume File'}
+            </p>
+            <p className="text-[11px] font-mono text-zinc-500 truncate mb-2">{value}</p>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={value}
+                target="_blank"
+                rel="noreferrer"
+                className={`${buttonClass} border border-white/10 px-2.5 py-1 text-xs text-zinc-200 hover:bg-white/5`}
+              >
+                Open ↗
+              </a>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className={`${buttonClass} border border-white/10 px-2.5 py-1 text-xs text-zinc-200 hover:bg-white/5`}
+              >
+                {uploading ? progress : 'Replace'}
+              </button>
+              <button
+                type="button"
+                onClick={() => onChange('')}
+                className={`${buttonClass} border border-red-500/20 px-2.5 py-1 text-xs text-red-300 hover:bg-red-500/10`}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => { e.preventDefault(); setIsDragging(false); handleFiles(e.dataTransfer.files); }}
+          onClick={() => fileInputRef.current?.click()}
+          className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed transition-all cursor-pointer ${
+            isDragging
+              ? 'border-amber-400 bg-amber-400/10 text-amber-200'
+              : 'border-white/15 bg-white/[0.02] text-zinc-400 hover:border-amber-300/40 hover:bg-white/[0.04]'
+          }`}
+        >
+          <svg className="w-9 h-9 mb-2 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+          <p className="text-xs font-semibold text-zinc-200">
+            {uploading ? progress : 'Drag & drop your resume here, or click to browse'}
+          </p>
+          <p className="text-[11px] font-mono text-zinc-500 mt-1">PDF, JPG, PNG, WebP — max 10 MB</p>
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,image/*"
+        className="hidden"
+        onChange={(e) => handleFiles(e.target.files)}
+      />
+      {error && <p className="mt-2 text-xs text-red-300">{error}</p>}
+    </div>
+  );
+}
+
 function ProfileEditor() {
   const { data } = useDocumentData('siteContent', 'profile', fallbackProfile);
   const [draft, setDraft] = useState(fallbackProfile);
@@ -826,7 +971,7 @@ function ProfileEditor() {
         onChange={(url) => update('profilePhoto', url)}
         folder="profile"
       />
-      <TextField label="Resume URL" value={draft.resumeUrl} onChange={(value) => update('resumeUrl', value)} />
+      <ResumeDropzone value={draft.resumeUrl} onChange={(url) => update('resumeUrl', url)} />
       <TextField label="Location" value={draft.location} onChange={(value) => update('location', value)} />
       <TextField label="Availability" value={draft.availability} onChange={(value) => update('availability', value)} />
       <TextField label="Email" value={draft.contact?.email} onChange={(value) => update('contact.email', value)} />
