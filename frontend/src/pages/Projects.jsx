@@ -522,7 +522,10 @@ export default function Projects() {
   // If no playground projects from DB, use fallback placeholder
   const playgroundItems = playgroundProjects.length > 0 ? playgroundProjects : fallbackPlaygroundProjects;
 
-  const featuredProject = mainProjects.find((p) => p.id === 'wibav3') || mainProjects[0];
+  const featuredProject =
+    mainProjects.find((p) => p.featured) ||
+    mainProjects.find((p) => p.id === 'backops-wib') ||
+    mainProjects[0];
   const otherProjects = mainProjects.filter((p) => p.id !== featuredProject?.id);
 
   return (
@@ -539,7 +542,7 @@ export default function Projects() {
         </p>
       </div>
 
-      {/* Featured Main Project (WIBE) */}
+      {/* Featured Main Project */}
       {featuredProject && (
         <div className="mb-10 rounded-xl border border-zinc-800 bg-[#0d0e12] overflow-hidden">
           <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-0">
@@ -550,20 +553,16 @@ export default function Projects() {
                     FEATURED PROJECT
                   </span>
                   <span className="text-[11px] font-mono text-zinc-400">
-                    {featuredProject.subtitle || 'Production · Food Delivery Platform'}
+                    {featuredProject.subtitle || featuredProject.category || 'Production · Platform'}
                   </span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                  {featuredProject.name}
+                  {featuredProject.name || featuredProject.title}
                 </h3>
 
                 <p className="text-xs sm:text-sm text-zinc-300 mt-3 leading-relaxed">
-                  {featuredProject.summary || featuredProject.description}
-                </p>
-
-                <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
-                  Worked across web and mobile applications, backend services, APIs, databases, payment integrations, and operational features used by real users.
+                  {featuredProject.longDescription || featuredProject.summary || featuredProject.description}
                 </p>
 
                 {featuredProject.highlights && (
@@ -602,6 +601,11 @@ export default function Projects() {
                     View Case Study ↗
                   </button>
 
+                  {featuredProject.repositoryUrl && (
+                    <ActionButton href={featuredProject.repositoryUrl} icon={<Icon name="github" />}>
+                      GitHub
+                    </ActionButton>
+                  )}
                   {featuredProject.appStoreUrl && (
                     <ActionButton href={featuredProject.appStoreUrl} icon={<Icon name="external" />}>
                       App Store
@@ -610,6 +614,11 @@ export default function Projects() {
                   {featuredProject.playStoreUrl && (
                     <ActionButton href={featuredProject.playStoreUrl} icon={<Icon name="external" />}>
                       Google Play
+                    </ActionButton>
+                  )}
+                  {featuredProject.liveDemoUrl && (
+                    <ActionButton href={featuredProject.liveDemoUrl} icon={<Icon name="external" />}>
+                      Live Demo
                     </ActionButton>
                   )}
                 </div>

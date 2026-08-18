@@ -43,27 +43,90 @@ export const fallbackProfile = {
 
 export const fallbackProjects = [
   {
-    id: 'wibav3',
-    title: 'When in Baguio (WIBE)',
-    name: 'When in Baguio (WIBE)',
-    subtitle: 'From code to something people actually use.',
-    tagline: 'Production · Food Delivery Platform',
+    id: 'backops-wib',
+    title: 'When in Baguio (WIBE) — BackOps & Dispatch Operations',
+    name: 'When in Baguio — BackOps & Operations Platform',
+    subtitle: 'Hyperlocal Logistics & Operations Platform',
+    tagline: 'Production · Food Delivery & Logistics BackOps',
     shortDescription:
-      'A production food delivery platform built for Baguio City, supporting customer ordering, restaurant operations, delivery workflows, payments, notifications, and administrative management.',
+      'A high-performance operations, merchant, and dispatch platform engineered with React 19, Node.js, MySQL, FCM HTTP v1, PayMongo, and Leaflet GIS to power Baguio City’s premier hyperlocal food delivery and courier network.',
     longDescription:
-      'WIBE is a production food delivery platform built for Baguio City, with applications and systems spanning customer ordering, payments, delivery workflows, notifications, and administration. I contributed across the stack — from web and mobile features to backend services, APIs, databases, integrations, and internal tools. This project gave me experience beyond simply building features: working with existing systems, debugging production issues, understanding real requirements, and shipping software that has to work for actual users.',
+      'When in Baguio (WIBE) serves as Baguio City’s premier hyperlocal food delivery and logistics platform. As a Full-Stack Software Engineer, I engineered the V2 Administration & Operations Platform, modernized core REST APIs, redesigned the real-time push notification dispatch pipeline, optimized high-volume MySQL database queries with keyset pagination and LRU caching (sub-100ms latency), and implemented mathematical pricing, dynamic packaging, and receipt engines.',
     description:
-      'WIBE is a production food delivery platform built for Baguio City, with applications and systems spanning customer ordering, payments, delivery workflows, notifications, and administration.',
+      'A high-performance operations, merchant, and dispatch platform engineered with React 19, Node.js, MySQL, FCM HTTP v1, PayMongo, and Leaflet GIS to power Baguio City’s premier hyperlocal food delivery and courier network.',
     summary:
-      'A production food delivery platform built for Baguio City, supporting customer ordering, restaurant operations, delivery workflows, payments, notifications, and administrative management.',
-    category: 'Production · Food Delivery · Web & Mobile',
+      'A high-performance operations, merchant, and dispatch platform engineered with React 19, Node.js, MySQL, FCM HTTP v1, PayMongo, and Leaflet GIS to power Baguio City’s premier hyperlocal food delivery and courier network.',
+    category: 'Production · BackOps & Logistics · Web Platform',
+    status: 'Production',
+    repositoryUrl: '',
+    liveDemoUrl: '',
+    appStoreUrl: '',
+    playStoreUrl: '',
+    featured: true,
+    displayOrder: 1,
+    thumbnailImage: '/projects/backops-wib/Dashboard.png',
+    technologies: ['React 19', 'Vite', 'Node.js', 'Express', 'MySQL', 'Firebase Cloud Messaging (FCM)', 'PayMongo', 'Leaflet GIS', 'Recharts'],
+    highlights: [
+      'V2 Operations & Dispatch platform built with React 19, Vite, and real-time order lifecycle tracking',
+      'High-reliability FCM HTTP v1 push notification pipeline eliminating multi-token drop-offs',
+      'Database optimization with keyset (cursor) pagination & LRU caching reducing latency to sub-100ms',
+      'Dynamic packaging and financial formula engine for merchant commissions and itemized add-ons',
+      'Geospatial polygonal delivery zones and distance surcharges using Leaflet GIS',
+      'PayMongo automated webhook listeners for GCash, Maya, and card transaction reconciliation',
+    ],
+    galleryImages: [
+      '/projects/backops-wib/Dashboard.png',
+      '/projects/backops-wib/Dashboard-Darkmode.png',
+      '/projects/backops-wib/Login.png',
+    ],
+    screenshots: [
+      { src: '/projects/backops-wib/Dashboard.png', alt: 'When in Baguio BackOps Operations Dashboard', title: 'Operations Dashboard (Light)' },
+      { src: '/projects/backops-wib/Dashboard-Darkmode.png', alt: 'When in Baguio BackOps Operations Dashboard Dark Mode', title: 'Operations Dashboard (Dark)' },
+      { src: '/projects/backops-wib/Login.png', alt: 'When in Baguio BackOps Secure Authentication Portal', title: 'Admin & Merchant Login' },
+    ],
+    problem:
+      'Operating a high-volume multi-vendor delivery service in Baguio City faced severe legacy database bottlenecks during peak rushes (unindexed PHP/KMRS tables), push notification drop-offs due to fragmented token schemas, complex merchant commission and packaging fee calculations, and lack of real-time geospatial dispatch visibility.',
+    solution:
+      'Engineered the V2 BackOps Platform in React 19 with thin query projections and keyset pagination for sub-100ms response times. Rebuilt the FCM HTTP v1 dispatch pipeline with fallback token normalization, implemented a deterministic financial receipt calculation engine, and integrated Leaflet GIS for live polygon zone management.',
+    features: [
+      'Live real-time order & courier dispatch board',
+      'FCM HTTP v1 multi-platform push notification engine',
+      'Geospatial delivery zone & boundary editor (Leaflet)',
+      'Sales velocity & operational analytics (Recharts)',
+      'Automated PayMongo payment webhook reconciliation',
+      'Itemized dynamic packaging & commission formula engine',
+    ],
+    contributions: [
+      'Architected and built the React 19 V2 operations, dispatch, and merchant administration dashboard',
+      'Modernized backend REST APIs in Node.js/Express, refactoring legacy endpoints with zero downtime',
+      'Optimized MySQL relational queries using compound indexing, keyset pagination, and LRU in-memory caching',
+      'Built a high-reliability dual-target FCM HTTP v1 notification dispatch system with token normalization',
+      'Engineered deterministic financial formula engines for dynamic per-item packaging and merchant commissions',
+      'Implemented interactive geospatial polygon delivery zones and surcharges using Leaflet and React-Leaflet',
+    ],
+  },
+  {
+    id: 'wibav3',
+    title: 'When in Baguio Eats (WIBE App)',
+    name: 'When in Baguio Eats App',
+    subtitle: 'Hyperlocal Food Delivery Customer & Mobile Platform',
+    tagline: 'Production · Food Delivery Customer Platform',
+    shortDescription:
+      'The customer-facing mobile application for Baguio City’s premier hyperlocal food delivery platform, providing live restaurant browsing, order customization, real-time tracking, and seamless checkout on iOS and Android.',
+    longDescription:
+      'When in Baguio Eats (WIBE) is the customer-facing mobile application and ordering platform built specifically for Baguio City. It enables local residents and tourists to discover restaurants, customize meal orders with add-ons and packaging options, track delivery riders in real-time, and pay via localized payment methods. I contributed across mobile features, backend services, payment handling, and customer tray push notifications.',
+    description:
+      'The customer-facing mobile application for Baguio City’s premier hyperlocal food delivery platform, providing live restaurant browsing, order customization, real-time tracking, and seamless checkout on iOS and Android.',
+    summary:
+      'The customer-facing mobile application for Baguio City’s premier hyperlocal food delivery platform, providing live restaurant browsing, order customization, real-time tracking, and seamless checkout on iOS and Android.',
+    category: 'Production · Food Delivery · Mobile App',
     status: 'Production',
     repositoryUrl: '',
     liveDemoUrl: '',
     appStoreUrl: 'https://apps.apple.com/ph/app/when-in-baguio-eat/id1524156193',
     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.wheninbaguio.wibapp&hl=en',
-    featured: true,
-    displayOrder: 1,
+    featured: false,
+    displayOrder: 2,
     thumbnailImage: '/projects/wibav3/overview.png',
     technologies: ['React Native', 'Node.js', 'Express', 'MySQL', 'Firebase', 'REST APIs'],
     highlights: [
@@ -131,8 +194,8 @@ export const fallbackProjects = [
     status: 'Completed',
     repositoryUrl: '',
     liveDemoUrl: '',
-    featured: true,
-    displayOrder: 2,
+    featured: false,
+    displayOrder: 3,
     thumbnailImage: '/projects/click2serve/Kiosk Homescreen.png',
     technologies: ['Laravel', 'PHP', 'JavaScript', 'MySQL'],
     highlights: [
@@ -191,6 +254,9 @@ export const fallbackProjects = [
       'Implemented officer and super-admin administrative management dashboards',
     ],
   },
+];
+
+export const fallbackPlaygroundProjects = [
   {
     id: 'client-project-tracker',
     title: 'ProjeX — Client Project Management',
@@ -205,12 +271,13 @@ export const fallbackProjects = [
       'ProjeX is a full-stack client project management app built with Laravel 12, React + TypeScript, and MySQL. Features a clean SaaS-style dashboard with CRUD operations, real-time validation, status and priority badges, and full error/loading state handling.',
     summary:
       'A full-stack client project management system with a clean SaaS-style dashboard, REST API backend, real-time validation, status and priority tracking, and a fully decoupled React + TypeScript frontend.',
-    category: 'Technical Assessment · Full Stack Web Application',
+    category: 'Technical Assessment · Full Stack App',
     status: 'Completed',
+    projectType: 'playground',
     repositoryUrl: 'https://github.com/Maur1k',
     liveDemoUrl: '',
-    featured: true,
-    displayOrder: 3,
+    featured: false,
+    displayOrder: 1,
     thumbnailImage: '/projects/project-management-crud/Dashboard.png',
     technologies: ['Laravel 12', 'PHP', 'MySQL', 'React', 'TypeScript', 'Vite', 'Axios', 'Tailwind CSS v4', 'REST API'],
     highlights: [
@@ -248,9 +315,6 @@ export const fallbackProjects = [
       'Styled the entire SaaS-style dashboard using Tailwind CSS v4',
     ],
   },
-];
-
-export const fallbackPlaygroundProjects = [
   {
     id: 'playground-placeholder',
     title: 'More coming soon',
@@ -262,7 +326,7 @@ export const fallbackPlaygroundProjects = [
     category: 'Playground',
     status: 'In Progress',
     projectType: 'playground',
-    displayOrder: 1,
+    displayOrder: 2,
     technologies: [],
     highlights: [],
     galleryImages: [],

@@ -177,7 +177,7 @@ export default function Home() {
                 <div className="space-y-1.5 text-xs font-mono">
                   {[
                     {
-                      label: 'Featured: When in Baguio (WIBE)',
+                      label: 'Featured: When in Baguio BackOps',
                       id: 'projects',
                       icon: (
                         <svg className="w-3.5 h-3.5 text-zinc-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75">
