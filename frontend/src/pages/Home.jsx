@@ -74,8 +74,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050507] text-[#ededed]">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="flex flex-col lg:flex-row lg:gap-12 xl:gap-16">
+      <div className="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
+        <div className="flex flex-col lg:flex-row lg:gap-8 xl:gap-12">
           {/* Left Column: Fixed / Sticky Profile Sidebar */}
           <Sidebar
             profile={profile}
@@ -85,7 +85,7 @@ export default function Home() {
           />
 
           {/* Right Column: Main Content Stream */}
-          <main className="flex-1 min-w-0 py-6 lg:py-10 max-w-4xl">
+          <main className="flex-1 min-w-0 py-6 lg:py-10 w-full">
             <Hero onThemeToggle={() => setIsShortcutOpen(true)} />
             <Experience />
             <Projects />

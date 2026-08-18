@@ -15,13 +15,13 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
     'https://www.linkedin.com/in/maurik-angelo-fernandez-ab835716a/';
 
   return (
-    <aside className="w-full lg:w-[280px] xl:w-[320px] lg:shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between p-6 lg:py-10 z-20">
+    <aside className="w-full lg:w-[320px] xl:w-[360px] lg:shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between p-5 sm:p-6 lg:py-10 z-20">
       <div className="space-y-4 lg:space-y-6">
-        {/* Profile Image + Name & Title: Row on Mobile/Tablet (< lg), Column on Desktop (>= lg) */}
-        <div className="flex items-center gap-4 lg:flex-col lg:items-start lg:gap-0">
+        {/* Profile Image + Name & Title: Always side-by-side in a row on all screens */}
+        <div className="flex items-center gap-3.5 sm:gap-4">
           {/* Profile Image & Status */}
-          <div className="relative group shrink-0 lg:mb-6">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 flex items-center justify-center shadow-xl relative">
+          <div className="relative group shrink-0">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 flex items-center justify-center shadow-xl relative">
               <img
                 src={photoSrc}
                 alt={profile?.name || 'Maurik Angelo L. Fernandez'}
@@ -35,7 +35,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
             </div>
             {/* Online / Open Indicator */}
             <div
-              className="absolute -bottom-1 -right-1 bg-[#09090b] border border-zinc-800 rounded-full p-1 shadow-lg"
+              className="absolute -bottom-1 -right-1 bg-[#09090b] border border-zinc-800 rounded-full p-0.5 sm:p-1 shadow-lg"
               title="Open to opportunities"
             >
               <span className="block w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 animate-pulse" />
@@ -45,7 +45,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
           {/* Name & Title */}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight text-white leading-tight">
+              <h1 className="text-base sm:text-lg lg:text-xl font-bold tracking-tight text-white leading-tight">
                 {profile?.name || 'Maurik Angelo L. Fernandez'}
               </h1>
               {/* Verified Badge */}
@@ -58,7 +58,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-300 font-medium mt-0.5 sm:mt-1">
+            <p className="text-xs sm:text-sm text-zinc-300 font-medium mt-0.5">
               {profile?.professionalTitle || 'Software Developer'}
             </p>
             <p className="text-[11px] text-zinc-400 font-mono mt-0.5">

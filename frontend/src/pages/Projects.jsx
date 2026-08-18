@@ -82,21 +82,23 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
   const goToNext = () => setActiveIndex((current) => (current + 1) % items.length);
   const goToPrevious = () => setActiveIndex((current) => (current - 1 + items.length) % items.length);
 
-  const previewHeight = compact ? 'h-48 sm:h-56' : 'h-[40vh] min-h-[300px] sm:h-[48vh]';
+  const previewHeight = compact
+    ? 'h-48 sm:h-56'
+    : 'h-[260px] sm:h-[340px] md:h-[380px] lg:h-[420px]';
 
   return (
-    <div className="space-y-2">
-      <div className="relative overflow-hidden rounded-xl border border-zinc-800/80 bg-[#09090b]">
-        <div className="relative">
+    <div className="space-y-2 w-full">
+      <div className="relative overflow-hidden rounded-xl border border-zinc-800/80 bg-[#07080b]">
+        <div className={`relative ${previewHeight} w-full flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-[#07080b]`}>
           {imageSrc ? (
             <img
               src={imageSrc}
               alt={activeScreenshot.alt || 'Project screenshot'}
-              className={`${previewHeight} w-full object-cover object-top transition-transform duration-500`}
+              className="max-h-full max-w-full w-auto h-auto object-contain rounded-lg shadow-2xl transition-all duration-300"
               loading="lazy"
             />
           ) : (
-            <div className={`${previewHeight} flex items-center justify-center bg-zinc-900 text-xs font-mono text-zinc-500`}>
+            <div className="flex items-center justify-center bg-zinc-900 text-xs font-mono text-zinc-500">
               No screenshot preview
             </div>
           )}
@@ -110,14 +112,14 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
 
           {items.length > 1 && (
             <div className="absolute inset-x-2 bottom-2 z-20 flex items-center justify-between pointer-events-none">
-              <span className="rounded bg-black/70 px-2 py-0.5 text-[10px] font-mono text-zinc-300 backdrop-blur border border-zinc-800">
+              <span className="rounded bg-black/85 px-2 py-0.5 text-[10px] font-mono text-zinc-300 backdrop-blur border border-zinc-800">
                 {activeScreenshot.title || 'Screen'} ({activeIndex + 1}/{items.length})
               </span>
               <div className="flex gap-1 pointer-events-auto">
                 <button
                   type="button"
                   onClick={goToPrevious}
-                  className="p-1 rounded bg-black/70 text-zinc-300 hover:text-white border border-zinc-800 backdrop-blur transition"
+                  className="p-1 rounded bg-black/85 text-zinc-300 hover:text-white border border-zinc-800 backdrop-blur transition hover:bg-zinc-800"
                   aria-label="Previous"
                 >
                   <Icon name="chevronLeft" className="w-3.5 h-3.5" />
@@ -125,7 +127,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
                 <button
                   type="button"
                   onClick={goToNext}
-                  className="p-1 rounded bg-black/70 text-zinc-300 hover:text-white border border-zinc-800 backdrop-blur transition"
+                  className="p-1 rounded bg-black/85 text-zinc-300 hover:text-white border border-zinc-800 backdrop-blur transition hover:bg-zinc-800"
                   aria-label="Next"
                 >
                   <Icon name="chevronRight" className="w-3.5 h-3.5" />
@@ -562,7 +564,7 @@ export default function Projects() {
       {/* Featured Main Project */}
       {featuredProject && (
         <div className="mb-10 rounded-xl border border-zinc-800 bg-[#0d0e12] overflow-hidden">
-          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-0">
+          <div className="grid lg:grid-cols-[1.1fr_1fr] xl:grid-cols-[1.05fr_1.15fr] gap-0 items-stretch">
             <div className="p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-3">
@@ -642,7 +644,7 @@ export default function Projects() {
               </div>
             </div>
 
-            <div className="p-4 sm:p-6 bg-[#08090b] border-t lg:border-t-0 lg:border-l border-zinc-900 flex flex-col justify-center">
+            <div className="p-4 sm:p-6 lg:p-8 bg-[#08090b] border-t lg:border-t-0 lg:border-l border-zinc-900 flex flex-col justify-center items-center">
               {featuredProject.screenshots && (
                 <ScreenshotCarousel screenshots={featuredProject.screenshots} />
               )}
