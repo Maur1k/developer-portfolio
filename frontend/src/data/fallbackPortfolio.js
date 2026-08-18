@@ -44,8 +44,8 @@ export const fallbackProfile = {
 export const fallbackProjects = [
   {
     id: 'backops-wib',
-    title: 'When in Baguio (WIBE) — BackOps & Dispatch Operations',
-    name: 'When in Baguio — BackOps & Operations Platform',
+    title: 'When in Baguio (WIBE) — Operations & Dispatch Platform',
+    name: 'When in Baguio — Operations & Dispatch Platform',
     subtitle: 'Hyperlocal Logistics & Operations Command Center',
     tagline: 'Production · Operations & Logistics Command Center',
     shortDescription:

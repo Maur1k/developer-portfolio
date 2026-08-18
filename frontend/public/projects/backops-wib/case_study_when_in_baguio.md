@@ -1,4 +1,4 @@
-# Case Study: When in Baguio (WIBE) — BackOps & Logistics Platform
+# Case Study: When in Baguio (WIBE) — Operations & Dispatch Platform
 ## Modernizing Operations, Order Dispatching, and High-Volume Infrastructure for Baguio City's Premier Food Delivery Network
 
 > **Developer:** Maurik Angelo L. Fernandez — Full Stack & Mobile Developer  
