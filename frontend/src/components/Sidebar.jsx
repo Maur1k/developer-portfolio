@@ -15,13 +15,13 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
     'https://www.linkedin.com/in/maurik-angelo-fernandez-ab835716a/';
 
   return (
-    <aside className="w-full lg:w-[320px] xl:w-[360px] lg:shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between p-5 sm:p-6 lg:py-10 z-20">
+    <aside className="w-full lg:w-[340px] xl:w-[380px] lg:shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between p-5 sm:p-6 lg:py-10 z-20">
       <div className="space-y-4 lg:space-y-6">
         {/* Profile Image + Name & Title: Always side-by-side in a row on all screens */}
-        <div className="flex items-center gap-3.5 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-3.5">
           {/* Profile Image & Status */}
           <div className="relative group shrink-0">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 flex items-center justify-center shadow-xl relative">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 flex items-center justify-center shadow-xl relative">
               <img
                 src={photoSrc}
                 alt={profile?.name || 'Maurik Angelo L. Fernandez'}
@@ -42,15 +42,15 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
             </div>
           </div>
 
-          {/* Name & Title */}
+          {/* Name & Title in 1 line */}
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <h1 className="text-base sm:text-lg lg:text-xl font-bold tracking-tight text-white leading-tight">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h1 className="text-sm sm:text-base xl:text-[17px] font-bold tracking-tight text-white whitespace-nowrap">
                 {profile?.name || 'Maurik Angelo L. Fernandez'}
               </h1>
               {/* Verified Badge */}
               <svg
-                className="w-4 h-4 text-blue-500 shrink-0"
+                className="w-4 h-4 text-blue-500 shrink-0 inline-block"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-label="Verified developer"
@@ -58,10 +58,10 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-300 font-medium mt-0.5">
+            <p className="text-xs text-zinc-300 font-medium mt-0.5 truncate">
               {profile?.professionalTitle || 'Software Developer'}
             </p>
-            <p className="text-[11px] text-zinc-400 font-mono mt-0.5">
+            <p className="text-[11px] text-zinc-400 font-mono mt-0.5 whitespace-nowrap">
               Full Stack · Web · Mobile
             </p>
           </div>
