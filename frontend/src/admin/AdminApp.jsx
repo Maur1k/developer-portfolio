@@ -1234,7 +1234,7 @@ function SkillsManager() {
 }
 
 function ProjectsManager() {
-  const { items: projects } = useCollectionData('projects', fallbackProjects, { orderBy: 'displayOrder' });
+  const { items: projects } = useCollectionData('projects', [...fallbackProjects, ...fallbackPlaygroundProjects], { orderBy: 'displayOrder' });
   const [editing, setEditing] = useState(null);
 
   const toggleFeature = async (project) => {
@@ -1737,7 +1737,8 @@ function Settings() {
       ]);
 
       // 2. Seed Projects
-      const normalizedProjects = fallbackProjects.map(normalizeProject);
+      const allFallbackProjects = [...fallbackProjects, ...fallbackPlaygroundProjects];
+      const normalizedProjects = allFallbackProjects.map(normalizeProject);
       await supabase.from('projects').upsert(normalizedProjects, { onConflict: 'id' });
 
       // 3. Seed Experience

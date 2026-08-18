@@ -68,7 +68,27 @@ export function useCollectionData(collectionName, fallback = [], options = {}) {
 
         if (isMounted) {
           if (Array.isArray(data) && data.length > 0) {
-            setItems(data.map(normalizeRow));
+            const dbItems = data.map(normalizeRow);
+            const dbMap = new Map(dbItems.map((item) => [item.id, item]));
+
+            // Map fallback items with db overrides if available, and add any new DB-only items
+            const merged = fallback.map((fallbackItem) => {
+              if (fallbackItem.id && dbMap.has(fallbackItem.id)) {
+                const dbItem = dbMap.get(fallbackItem.id);
+                return { ...fallbackItem, ...dbItem };
+              }
+              return fallbackItem;
+            });
+
+            // Add any database items not present in fallback
+            const fallbackIds = new Set(fallback.map((f) => f.id));
+            dbItems.forEach((dbItem) => {
+              if (dbItem.id && !fallbackIds.has(dbItem.id)) {
+                merged.push(dbItem);
+              }
+            });
+
+            setItems(merged);
           } else {
             setItems(fallback);
           }

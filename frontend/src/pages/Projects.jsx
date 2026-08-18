@@ -515,18 +515,35 @@ export default function Projects() {
   const { items: allProjects, loading } = useCollectionData('projects', [...fallbackProjects, ...fallbackPlaygroundProjects], { orderBy: 'displayOrder' });
   const [selectedProject, setSelectedProject] = useState(null);
 
-  // Separate main projects vs playground projects by projectType field
-  const mainProjects = allProjects.filter((p) => !p.projectType || p.projectType === 'main');
-  const playgroundProjects = allProjects.filter((p) => p.projectType === 'playground');
+  // Separate main projects vs playground projects by projectType field or ID
+  const isPlayground = (p) =>
+    p.projectType === 'playground' ||
+    p.project_type === 'playground' ||
+    p.id === 'client-project-tracker' ||
+    p.id === 'playground-placeholder';
+
+  const mainProjects = allProjects.filter((p) => !isPlayground(p));
+  const playgroundProjects = allProjects.filter((p) => isPlayground(p));
 
   // If no playground projects from DB, use fallback placeholder
   const playgroundItems = playgroundProjects.length > 0 ? playgroundProjects : fallbackPlaygroundProjects;
 
+  // Ensure 'backops-wib' is always the featured project
   const featuredProject =
-    mainProjects.find((p) => p.featured) ||
     mainProjects.find((p) => p.id === 'backops-wib') ||
+    mainProjects.find((p) => p.featured && p.id !== 'wibav3') ||
     mainProjects[0];
-  const otherProjects = mainProjects.filter((p) => p.id !== featuredProject?.id);
+
+  const otherProjects = mainProjects
+    .filter((p) => p.id !== featuredProject?.id)
+    .sort((a, b) => {
+      const getOrder = (p) => {
+        if (p.id === 'wibav3') return 1;
+        if (p.id === 'click2serve') return 2;
+        return p.displayOrder ?? p.display_order ?? 99;
+      };
+      return getOrder(a) - getOrder(b);
+    });
 
   return (
     <section id="projects" className="py-16 border-b border-zinc-900">
