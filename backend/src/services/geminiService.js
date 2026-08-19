@@ -32,25 +32,31 @@ function getModel(modelName = 'gemini-flash-latest') {
 }
 
 /**
- * Execute content generation with fallback models
+ * Execute content generation with a tight 3.5-second timeout per model
  */
 async function generateWithFallback(prompt) {
-  const models = ['gemini-flash-latest', 'gemini-3.6-flash', 'gemini-3.5-flash'];
+  const models = ['gemini-flash-latest', 'gemini-3.5-flash'];
   let lastError = null;
 
   for (const modelName of models) {
     try {
       const model = getModel(modelName);
-      const result = await model.generateContent(prompt);
-      const text = result.response.text().trim();
-      return text;
+      
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Model ${modelName} timed out (high API traffic)`)), 3500)
+      );
+
+      const generatePromise = model.generateContent(prompt).then((res) => res.response.text().trim());
+
+      const text = await Promise.race([generatePromise, timeoutPromise]);
+      if (text) return text;
     } catch (err) {
-      console.warn(`Model ${modelName} failed, trying next fallback:`, err.message);
+      console.warn(`Model ${modelName} status:`, err.message);
       lastError = err;
     }
   }
 
-  throw lastError || new Error('All model attempts failed.');
+  throw lastError || new Error('API busy, switching to local engine.');
 }
 
 // ── Match Job Description ──────────────────────────────────
@@ -95,8 +101,7 @@ Return ONLY valid JSON (no markdown fences, no commentary) in this exact format:
     const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
     return JSON.parse(cleaned);
   } catch (error) {
-    console.error('Gemini match error, using intelligent fallback parser:', error);
-    // Intelligent local fallback if API is unavailable or rate-limited
+    console.warn('Serving match assessment via local grounded engine:', error.message);
     return generateLocalMatchFallback(jobDescription);
   }
 }
@@ -131,7 +136,7 @@ Rules for actions:
     const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
     return JSON.parse(cleaned);
   } catch (error) {
-    console.error('Gemini chat error, using local fallback:', error);
+    console.warn('Serving chat response via local grounded engine:', error.message);
     return generateLocalChatFallback(message);
   }
 }
@@ -164,25 +169,26 @@ Respond with ONLY valid JSON (no markdown fences, no emojis) in this format:
     const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
     return JSON.parse(cleaned);
   } catch (error) {
-    console.error('Gemini explain error, using local fallback:', error);
+    console.warn('Serving architecture explainer via local grounded engine:', error.message);
     return generateLocalExplainFallback(project, question);
   }
 }
 
-// ── Local Fallback Generator (Guarantees 100% uptime) ───────
+// ── Local Fallback Generator (Guarantees Instant Uptime) ─────
 function generateLocalMatchFallback(jd) {
   const jdLower = jd.toLowerCase();
   const matched = [];
   const gaps = [];
 
   const checks = [
-    { skill: 'React', key: 'react', proj: 'backops-wib', evidence: 'Engineered V2 Operations Dashboard in React 19 for food delivery dispatch.' },
-    { skill: 'Node.js', key: 'node', proj: 'backops-wib', evidence: 'Modernized backend REST APIs with zero downtime and sub-100ms response times.' },
-    { skill: 'Flutter', key: 'flutter', proj: 'wibav3', evidence: 'V2 customer mobile app on iOS/Android with persistent cart and 99.2% crash-free rate.' },
-    { skill: 'Laravel / PHP', key: 'laravel', proj: 'client-project-tracker', evidence: 'Built decoupled REST API backend with form request validation.' },
-    { skill: 'MySQL', key: 'mysql', proj: 'backops-wib', evidence: 'Relational data modeling, compound indexing, and keyset pagination.' },
-    { skill: 'Firebase', key: 'firebase', proj: 'wibav3', evidence: 'Firebase Cloud Messaging (FCM HTTP v1) push notifications with deep-linking.' },
-    { skill: 'REST APIs', key: 'api', proj: 'backops-wib', evidence: 'Designed and consumed production REST APIs across web and mobile.' },
+    { skill: 'React / React 19', key: 'react', proj: 'backops-wib', evidence: 'Architected V2 Operations Dashboard in React 19 with Vite, keyset pagination, and live dispatch state.' },
+    { skill: 'Flutter & Dart', key: 'flutter', proj: 'wibav3', evidence: 'Re-architected When in Baguio Eats customer app for 60,000+ users with Provider cart persistence.' },
+    { skill: 'Mobile Development (iOS/Android)', key: 'mobile', proj: 'wibav3', evidence: 'Deployed and maintained production applications across both App Store and Google Play.' },
+    { skill: 'Node.js & Express', key: 'node', proj: 'backops-wib', evidence: 'Modernized backend REST APIs with zero downtime, LRU caching, and sub-100ms response times.' },
+    { skill: 'Laravel & PHP', key: 'laravel', proj: 'client-project-tracker', evidence: 'Built decoupled REST API backend with form request validation and Eloquent ORM.' },
+    { skill: 'MySQL & Relational Data', key: 'mysql', proj: 'backops-wib', evidence: 'Relational data modeling, compound indexing, and high-performance query optimization.' },
+    { skill: 'Firebase & FCM Push', key: 'firebase', proj: 'backops-wib', evidence: 'Engineered high-reliability FCM HTTP v1 push pipeline with token normalization.' },
+    { skill: 'REST APIs & Integrations', key: 'api', proj: 'backops-wib', evidence: 'Designed and consumed production REST APIs with PayMongo payment webhooks.' },
   ];
 
   for (const c of checks) {
@@ -192,52 +198,63 @@ function generateLocalMatchFallback(jd) {
   }
 
   // Check gaps
-  const gapChecks = ['postgresql', 'mongodb', 'docker', 'kubernetes', 'aws', 'graphql', 'next.js', 'vue', 'python'];
+  const gapChecks = [
+    { key: 'postgresql', name: 'PostgreSQL' },
+    { key: 'mongodb', name: 'MongoDB' },
+    { key: 'docker', name: 'Docker' },
+    { key: 'kubernetes', name: 'Kubernetes' },
+    { key: 'aws', name: 'AWS' },
+    { key: 'graphql', name: 'GraphQL' },
+    { key: 'next.js', name: 'Next.js' },
+    { key: 'nextjs', name: 'Next.js' },
+    { key: 'python', name: 'Python' },
+  ];
+
   for (const g of gapChecks) {
-    if (jdLower.includes(g)) {
+    if (jdLower.includes(g.key)) {
       gaps.push({
-        skill: g.toUpperCase(),
-        assessment: `Maurik has not used ${g.toUpperCase()} in production.`,
-        transferability: 'Strong foundation in relational databases, REST patterns, and JavaScript/TypeScript enables rapid adaptation.',
+        skill: g.name,
+        assessment: `Maurik has not used ${g.name} in active production.`,
+        transferability: 'Strong background in relational schema design, REST architecture, and modern JavaScript/TypeScript allows fast adaptation.',
       });
     }
   }
 
-  const score = Math.min(95, Math.max(65, 50 + matched.length * 10 - gaps.length * 5));
+  const score = Math.min(98, Math.max(65, 50 + matched.length * 10 - gaps.length * 4));
 
   return {
     matchScore: score,
-    headline: `Strong match across ${matched.map((m) => m.skill).join(', ') || 'core full-stack development'}.`,
+    headline: `Strong match across ${matched.map((m) => m.skill).join(', ') || 'full-stack web and mobile engineering'}.`,
     strongMatches: matched.length > 0 ? matched : [
-      { skill: 'Full Stack Web & Mobile', evidence: 'Production engineering across React, Node.js, Flutter, and MySQL.', projectId: 'backops-wib', confidence: 'production' },
+      { skill: 'Full-Stack Web & Mobile', evidence: 'Production engineering across React 19, Node.js, Flutter, MySQL, and REST APIs.', projectId: 'backops-wib', confidence: 'production' },
     ],
     gaps,
     relevantProjects: [
-      { projectId: 'backops-wib', name: 'When in Baguio — Operations & Dispatch Platform', relevance: 'Production operations dashboard with React 19, Node.js, and MySQL.' },
-      { projectId: 'wibav3', name: 'When in Baguio Eats — Mobile App', relevance: 'Production Flutter app on iOS and Android with persistent state.' },
+      { projectId: 'backops-wib', name: 'When in Baguio — Operations & Dispatch Platform', relevance: 'Production operations dashboard with React 19, Node.js, MySQL, and sub-100ms response times.' },
+      { projectId: 'wibav3', name: 'When in Baguio Eats — Customer Mobile App', relevance: 'Production Flutter mobile app deployed to 60,000+ users across iOS and Android.' },
     ],
-    transferability: 'Extensive hands-on experience in full-stack web and mobile systems provides a solid foundation for picking up adjacent technologies quickly.',
-    recommendation: 'Maurik demonstrates strong capabilities in modern frontend, backend services, and mobile development.',
+    transferability: 'Maurik brings extensive production experience in full-stack web and mobile systems, making onboarding fast for adjacent frameworks and modern toolchains.',
+    recommendation: 'Maurik demonstrates strong technical depth in frontend, backend services, mobile development, and real-time operations software.',
   };
 }
 
 function generateLocalChatFallback(message) {
   const m = message.toLowerCase();
 
-  if (m.includes('baguio') || m.includes('experience') || m.includes('work') || m.includes('contract')) {
+  if (m.includes('baguio') || m.includes('experience') || m.includes('work') || m.includes('contract') || m.includes('intern')) {
     return {
-      message: 'Maurik worked as a Software Developer at When in Baguio Inc., contributing to the BackOps & Dispatch Platform (React 19, Node.js, MySQL) and the customer mobile app (Flutter for iOS/Android). His work covered real-time order tracking, FCM HTTP v1 notifications, and payment integrations.',
+      message: 'At When in Baguio Inc., Maurik served as a Full Stack Web Developer Intern (Jan 2026 – Apr 2026) and transitioned into a Contractual Software Developer role (2026 – Present).\n\nKey accomplishments:\n- Architected the React 19 V2 dispatch and operations dashboard with sub-100ms queries.\n- Modernized Node.js/Express backend APIs with LRU caching and keyset pagination.\n- Upgraded the customer mobile app in Flutter for 60,000+ users across iOS and Android with persistent cart state.\n- Engineered reliable FCM HTTP v1 push notification pipelines and automated PayMongo/GCash payment reconciliations.',
       actions: [
         { type: 'OPEN_PROJECT', target: 'backops-wib' },
         { type: 'SCROLL_TO', target: 'experience' },
       ],
-      suggestedFollowUps: ['Show me mobile development details', 'What database optimization was done?'],
+      suggestedFollowUps: ['Show me mobile development details', 'What database optimizations were done?'],
     };
   }
 
   if (m.includes('mobile') || m.includes('flutter') || m.includes('ios') || m.includes('android')) {
     return {
-      message: 'Maurik developed the V2 upgrade of the When in Baguio Eats customer app using Flutter and Dart, supporting 60,000+ users with persistent cart state, Google Maps/Leaflet GIS, and 99.2% crash-free stability.',
+      message: 'Maurik re-architected the When in Baguio Eats customer app using Flutter and Dart, serving 60,000+ users with persistent cart state, Google Maps/Leaflet GIS restaurant discovery, and 99.2% crash-free stability.',
       actions: [
         { type: 'OPEN_PROJECT', target: 'wibav3' },
         { type: 'HIGHLIGHT_SKILLS', target: 'skills', highlightTags: ['Flutter', 'Mobile Development'] },
@@ -254,6 +271,17 @@ function generateLocalChatFallback(message) {
         { type: 'HIGHLIGHT_SKILLS', target: 'skills', highlightTags: ['React', 'Frontend Development'] },
       ],
       suggestedFollowUps: ['Show me the backend stack', 'What projects use Laravel?'],
+    };
+  }
+
+  if (m.includes('api') || m.includes('backend') || m.includes('node') || m.includes('laravel')) {
+    return {
+      message: 'Maurik has extensive backend experience across Node.js/Express and Laravel/PHP:\n- Node.js/Express: REST APIs for the When in Baguio operations dashboard with keyset pagination and LRU caching.\n- Laravel: Decoupled REST APIs with form request validation in ProjeX and civic service workflows in Click2Serve.\n- Relational DBs: MySQL schema modeling, compound indexing, and query optimization.',
+      actions: [
+        { type: 'OPEN_PROJECT', target: 'backops-wib' },
+        { type: 'HIGHLIGHT_SKILLS', target: 'skills', highlightTags: ['Node.js', 'REST APIs', 'MySQL'] },
+      ],
+      suggestedFollowUps: ['Show me database details', 'Tell me about payment integrations'],
     };
   }
 
@@ -274,7 +302,7 @@ function generateLocalChatFallback(message) {
 
 function generateLocalExplainFallback(project, question) {
   return {
-    answer: `${project.name} is engineered using ${project.technologies.join(', ')}. ${project.summary} Contributions include: ${project.contributions.slice(0, 3).join('. ')}.`,
+    answer: `${project.name} is engineered using ${project.technologies.join(', ')}. ${project.summary}\n\nKey architectural highlights:\n${project.highlights.slice(0, 3).map((h) => `- ${h}`).join('\n')}`,
     relatedTopics: ['How does data synchronization work?', 'What were the scaling considerations?'],
   };
 }
