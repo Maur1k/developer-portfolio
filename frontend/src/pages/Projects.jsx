@@ -2,6 +2,8 @@ import React, { useEffect, useId, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCollectionData } from '../hooks/useFirestoreData';
 import { fallbackProjects, fallbackPlaygroundProjects } from '../data/fallbackPortfolio';
+import ProjectArchitectureAI from '../components/ProjectArchitectureAI';
+import { useCopilot } from '../context/CopilotContext';
 
 function Icon({ name, className = 'h-4 w-4' }) {
   const paths = {
@@ -293,8 +295,9 @@ function ProjectCard({ project, index, onLearnMore }) {
   );
 }
 
-function ProjectModal({ project, onClose }) {
+function ProjectModal({ project, onClose, initialTab = 'overview' }) {
   const titleId = useId();
+  const [modalTab, setModalTab] = useState(initialTab); // 'overview' | 'screenshots' | 'architecture'
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -312,6 +315,8 @@ function ProjectModal({ project, onClose }) {
   }, [onClose]);
 
   if (!project) return null;
+
+  const hasScreenshots = project.screenshots && project.screenshots.length > 0;
 
   return (
     <motion.div
@@ -345,94 +350,162 @@ function ProjectModal({ project, onClose }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="p-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+            className="p-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
           >
             <Icon name="close" />
           </button>
         </div>
 
-        {/* Content */}
+        {/* Modal Navigation Tabs */}
+        <div className="flex border-b border-zinc-800/80 bg-[#07080a] px-3">
+          <button
+            type="button"
+            onClick={() => setModalTab('overview')}
+            className={`px-3.5 py-2.5 text-xs font-mono font-medium transition-colors border-b-2 ${
+              modalTab === 'overview'
+                ? 'border-white text-white font-semibold'
+                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+            }`}
+          >
+            Overview
+          </button>
+
+          {hasScreenshots && (
+            <button
+              type="button"
+              onClick={() => setModalTab('screenshots')}
+              className={`px-3.5 py-2.5 text-xs font-mono font-medium transition-colors border-b-2 ${
+                modalTab === 'screenshots'
+                  ? 'border-white text-white font-semibold'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              Screenshots ({project.screenshots.length})
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setModalTab('architecture')}
+            className={`px-3.5 py-2.5 text-xs font-mono font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
+              modalTab === 'architecture'
+                ? 'border-amber-400 text-amber-400 font-semibold'
+                : 'border-transparent text-zinc-500 hover:text-amber-400/80'
+            }`}
+          >
+            <span>⚡</span>
+            <span>AI Architecture Q&A</span>
+          </button>
+        </div>
+
+        {/* Content Area */}
         <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
-          {project.screenshots && project.screenshots.length > 0 && (
-            <ScreenshotCarousel screenshots={project.screenshots} />
+          {/* 1. ARCHITECTURE TAB */}
+          {modalTab === 'architecture' && (
+            <ProjectArchitectureAI project={project} />
           )}
 
-          <div>
-            <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Overview</h4>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              {project.longDescription || project.description || project.summary}
-            </p>
-          </div>
-
-          {project.highlights && project.highlights.length > 0 && (
-            <div>
-              <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Key Highlights</h4>
-              <ul className="grid sm:grid-cols-2 gap-2">
-                {project.highlights.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs text-zinc-300">
-                    <span className="text-zinc-500 select-none">▪</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* 2. SCREENSHOTS TAB */}
+          {modalTab === 'screenshots' && hasScreenshots && (
+            <div className="space-y-4">
+              <ScreenshotCarousel screenshots={project.screenshots} />
+              {project.screenshots.length > 1 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2">
+                  {project.screenshots.map((s, idx) => (
+                    <div key={idx} className="rounded-lg border border-zinc-800 overflow-hidden bg-zinc-950 aspect-video">
+                      <img src={s.src} alt={s.alt} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
-          {project.problem && (
-            <div>
-              <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Problem</h4>
-              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">{project.problem}</p>
-            </div>
-          )}
+          {/* 3. OVERVIEW TAB */}
+          {modalTab === 'overview' && (
+            <>
+              {hasScreenshots && (
+                <ScreenshotCarousel screenshots={project.screenshots} />
+              )}
 
-          {project.solution && (
-            <div>
-              <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Solution</h4>
-              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">{project.solution}</p>
-            </div>
-          )}
+              <div>
+                <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Overview</h4>
+                <p className="text-sm text-zinc-300 leading-relaxed">
+                  {project.longDescription || project.description || project.summary}
+                </p>
+              </div>
 
-          {project.contributions && project.contributions.length > 0 && (
-            <div>
-              <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">My Engineering Contributions</h4>
-              <ul className="space-y-1.5">
-                {project.contributions.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-zinc-300">
-                    <span className="text-zinc-500 select-none">▪</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+              {project.highlights && project.highlights.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Key Highlights</h4>
+                  <ul className="grid sm:grid-cols-2 gap-2">
+                    {project.highlights.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-zinc-300">
+                        <span className="text-zinc-500 select-none">▪</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-          {project.results && project.results.length > 0 && (
-            <div>
-              <h4 className="text-xs font-mono uppercase text-emerald-400 mb-2">Results & Impact</h4>
-              <ul className="grid sm:grid-cols-2 gap-2">
-                {project.results.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs text-zinc-300">
-                    <span className="text-emerald-400 select-none font-bold">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+              {project.problem && (
+                <div>
+                  <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Problem</h4>
+                  <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">{project.problem}</p>
+                </div>
+              )}
 
-          <div>
-            <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Tech Stack</h4>
-            <div className="flex flex-wrap gap-1.5">
-              {(project.technologies || []).map((tech) => (
-                <span
-                  key={tech}
-                  className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-300"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
+              {project.solution && (
+                <div>
+                  <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Solution</h4>
+                  <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">{project.solution}</p>
+                </div>
+              )}
+
+              {project.contributions && project.contributions.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">My Engineering Contributions</h4>
+                  <ul className="space-y-1.5">
+                    {project.contributions.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-zinc-300">
+                        <span className="text-zinc-500 select-none">▪</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {project.results && project.results.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-mono uppercase text-emerald-400 mb-2">Results & Impact</h4>
+                  <ul className="grid sm:grid-cols-2 gap-2">
+                    {project.results.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-zinc-300">
+                        <span className="text-emerald-400 select-none font-bold">✓</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div>
+                <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Tech Stack</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {(project.technologies || []).map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-300"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Links */}
           <div className="flex flex-wrap gap-3 pt-4 border-t border-zinc-800">
@@ -567,6 +640,19 @@ function PlaygroundCard({ project, onLearnMore }) {
 export default function Projects() {
   const { items: allProjects, loading } = useCollectionData('projects', [...fallbackProjects, ...fallbackPlaygroundProjects], { orderBy: 'displayOrder' });
   const [selectedProject, setSelectedProject] = useState(null);
+  const { pendingAction, consumePendingAction } = useCopilot();
+
+  useEffect(() => {
+    if (pendingAction?.type === 'OPEN_PROJECT' && pendingAction?.projectId) {
+      const match = allProjects.find((p) => p.id === pendingAction.projectId) ||
+                    fallbackProjects.find((p) => p.id === pendingAction.projectId) ||
+                    fallbackPlaygroundProjects.find((p) => p.id === pendingAction.projectId);
+      if (match) {
+        setSelectedProject(match);
+      }
+      consumePendingAction();
+    }
+  }, [pendingAction, allProjects, consumePendingAction]);
 
   // Separate main projects vs playground projects by projectType field or ID
   const isPlayground = (p) =>

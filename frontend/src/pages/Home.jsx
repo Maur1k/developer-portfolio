@@ -7,16 +7,28 @@ import Skills from './Skills';
 import Contact from './Contact';
 import Footer from '../components/Footer';
 import ResumeModal from '../components/ResumeModal';
+import CopilotModal from '../components/CopilotModal';
+import CopilotFloatingTrigger from '../components/CopilotFloatingTrigger';
+import { useCopilot } from '../context/CopilotContext';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Home() {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
+  const { openCopilot, pendingAction, consumePendingAction } = useCopilot();
   const [activeSection, setActiveSection] = useState('about');
   const [isShortcutOpen, setIsShortcutOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Watch for pending UI actions like OPEN_RESUME
+  useEffect(() => {
+    if (pendingAction?.type === 'OPEN_RESUME') {
+      setIsResumeOpen(true);
+      consumePendingAction();
+    }
+  }, [pendingAction, consumePendingAction]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -52,7 +64,10 @@ export default function Home() {
       // If user is typing in an input/textarea, ignore
       if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return;
 
-      if (e.key === 'm' || e.key === 'M' || e.key === 'd' || e.key === 'D') {
+      if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        openCopilot('match');
+      } else if (e.key === 'd' || e.key === 'D') {
         e.preventDefault();
         setIsShortcutOpen((prev) => !prev);
       } else if (e.key === 'r' || e.key === 'R') {
@@ -70,7 +85,7 @@ export default function Home() {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [openCopilot]);
 
   return (
     <div className="min-h-screen bg-[#050507] text-[#ededed]">
@@ -86,7 +101,7 @@ export default function Home() {
 
           {/* Right Column: Main Content Stream */}
           <main className="flex-1 min-w-0 py-6 lg:py-10 w-full">
-            <Hero onThemeToggle={() => setIsShortcutOpen(true)} />
+            <Hero onThemeToggle={() => openCopilot('match')} />
             <Experience />
             <Projects />
             <Skills />
@@ -95,6 +110,12 @@ export default function Home() {
           </main>
         </div>
       </div>
+
+      {/* Maurik AI Portfolio Copilot Modal */}
+      <CopilotModal />
+
+      {/* Floating Copilot Pill */}
+      <CopilotFloatingTrigger />
 
       {/* Resume Viewer Modal */}
       <ResumeModal

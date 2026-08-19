@@ -2,9 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
+import { useCopilot } from '../context/CopilotContext';
 
 export default function Hero({ onThemeToggle }) {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
+  const { openCopilot } = useCopilot();
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
@@ -78,8 +80,17 @@ export default function Hero({ onThemeToggle }) {
         </p>
       </motion.div>
 
-      {/* CTA Buttons */}
+      {/* CTA Buttons + Recruiter Match Banner */}
       <div className="flex flex-wrap items-center gap-3 mt-6">
+        <button
+          type="button"
+          onClick={() => openCopilot('match')}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-zinc-950 font-mono text-xs font-bold hover:brightness-110 transition-all shadow-md cursor-pointer"
+        >
+          <span>🎯</span>
+          <span>Recruiter Match — Paste JD</span>
+        </button>
+
         <button
           type="button"
           onClick={() => scrollTo('projects')}

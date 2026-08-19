@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { CopilotProvider } from './context/CopilotContext';
 
 const AdminLayout = React.lazy(() => import('./admin/AdminApp'));
 const Login = React.lazy(() => import('./admin/AdminApp').then((module) => ({ default: module.Login })));
@@ -59,7 +60,9 @@ export default function AppShell() {
   return (
     <Router>
       <AuthProvider>
-        <App />
+        <CopilotProvider>
+          <App />
+        </CopilotProvider>
       </AuthProvider>
     </Router>
   );
