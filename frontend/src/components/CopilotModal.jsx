@@ -29,7 +29,7 @@ function ScoreRing({ score }) {
           className="transition-all duration-1000 ease-out"
         />
       </svg>
-      <span className="absolute text-xl font-bold text-white">{score}%</span>
+      <span className="absolute text-xl font-bold text-white font-mono">{score}%</span>
     </div>
   );
 }
@@ -89,10 +89,8 @@ export default function CopilotModal() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-zinc-800/80 px-5 py-3.5 bg-[#09090b] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z" />
-                  </svg>
+                <div className="w-6 h-6 rounded border border-zinc-700 bg-zinc-800 flex items-center justify-center font-mono text-[10px] font-bold text-amber-400">
+                  AI
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">Maurik AI</h3>
@@ -119,7 +117,7 @@ export default function CopilotModal() {
                     : 'text-zinc-500 hover:text-zinc-300'
                 }`}
               >
-                🎯 Recruiter Match
+                Recruiter Match
               </button>
               <button
                 type="button"
@@ -130,7 +128,7 @@ export default function CopilotModal() {
                     : 'text-zinc-500 hover:text-zinc-300'
                 }`}
               >
-                ⚡ Ask Maurik
+                Ask Maurik
               </button>
             </div>
 
@@ -189,7 +187,7 @@ function MatchTab({ executeAction, closeCopilot }) {
       <div className="p-5 space-y-4">
         <div>
           <p className="text-xs text-zinc-400 mb-3 leading-relaxed">
-            Paste a Job Description below. Maurik AI will analyze it against verified production experience, cite specific projects as evidence, and honestly identify any gaps.
+            Paste a Job Description below. Maurik AI will analyze it against verified production experience, cite specific projects as evidence, and identify any gaps.
           </p>
           <textarea
             value={jdText}
@@ -225,13 +223,10 @@ function MatchTab({ executeAction, closeCopilot }) {
           {loading ? (
             <>
               <span className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin" />
-              Analyzing with Gemini...
+              <span>Analyzing with Gemini...</span>
             </>
           ) : (
-            <>
-              <span>🎯</span>
-              Analyze Match
-            </>
+            <span>Analyze Match</span>
           )}
         </button>
       </div>
@@ -260,7 +255,7 @@ function MatchTab({ executeAction, closeCopilot }) {
           <div className="space-y-1.5">
             {result.strongMatches.map((m, i) => (
               <div key={i} className="flex items-start gap-2 text-xs">
-                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
+                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">+</span>
                 <div className="min-w-0">
                   <span className="font-semibold text-white">{m.skill}</span>
                   <span className="text-zinc-500 mx-1">—</span>
@@ -316,7 +311,7 @@ function MatchTab({ executeAction, closeCopilot }) {
                 <button
                   type="button"
                   onClick={() => handleViewEvidence(p.projectId)}
-                  className="shrink-0 px-2.5 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-[10px] font-mono text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors ml-2"
+                  className="shrink-0 px-2.5 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-[10px] font-mono text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors ml-2 cursor-pointer"
                 >
                   View Evidence ↗
                 </button>
@@ -345,7 +340,7 @@ function MatchTab({ executeAction, closeCopilot }) {
       <button
         type="button"
         onClick={() => { setResult(null); setJdText(''); }}
-        className="w-full py-2 rounded-lg border border-zinc-800 text-xs font-mono text-zinc-400 hover:text-white hover:bg-zinc-900 transition"
+        className="w-full py-2 rounded-lg border border-zinc-800 text-xs font-mono text-zinc-400 hover:text-white hover:bg-zinc-900 transition cursor-pointer"
       >
         ← Analyze Another JD
       </button>
@@ -405,6 +400,21 @@ function ExploreTab({ executeAction, closeCopilot }) {
     setTimeout(() => executeAction(action), 300);
   };
 
+  const getActionLabel = (action) => {
+    switch (action.type) {
+      case 'OPEN_PROJECT':
+        return `[Project: ${action.target}]`;
+      case 'SCROLL_TO':
+        return `[Section: ${action.target}]`;
+      case 'HIGHLIGHT_SKILLS':
+        return `[Skills: ${action.highlightTags ? action.highlightTags.join(', ') : action.target}]`;
+      case 'OPEN_RESUME':
+        return '[View Resume]';
+      default:
+        return action.target || 'Navigate';
+    }
+  };
+
   return (
     <div className="flex flex-col h-[55vh]">
       {/* Messages */}
@@ -412,7 +422,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
         {messages.length === 0 && (
           <div className="space-y-3">
             <p className="text-xs text-zinc-500 leading-relaxed">
-              Ask Maurik AI anything about his experience, skills, and projects. The AI will answer with evidence and can navigate you directly to the relevant section.
+              Ask Maurik AI about technical experience, architecture, skills, and projects.
             </p>
             <div className="flex flex-wrap gap-1.5">
               {exploreSuggestions.map((s) => (
@@ -446,13 +456,9 @@ function ExploreTab({ executeAction, closeCopilot }) {
                       key={j}
                       type="button"
                       onClick={() => handleAction(action)}
-                      className="px-2 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-[10px] font-mono text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors"
+                      className="px-2 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-[10px] font-mono text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors cursor-pointer"
                     >
-                      {action.type === 'OPEN_PROJECT' && '📂 '}
-                      {action.type === 'SCROLL_TO' && '📍 '}
-                      {action.type === 'HIGHLIGHT_SKILLS' && '✨ '}
-                      {action.type === 'OPEN_RESUME' && '📄 '}
-                      {action.target || 'Go'} ↗
+                      {getActionLabel(action)} ↗
                     </button>
                   ))}
                 </div>
@@ -466,7 +472,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
                       key={j}
                       type="button"
                       onClick={() => sendMessage(q)}
-                      className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-500 hover:text-zinc-300 bg-zinc-900/60 hover:bg-zinc-800 transition-colors"
+                      className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-500 hover:text-zinc-300 bg-zinc-900/60 hover:bg-zinc-800 transition-colors cursor-pointer"
                     >
                       {q}
                     </button>
@@ -505,7 +511,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
             type="button"
             onClick={() => sendMessage()}
             disabled={loading || !input.trim()}
-            className="px-3.5 py-2 rounded-lg bg-white text-zinc-950 text-xs font-mono font-semibold hover:bg-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0"
+            className="px-3.5 py-2 rounded-lg bg-white text-zinc-950 text-xs font-mono font-semibold hover:bg-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
           >
             Send
           </button>

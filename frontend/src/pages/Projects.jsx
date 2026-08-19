@@ -393,8 +393,8 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
                 : 'border-transparent text-zinc-500 hover:text-amber-400/80'
             }`}
           >
-            <span>⚡</span>
-            <span>AI Architecture Q&A</span>
+            <span>[AI]</span>
+            <span>Architecture Q&A</span>
           </button>
         </div>
 

@@ -87,8 +87,8 @@ export default function Hero({ onThemeToggle }) {
           onClick={() => openCopilot('match')}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-zinc-950 font-mono text-xs font-bold hover:brightness-110 transition-all shadow-md cursor-pointer"
         >
-          <span>🎯</span>
           <span>Recruiter Match — Paste JD</span>
+          <span>↗</span>
         </button>
 
         <button

@@ -53,7 +53,7 @@ export default function ProjectArchitectureAI({ project }) {
   return (
     <div className="space-y-4 pt-1">
       <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-zinc-300 flex items-start gap-2.5">
-        <span className="text-amber-400 text-sm">💡</span>
+        <span className="font-mono text-amber-400 text-xs font-bold shrink-0">[Arch]</span>
         <div className="space-y-0.5">
           <p className="font-semibold text-white">Grounded Architecture Explainer</p>
           <p className="text-zinc-400 text-[11px] leading-relaxed">
