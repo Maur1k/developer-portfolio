@@ -603,7 +603,7 @@ export default function Projects() {
       {/* Section Tag */}
       <div className="section-tag mb-4">[Projects]</div>
 
-      <div className="mb-8 max-w-2xl">
+      <div className="mb-8">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Things I've Built
         </h2>

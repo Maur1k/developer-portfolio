@@ -53,7 +53,7 @@ export default function Hero({ onThemeToggle }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15] max-w-3xl">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15]">
           {profile.headline || 'I build things, break things, and figure out how to make them work.'}
         </h1>
       </motion.div>
@@ -63,7 +63,7 @@ export default function Hero({ onThemeToggle }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-6 space-y-4 text-sm sm:text-base text-zinc-300 leading-relaxed max-w-3xl"
+        className="mt-6 space-y-4 text-sm sm:text-base text-zinc-300 leading-relaxed"
       >
         <p>
           Hi, I'm <strong className="font-semibold text-white">Maurik Angelo L. Fernandez</strong>, a software developer specializing in <strong className="font-semibold text-white">full-stack web and mobile development</strong>.

@@ -19,7 +19,7 @@ export default function Contact() {
       {/* Section Tag */}
       <div className="section-tag mb-8">[Contact]</div>
 
-      <div className="max-w-2xl">
+      <div>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           Let's Build Something.
         </h2>
