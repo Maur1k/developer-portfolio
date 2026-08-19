@@ -174,6 +174,25 @@ function MatchTab({ executeAction, closeCopilot }) {
     }
   };
 
+  const [copiedSummary, setCopiedSummary] = useState(false);
+
+  const handleCopySummary = () => {
+    if (!result) return;
+    const summary = `Candidate Evaluation: Maurik Angelo L. Fernandez
+Match Score: ${result.matchScore}%
+Fit Summary: ${result.headline}
+
+Key Verified Matches:
+${(result.strongMatches || []).map((m) => `- ${m.skill}: ${m.evidence}`).join('\n')}
+
+${result.gaps && result.gaps.length > 0 ? `Identified Gaps & Transferability:\n${result.gaps.map((g) => `- ${g.skill}: ${g.assessment} (${g.transferability || 'Transferable'})`).join('\n')}\n` : ''}
+Recommendation: ${result.recommendation || result.transferability || 'Strong candidate for full-stack web and mobile engineering.'}`;
+
+    navigator.clipboard.writeText(summary);
+    setCopiedSummary(true);
+    setTimeout(() => setCopiedSummary(false), 2000);
+  };
+
   const handleViewEvidence = (projectId) => {
     closeCopilot();
     setTimeout(() => {
@@ -336,14 +355,24 @@ function MatchTab({ executeAction, closeCopilot }) {
         </div>
       )}
 
-      {/* Reset */}
-      <button
-        type="button"
-        onClick={() => { setResult(null); setJdText(''); }}
-        className="w-full py-2 rounded-lg border border-zinc-800 text-xs font-mono text-zinc-400 hover:text-white hover:bg-zinc-900 transition cursor-pointer"
-      >
-        ← Analyze Another JD
-      </button>
+      {/* Actions: Copy Summary & Reset */}
+      <div className="flex gap-2 pt-1">
+        <button
+          type="button"
+          onClick={handleCopySummary}
+          className="flex-1 py-2.5 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 text-xs font-mono text-white transition flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <span>{copiedSummary ? 'Copied to Clipboard!' : 'Copy Summary for Hiring Manager'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => { setResult(null); setJdText(''); }}
+          className="px-4 py-2.5 rounded-lg border border-zinc-800 bg-transparent text-xs font-mono text-zinc-400 hover:text-white hover:bg-zinc-900 transition cursor-pointer shrink-0"
+        >
+          ← Reset
+        </button>
+      </div>
     </div>
   );
 }
@@ -388,7 +417,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: `Sorry, I couldn't process that. ${err.message || 'Is the backend running?'}`, actions: [], followUps: [] },
+        { role: 'assistant', content: `Sorry, I couldn't process that. ${err.message || 'Please try again.'}`, actions: [], followUps: [] },
       ]);
     } finally {
       setLoading(false);
@@ -401,17 +430,32 @@ function ExploreTab({ executeAction, closeCopilot }) {
   };
 
   const getActionLabel = (action) => {
+    const projectNames = {
+      'backops-wib': 'BackOps Platform',
+      'wibav3': 'When in Baguio Eats',
+      'click2serve': 'CLICK2SERVE Kiosk',
+      'client-project-tracker': 'ProjeX SaaS',
+    };
+
+    const sectionNames = {
+      about: 'About Section',
+      experience: 'Experience Section',
+      projects: 'Projects Section',
+      skills: 'Tech Stack',
+      contact: 'Contact Info',
+    };
+
     switch (action.type) {
       case 'OPEN_PROJECT':
-        return `[Project: ${action.target}]`;
+        return `View ${projectNames[action.target] || action.target}`;
       case 'SCROLL_TO':
-        return `[Section: ${action.target}]`;
+        return `Jump to ${sectionNames[action.target] || action.target}`;
       case 'HIGHLIGHT_SKILLS':
-        return `[Skills: ${action.highlightTags ? action.highlightTags.join(', ') : action.target}]`;
+        return `Highlight ${action.highlightTags && action.highlightTags[0] ? action.highlightTags[0] : 'Skills'}`;
       case 'OPEN_RESUME':
-        return '[View Resume]';
+        return 'View Resume';
       default:
-        return action.target || 'Navigate';
+        return action.target || 'Explore';
     }
   };
 
