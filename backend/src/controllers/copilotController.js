@@ -17,10 +17,22 @@ export async function handleMatch(req, res) {
 export async function handleChat(req, res) {
   try {
     const { message, history } = req.body;
-    if (!message || typeof message !== 'string' || message.trim().length < 2) {
+    if (!message || typeof message !== 'string' || message.trim().length < 1) {
       return res.status(400).json({ error: 'Please provide a valid message.' });
     }
-    const result = await chatCopilot(message.trim(), history || []);
+
+    // Sanitize conversation history: allow maximum 14 recent turns to stay token-efficient
+    const sanitizedHistory = Array.isArray(history)
+      ? history
+          .filter((item) => item && typeof item.content === 'string' && (item.role === 'user' || item.role === 'assistant'))
+          .slice(-14)
+          .map((item) => ({
+            role: item.role,
+            content: String(item.content).slice(0, 1500),
+          }))
+      : [];
+
+    const result = await chatCopilot(message.trim().slice(0, 1000), sanitizedHistory);
     res.json(result);
   } catch (error) {
     console.error('Copilot Chat Error:', error);
@@ -34,10 +46,11 @@ export async function handleExplain(req, res) {
     if (!projectId || !question) {
       return res.status(400).json({ error: 'Please provide both projectId and question.' });
     }
-    const result = await explainArchitecture(projectId, question.trim());
+    const result = await explainArchitecture(projectId, String(question).trim().slice(0, 500));
     res.json(result);
   } catch (error) {
     console.error('Copilot Explain Error:', error);
     res.status(500).json({ error: 'Failed to explain architecture. Please try again.' });
   }
 }
+

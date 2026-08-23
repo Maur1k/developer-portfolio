@@ -22,16 +22,22 @@ export function CopilotProvider({ children }) {
     setIsOpen(false);
   }, []);
 
+  // Allowed UI Action targets to prevent arbitrary execution
+  const ALLOWED_SECTIONS = ['about', 'experience', 'projects', 'skills', 'contact'];
+  const ALLOWED_PROJECTS = ['backops-wib', 'wibav3', 'click2serve', 'client-project-tracker'];
+
   /**
-   * Execute a UI action dispatched by the AI.
-   * Actions: SCROLL_TO, OPEN_PROJECT, HIGHLIGHT_SKILLS, OPEN_RESUME
+   * Execute a UI action dispatched by the AI with strict allowlist validation.
+   * Actions: SCROLL_TO, OPEN_PROJECT, HIGHLIGHT_SKILLS, OPEN_RESUME, SWITCH_TAB
    */
   const executeAction = useCallback((action) => {
-    if (!action) return;
+    if (!action || typeof action !== 'object') return;
 
     switch (action.type) {
       case 'SCROLL_TO': {
-        const el = document.getElementById(action.target);
+        const target = String(action.target || '').toLowerCase();
+        if (!ALLOWED_SECTIONS.includes(target)) return;
+        const el = document.getElementById(target);
         if (el) {
           const topOffset = el.getBoundingClientRect().top + window.scrollY - 20;
           window.scrollTo({ top: topOffset, behavior: 'smooth' });
@@ -39,8 +45,10 @@ export function CopilotProvider({ children }) {
         break;
       }
       case 'OPEN_PROJECT': {
+        const target = String(action.target || '').toLowerCase();
+        if (!ALLOWED_PROJECTS.includes(target)) return;
         // Set pendingAction so Projects.jsx can listen and open the modal
-        setPendingAction({ type: 'OPEN_PROJECT', projectId: action.target });
+        setPendingAction({ type: 'OPEN_PROJECT', projectId: target });
         // Also scroll to projects section
         const projectsEl = document.getElementById('projects');
         if (projectsEl) {
@@ -50,8 +58,9 @@ export function CopilotProvider({ children }) {
         break;
       }
       case 'HIGHLIGHT_SKILLS': {
-        if (action.highlightTags && action.highlightTags.length > 0) {
-          setHighlightedSkills(action.highlightTags);
+        if (Array.isArray(action.highlightTags) && action.highlightTags.length > 0) {
+          const sanitizedTags = action.highlightTags.map((t) => String(t).slice(0, 40));
+          setHighlightedSkills(sanitizedTags);
           // Auto-clear highlights after 6 seconds
           setTimeout(() => setHighlightedSkills([]), 6000);
         }
@@ -65,6 +74,12 @@ export function CopilotProvider({ children }) {
       }
       case 'OPEN_RESUME': {
         setPendingAction({ type: 'OPEN_RESUME' });
+        break;
+      }
+      case 'SWITCH_TAB': {
+        if (action.target === 'match' || action.target === 'explore') {
+          setActiveTab(action.target);
+        }
         break;
       }
       default:
