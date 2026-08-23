@@ -405,6 +405,23 @@ function generateLocalChatFallback(message, conversationHistory = []) {
     };
   }
 
+  // Case: Payments / PayMongo / GCash
+  if (m.includes('payment') || m.includes('paymongo') || m.includes('gcash') || m.includes('gateway') || m.includes('checkout') || m.includes('settlement')) {
+    return {
+      message: 'Maurik has verified production experience integrating **PayMongo** for end-to-end payment workflows:\n\n- **When in Baguio Eats Mobile (Flutter)**: Integrated secure **GCash QR generation** and automated in-app checkout reconciliation.\n- **Operations Dashboard (Node.js/React 19)**: Built automated **webhook listeners** for instant GCash, Maya, and credit/debit card transaction verification and settlement calculation.',
+      evidence: [
+        { projectId: 'backops-wib', projectName: 'When in Baguio Operations', highlight: 'PayMongo automated webhooks for GCash, Maya, & Cards' },
+        { projectId: 'wibav3', projectName: 'When in Baguio Eats', highlight: 'Flutter GCash QR checkout and payment flow' },
+      ],
+      confidence: 'confirmed',
+      actions: [
+        { type: 'OPEN_PROJECT', target: 'backops-wib' },
+        { type: 'HIGHLIGHT_SKILLS', target: 'skills', highlightTags: ['PayMongo', 'REST APIs'] },
+      ],
+      suggestedFollowUps: ['How were payment webhooks handled?', 'Tell me about the backend architecture', 'Show me the Flutter mobile app'],
+    };
+  }
+
   // Case: Experience / Baguio
   if (m.includes('baguio') || m.includes('experience') || m.includes('work') || m.includes('role') || m.includes('company')) {
     return {
