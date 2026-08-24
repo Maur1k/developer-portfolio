@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useCopilot } from '../context/CopilotContext';
+import { trackEvent } from '../services/analytics';
 
 export default function CopilotFloatingTrigger() {
   const { openCopilot, isOpen } = useCopilot();
@@ -16,7 +17,10 @@ export default function CopilotFloatingTrigger() {
     >
       <button
         type="button"
-        onClick={() => openCopilot('match')}
+        onClick={() => {
+          trackEvent('copilot_open', 'Floating Trigger');
+          openCopilot('match');
+        }}
         className="group flex items-center gap-2.5 px-3.5 py-2 rounded-full border border-zinc-800 bg-[#0d0e14]/90 hover:bg-[#14151f] hover:border-amber-500/40 text-zinc-300 hover:text-white shadow-xl backdrop-blur-md transition-all duration-200 cursor-pointer"
         title="Open Maurik AI Portfolio Copilot (Press M)"
       >

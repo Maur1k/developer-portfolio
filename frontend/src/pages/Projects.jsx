@@ -4,6 +4,7 @@ import { useCollectionData } from '../hooks/useFirestoreData';
 import { fallbackProjects, fallbackPlaygroundProjects } from '../data/fallbackPortfolio';
 import ProjectArchitectureAI from '../components/ProjectArchitectureAI';
 import { useCopilot } from '../context/CopilotContext';
+import { trackEvent } from '../services/analytics';
 
 function Icon({ name, className = 'h-4 w-4' }) {
   const paths = {
@@ -41,7 +42,7 @@ function Icon({ name, className = 'h-4 w-4' }) {
   );
 }
 
-function ActionButton({ href, children, icon, variant = 'secondary', disabledLabel }) {
+function ActionButton({ href, children, icon, variant = 'secondary', disabledLabel, projectTitle }) {
   const base = 'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 text-xs font-mono transition-all duration-200';
   const styles =
     variant === 'primary'
@@ -58,7 +59,15 @@ function ActionButton({ href, children, icon, variant = 'secondary', disabledLab
   }
 
   return (
-    <a href={href} target="_blank" rel="noreferrer" className={`${base} ${styles}`}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      onClick={() => {
+        trackEvent('project_click', projectTitle || 'Project Link', { url: href });
+      }}
+      className={`${base} ${styles}`}
+    >
       {icon}
       {children}
     </a>
@@ -652,13 +661,20 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(null);
   const { pendingAction, consumePendingAction } = useCopilot();
 
+  const handleOpenProject = (project) => {
+    if (project) {
+      trackEvent('project_view', project.title || project.name || 'Project');
+    }
+    setSelectedProject(project);
+  };
+
   useEffect(() => {
     if (pendingAction?.type === 'OPEN_PROJECT' && pendingAction?.projectId) {
       const match = allProjects.find((p) => p.id === pendingAction.projectId) ||
                     fallbackProjects.find((p) => p.id === pendingAction.projectId) ||
                     fallbackPlaygroundProjects.find((p) => p.id === pendingAction.projectId);
       if (match) {
-        setSelectedProject(match);
+        handleOpenProject(match);
       }
       consumePendingAction();
     }
@@ -780,29 +796,29 @@ export default function Projects() {
                 <div className="flex flex-wrap gap-2 pt-1">
                   <button
                     type="button"
-                    onClick={() => setSelectedProject(featuredProject)}
+                    onClick={() => handleOpenProject(featuredProject)}
                     className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-zinc-700 bg-white text-zinc-900 font-semibold px-4 text-xs font-mono hover:bg-zinc-200 transition-colors"
                   >
                     View Case Study ↗
                   </button>
 
                   {featuredProject.repositoryUrl && (
-                    <ActionButton href={featuredProject.repositoryUrl} icon={<Icon name="github" />}>
+                    <ActionButton href={featuredProject.repositoryUrl} projectTitle={featuredProject.title} icon={<Icon name="github" />}>
                       GitHub
                     </ActionButton>
                   )}
                   {featuredProject.appStoreUrl && (
-                    <ActionButton href={featuredProject.appStoreUrl} icon={<Icon name="external" />}>
+                    <ActionButton href={featuredProject.appStoreUrl} projectTitle={featuredProject.title} icon={<Icon name="external" />}>
                       App Store
                     </ActionButton>
                   )}
                   {featuredProject.playStoreUrl && (
-                    <ActionButton href={featuredProject.playStoreUrl} icon={<Icon name="external" />}>
+                    <ActionButton href={featuredProject.playStoreUrl} projectTitle={featuredProject.title} icon={<Icon name="external" />}>
                       Google Play
                     </ActionButton>
                   )}
                   {featuredProject.liveDemoUrl && (
-                    <ActionButton href={featuredProject.liveDemoUrl} icon={<Icon name="external" />}>
+                    <ActionButton href={featuredProject.liveDemoUrl} projectTitle={featuredProject.title} icon={<Icon name="external" />}>
                       Live Demo
                     </ActionButton>
                   )}
@@ -827,7 +843,7 @@ export default function Projects() {
               key={project.id || project.name}
               project={project}
               index={index + 1}
-              onLearnMore={setSelectedProject}
+              onLearnMore={handleOpenProject}
             />
           ))}
         </div>
@@ -855,7 +871,7 @@ export default function Projects() {
             <PlaygroundCard
               key={project.id || project.name}
               project={project}
-              onLearnMore={setSelectedProject}
+              onLearnMore={handleOpenProject}
             />
           ))}
         </div>

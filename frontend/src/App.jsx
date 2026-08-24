@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { CopilotProvider } from './context/CopilotContext';
+import { trackEvent } from './services/analytics';
 
 const AdminLayout = React.lazy(() => import('./admin/AdminApp'));
 const Login = React.lazy(() => import('./admin/AdminApp').then((module) => ({ default: module.Login })));
@@ -27,6 +28,13 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    if (!isAdminRoute) {
+      const pageName = isHomePage ? 'Home Portfolio' : location.pathname.replace('/', '');
+      trackEvent('page_view', pageName, { path: location.pathname });
+    }
+  }, [location.pathname, isAdminRoute, isHomePage]);
 
   return (
     <div className="min-h-screen bg-[#050507] text-[#ededed] flex flex-col selection:bg-orange-500 selection:text-black">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
+import { trackEvent } from '../services/analytics';
 
 export default function Contact() {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
@@ -11,6 +12,7 @@ export default function Contact() {
     if (profile.contact?.email) {
       navigator.clipboard.writeText(profile.contact.email);
       setCopied(true);
+      trackEvent('contact_click', 'Email Copied');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -60,6 +62,7 @@ export default function Contact() {
             <div className="flex gap-2 mt-4 pt-3 border-t border-zinc-900">
               <a
                 href={`mailto:${profile.contact?.email}`}
+                onClick={() => trackEvent('contact_click', 'Send Email Link')}
                 className="flex-1 inline-flex h-8 items-center justify-center gap-1 rounded bg-zinc-100 text-zinc-900 text-xs font-mono font-medium hover:bg-white transition"
               >
                 Send Email ↗
@@ -91,6 +94,7 @@ export default function Contact() {
             <div className="flex gap-2 mt-4 pt-3 border-t border-zinc-900">
               <a
                 href={`tel:${profile.contact?.phone?.replace(/\s+/g, '')}`}
+                onClick={() => trackEvent('contact_click', 'Phone Link')}
                 className="flex-1 inline-flex h-8 items-center justify-center gap-1 rounded border border-zinc-800 bg-[#121318] text-zinc-200 text-xs font-mono font-medium hover:bg-zinc-800 transition"
               >
                 Call / Message ↗
@@ -116,6 +120,7 @@ export default function Contact() {
                 href={profile.socialLinks.linkedin}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('linkedin_click', 'Contact Section')}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-700 hover:text-white text-xs font-mono text-zinc-300 transition"
               >
                 <span className="text-blue-400">in</span>
@@ -128,6 +133,7 @@ export default function Contact() {
                 href={profile.socialLinks.github}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('github_click', 'Contact Section')}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-700 hover:text-white text-xs font-mono text-zinc-300 transition"
               >
                 <span>GitHub</span>
@@ -139,6 +145,7 @@ export default function Contact() {
                 href={profile.socialLinks.jobstreet}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('contact_click', 'JobStreet')}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-700 hover:text-white text-xs font-mono text-zinc-300 transition"
               >
                 <span className="text-purple-400">JS</span>

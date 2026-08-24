@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackEvent } from '../services/analytics';
 
 export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/Resume.jpg' }) {
   const [hasError, setHasError] = useState(false);
@@ -13,6 +14,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/Resum
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
       setHasError(false);
+      trackEvent('resume_view', 'Resume Modal Opened');
     }
 
     return () => {
@@ -76,6 +78,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/Resum
                 download={downloadFilename}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('resume_download', downloadFilename)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-700 bg-white text-zinc-950 text-xs font-mono font-medium hover:bg-zinc-200 transition"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -88,6 +91,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/Resum
                 href={resumeUrl}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('resume_view', 'Resume Full Tab')}
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900 text-xs font-mono text-zinc-300 hover:text-white transition"
                 title="Open in new tab"
               >

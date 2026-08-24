@@ -1,4 +1,5 @@
 import React from 'react';
+import { trackEvent } from '../services/analytics';
 
 export default function Sidebar({ profile, activeSection, onNavigate, onOpenResume, onOpenPhoto }) {
   const navLinks = [
@@ -94,6 +95,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
             </svg>
             <a
               href={`mailto:${profile?.contact?.email || 'maurikfernandez123@gmail.com'}`}
+              onClick={() => trackEvent('contact_click', 'Sidebar Email')}
               className="hover:text-zinc-200 transition-colors truncate"
             >
               {profile?.contact?.email || 'maurikfernandez123@gmail.com'}
@@ -105,6 +107,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
             </svg>
             <a
               href={`tel:${(profile?.contact?.phone || '+639277975100').replace(/\s+/g, '')}`}
+              onClick={() => trackEvent('contact_click', 'Sidebar Phone')}
               className="hover:text-zinc-200 transition-colors"
             >
               {profile?.contact?.phone || '+63 927 797 5100'}
@@ -116,7 +119,10 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
         <div className="pt-1">
           <button
             type="button"
-            onClick={() => onNavigate('contact')}
+            onClick={() => {
+              trackEvent('contact_click', 'Sidebar Get In Touch');
+              onNavigate('contact');
+            }}
             className="w-full inline-flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800/80 hover:border-zinc-700 text-zinc-200 text-xs sm:text-sm font-medium transition-all duration-200 group"
           >
             <span className="flex items-center gap-2">
@@ -139,7 +145,10 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
               <button
                 key={link.id}
                 type="button"
-                onClick={() => onNavigate(link.id)}
+                onClick={() => {
+                  trackEvent('page_view', `Section: ${link.label}`);
+                  onNavigate(link.id);
+                }}
                 className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-mono transition-colors text-left ${
                   isActive
                     ? 'text-white bg-zinc-800/50 font-semibold'
@@ -158,7 +167,10 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
       <div className="pt-6 border-t border-zinc-900 flex items-center justify-between gap-2.5">
         <button
           type="button"
-          onClick={onOpenResume}
+          onClick={() => {
+            trackEvent('resume_view', 'Sidebar Resume Button');
+            onOpenResume();
+          }}
           className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition-colors cursor-pointer"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -172,6 +184,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
           href={linkedinUrl}
           target="_blank"
           rel="noreferrer"
+          onClick={() => trackEvent('linkedin_click', 'Sidebar')}
           aria-label="LinkedIn"
           className="p-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
         >
@@ -186,6 +199,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
             href={profile.socialLinks.github}
             target="_blank"
             rel="noreferrer"
+            onClick={() => trackEvent('github_click', 'Sidebar')}
             aria-label="GitHub"
             className="p-2 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
           >
