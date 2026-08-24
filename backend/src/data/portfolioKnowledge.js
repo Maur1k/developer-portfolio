@@ -1,10 +1,10 @@
 export const portfolioKnowledge = {
   profile: {
     name: 'Maurik Angelo L. Fernandez',
-    title: 'Software Developer',
-    subtitle: 'Full Stack · Web · Mobile',
+    title: 'Software Developer | Full-Stack & AI-Assisted Development',
+    subtitle: 'Full Stack · Web · Mobile · AI-Assisted Development',
     location: 'Urdaneta City, Pangasinan, Philippines',
-    education: 'BS Information Technology, Major in Web and Mobile Technologies — Pangasinan State University, Urdaneta Campus (Graduated July 2026)',
+    education: 'BS Information Technology, Major in Web and Mobile Technologies — Pangasinan State University, Urdaneta Campus (2022–2026)',
     availability: 'Open to Opportunities',
     contact: {
       email: 'maurikfernandez123@gmail.com',
@@ -14,15 +14,17 @@ export const portfolioKnowledge = {
       linkedin: 'https://www.linkedin.com/in/maurik-angelo-fernandez-ab835716a/',
       github: 'https://github.com/Maur1k',
     },
-    coreSummary: 'Full-stack software developer with production engineering experience building high-performance web dashboards in React 19 and Node.js, cross-platform mobile apps in Flutter serving 60,000+ users, and decoupled REST APIs with Laravel and MySQL.',
+    coreSummary: 'Full-stack software developer experienced in building and shipping production systems across web and mobile using React, Node.js, Laravel, PHP, MySQL, Firebase, and Flutter. Highly proficient in AI-accelerated engineering, seamlessly integrating AI-assisted and agentic workflows (Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, Gemini) into technical research, rapid implementation, debugging, documentation, and refactoring while maintaining complete ownership of architectural decisions and shipped code quality.',
   },
   skills: {
-    frontend: ['React', 'React 19', 'React Native', 'JavaScript (ES6+)', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion', 'HTML5/CSS3'],
-    mobile: ['Flutter', 'Dart', 'Android (Google Play)', 'iOS (App Store)', 'Provider State Management', 'Cross-Platform UI Architecture'],
-    backend: ['Node.js', 'Express', 'Laravel', 'PHP', 'REST APIs', 'Middleware Design', 'CRUD Systems', 'API Security'],
-    database: ['MySQL', 'Relational Schema Design', 'Compound Indexing', 'Keyset Pagination', 'LRU In-Memory Caching', 'Firebase Firestore', 'Realtime Database'],
+    languages: ['PHP', 'JavaScript', 'Dart', 'Java', 'Python'],
+    frontendAndMobile: ['React', 'React 19', 'Flutter', 'Tailwind CSS', 'Vite', 'TypeScript', 'Framer Motion', 'HTML5/CSS3'],
+    backend: ['Node.js', 'Express.js', 'Laravel', 'PHP', 'REST APIs', 'Middleware Design', 'cPanel', 'API Security'],
+    databases: ['MySQL', 'MongoDB', 'Firebase Firestore', 'Realtime Database', 'Relational Schema Design', 'Compound Indexing', 'Keyset Pagination', 'LRU In-Memory Caching'],
+    aiAssistedDevelopment: ['Cursor', 'GitHub Copilot', 'Claude Code', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'Prompt Engineering', 'Rapid AI Prototyping', 'AI Debugging & Refactoring'],
+    practices: ['Unit Testing', 'Code Review', 'Technical Documentation', 'Agile Development', 'API Integration', 'Testing & Debugging'],
     apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS', 'Google Maps API', 'Axios', 'Postman'],
-    toolsAndDevOps: ['Git', 'GitHub', 'Vite', 'Postman', 'Composer', 'npm', 'Swagger/OpenAPI', 'VS Code', 'Cursor AI', 'Claude Code', 'Gemini'],
+    developmentTools: ['Git', 'GitHub', 'Postman', 'VS Code', 'cPanel', 'Vite'],
   },
   experience: [
     {
@@ -196,11 +198,17 @@ export const portfolioKnowledge = {
   ],
   boundaries: {
     confirmedProduction: [
-      'React', 'React 19', 'JavaScript', 'TypeScript', 'Flutter', 'Dart', 'Node.js', 'Express',
-      'Laravel', 'PHP', 'MySQL', 'Firebase (FCM, Firestore, Auth)', 'PayMongo (GCash, Cards)',
-      'Leaflet GIS', 'Google Maps API', 'REST APIs', 'Vite', 'Tailwind CSS', 'Git'
+      'React', 'React 19', 'JavaScript', 'TypeScript', 'Flutter', 'Dart', 'Node.js', 'Express.js',
+      'Laravel', 'PHP', 'MySQL', 'MongoDB', 'Firebase (FCM, Firestore, Auth)', 'PayMongo (GCash, Cards)',
+      'Leaflet GIS', 'Google Maps API', 'REST APIs', 'Vite', 'Tailwind CSS', 'Git', 'GitHub',
+      'Python', 'Java', 'AI-Assisted Development', 'Cursor', 'Claude Code', 'GitHub Copilot',
+      'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'AI-Accelerated Engineering', 'cPanel'
     ],
     transferable: [
+      {
+        skill: 'AI / LLM Frameworks (LangChain, LlamaIndex, pgvector, AI Agents)',
+        basis: 'Extensive hands-on daily experience with AI-assisted and agentic development workflows (Cursor, Claude Code, Codex, Copilot, ChatGPT, Gemini), prompt engineering, Python/Node.js API integration, and architectural verification enables rapid adoption of LangChain, LlamaIndex, and vector databases.',
+      },
       {
         skill: 'PostgreSQL',
         basis: 'Strong relational modeling, indexing, and SQL query optimization in MySQL directly transfers.',
@@ -223,9 +231,9 @@ export const portfolioKnowledge = {
       },
     ],
     notUsedInProduction: [
-      'PostgreSQL', 'MongoDB', 'Redis', 'Kubernetes', 'Docker', 'AWS', 'Azure', 'GCP',
-      'GraphQL', 'Next.js', 'Vue.js', 'Angular', 'Django', 'Python', 'Go', 'Rust',
-      'Java', 'Spring Boot', 'Microservices architecture', 'CI/CD pipelines', 'Terraform', 'Kafka', 'Stripe'
+      'PostgreSQL', 'Redis', 'Kubernetes', 'Docker', 'AWS', 'Azure', 'GCP',
+      'GraphQL', 'Next.js', 'Vue.js', 'Angular', 'Django', 'Go', 'Rust',
+      'Spring Boot', 'Microservices architecture', 'CI/CD pipelines', 'Terraform', 'Kafka', 'Stripe'
     ],
     disclaimer: 'Maurik has NOT used these technologies in production. If asked about them, clearly state they are not documented in his production work. Then discuss how his verified skills transfer without claiming false experience.',
   },

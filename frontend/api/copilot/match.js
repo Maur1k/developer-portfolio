@@ -3,17 +3,18 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const portfolioKnowledge = {
   profile: {
     name: 'Maurik Angelo L. Fernandez',
-    title: 'Software Developer',
-    subtitle: 'Full Stack · Web · Mobile',
+    title: 'Software Developer | Full-Stack & AI-Assisted Development',
+    subtitle: 'Full Stack · Web · Mobile · AI-Assisted Development',
     location: 'Urdaneta City, Pangasinan, Philippines',
-    education: 'BS Information Technology, Major in Web and Mobile Technologies — Pangasinan State University, Urdaneta Campus (Graduated July 2026)',
+    education: 'BS Information Technology, Major in Web and Mobile Technologies — Pangasinan State University, Urdaneta Campus (2022–2026)',
     availability: 'Open to Opportunities',
   },
   skills: {
-    frontend: ['React', 'React 19', 'JavaScript (ES6+)', 'TypeScript', 'Vite', 'Tailwind CSS'],
-    mobile: ['Flutter', 'Dart', 'Android', 'iOS', 'Provider State Management'],
-    backend: ['Node.js', 'Express', 'Laravel', 'PHP', 'REST APIs'],
-    database: ['MySQL', 'Relational Schema Design', 'Compound Indexing', 'Keyset Pagination', 'Firebase'],
+    languages: ['PHP', 'JavaScript', 'Dart', 'Java', 'Python'],
+    frontendAndMobile: ['React', 'React 19', 'Flutter', 'Tailwind CSS', 'Vite', 'TypeScript'],
+    backend: ['Node.js', 'Express.js', 'Laravel', 'PHP', 'REST APIs', 'cPanel'],
+    databases: ['MySQL', 'MongoDB', 'Firebase Firestore', 'Realtime Database'],
+    aiAssistedDevelopment: ['Cursor', 'GitHub Copilot', 'Claude Code', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'Prompt Engineering'],
     apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS'],
   },
   projects: [
@@ -26,6 +27,7 @@ const portfolioKnowledge = {
         'Sub-100ms dashboard queries via keyset pagination & LRU caching.',
         'High-reliability FCM HTTP v1 push pipeline with token normalization.',
         'PayMongo webhook reconciliation for GCash, Maya, and card transactions.',
+        'Applied AI-assisted workflows for rapid production delivery while retaining architectural control.',
       ],
     },
     {
@@ -37,6 +39,7 @@ const portfolioKnowledge = {
         '60,000+ active users across Google Play and App Store.',
         '99.2% crash-free session rate.',
         'Provider cart persistence reducing checkout latency by 40%.',
+        'Agentic AI workflows to accelerate debugging and feature implementation.',
       ],
     },
     {
@@ -56,7 +59,7 @@ const portfolioKnowledge = {
   ],
 };
 
-const SYSTEM_PROMPT = `You are Maurik AI, the portfolio copilot and technical representative for Maurik Angelo L. Fernandez. Evaluate Maurik against job descriptions strictly using verified portfolio data. Do NOT use emojis.`;
+const SYSTEM_PROMPT = `You are Maurik AI, the portfolio copilot and technical representative for Maurik Angelo L. Fernandez. Evaluate Maurik against job descriptions strictly using verified portfolio data. Recognize his dual strengths in full-stack web/mobile engineering and AI-assisted/agentic engineering workflows (Cursor, Claude Code, Copilot, Codex). Do NOT use emojis.`;
 const FREE_TIER_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
 
 export default async function handler(req, res) {
@@ -93,7 +96,7 @@ Evaluate Maurik against it strictly based on the portfolio data. Return ONLY val
   "transferableSkills": [
     {
       "skill": "<requested skill>",
-      "bridge": "<how verified skills bridge this, e.g. MySQL -> PostgreSQL, PayMongo -> Stripe>"
+      "bridge": "<how verified skills bridge this, e.g. AI-assisted workflows & Python -> LangChain/LlamaIndex, MySQL -> PostgreSQL, PayMongo -> Stripe>"
     }
   ],
   "gaps": [
@@ -137,16 +140,17 @@ Evaluate Maurik against it strictly based on the portfolio data. Return ONLY val
 
   // Fallback
   return res.status(200).json({
-    matchScore: 88,
-    headline: 'Strong match across Full-Stack Web (React 19/Node.js) and Mobile (Flutter) production engineering.',
+    matchScore: 92,
+    headline: 'Strong match across Full-Stack Web (React 19/Node.js), Mobile (Flutter), and AI-Assisted Agentic Workflows.',
     strongMatches: [
+      { skill: 'AI-Assisted & Agentic Workflows', evidence: 'AI-augmented developer integrating Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, and Gemini for rapid research, debugging, and production delivery.', projectId: 'backops-wib', confidence: 'production' },
       { skill: 'React & Frontend Architecture', evidence: 'Architected V2 Operations Dashboard in React 19 with Vite, keyset pagination, and sub-100ms loads.', projectId: 'backops-wib', confidence: 'production' },
       { skill: 'Mobile Development (Flutter)', evidence: 'Re-architected When in Baguio Eats customer app for 60,000+ users with 99.2% crash-free rate.', projectId: 'wibav3', confidence: 'production' },
-      { skill: 'Backend REST APIs & Databases', evidence: 'Node.js & Express REST APIs, MySQL schema design, indexing, and PayMongo payment webhooks.', projectId: 'backops-wib', confidence: 'production' },
+      { skill: 'Backend REST APIs & Databases', evidence: 'Node.js & Express REST APIs, MySQL, MongoDB, and PayMongo payment webhooks.', projectId: 'backops-wib', confidence: 'production' },
     ],
     transferableSkills: [
+      { skill: 'LangChain / AI Agent Frameworks', bridge: 'Deep daily experience with AI-assisted and agentic development (Cursor, Claude Code, Codex, Copilot) combined with Python and Node.js REST API engineering enables rapid adoption of LangChain and agentic orchestration.' },
       { skill: 'PostgreSQL', bridge: 'Relational data modeling, compound indexing, and SQL optimization from MySQL transfer directly.' },
-      { skill: 'Next.js', bridge: 'Deep component lifecycle and React 19 / Vite SPA experience enable rapid SSR adaptation.' },
       { skill: 'Stripe', bridge: 'PayMongo webhook handling, tokenization, and QR workflows directly map to Stripe integration patterns.' },
     ],
     gaps: [],
@@ -154,6 +158,6 @@ Evaluate Maurik against it strictly based on the portfolio data. Return ONLY val
       { projectId: 'backops-wib', name: 'When in Baguio — Operations & Dispatch Platform', relevance: 'Real-time dispatch board, React 19, Node.js, and MySQL with sub-100ms response times.' },
       { projectId: 'wibav3', name: 'When in Baguio Eats — Customer Mobile App', relevance: 'Production Flutter mobile app deployed to 60,000+ users across iOS and Android.' },
     ],
-    recommendation: 'Maurik demonstrates strong technical depth in full-stack web and cross-platform mobile systems with verified production impact.',
+    recommendation: 'Maurik demonstrates exceptional versatility as a full-stack engineer and AI-augmented developer capable of shipping high-impact software at rapid velocity.',
   });
 }

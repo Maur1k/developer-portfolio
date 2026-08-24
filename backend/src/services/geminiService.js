@@ -260,11 +260,15 @@ function generateLocalMatchFallback(jd) {
   const gaps = [];
 
   const checks = [
+    { skill: 'AI-Assisted & Agentic Workflows', key: 'ai', proj: 'backops-wib', evidence: 'AI-augmented software developer integrating Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, and Gemini for accelerated technical research, implementation, and architectural validation.' },
+    { skill: 'AI-Assisted Development (Cursor/Claude/Copilot)', key: 'cursor', proj: 'backops-wib', evidence: 'Daily agentic and AI-assisted workflows accelerating feature implementation, debugging, and refactoring while maintaining strict code quality.' },
     { skill: 'React / React 19', key: 'react', proj: 'backops-wib', evidence: 'Architected V2 Operations Dashboard with React 19, Vite, and live dispatch board.' },
     { skill: 'Flutter & Mobile Development', key: 'flutter', proj: 'wibav3', evidence: 'Re-architected When in Baguio Eats customer app for 60,000+ users with 99.2% crash-free rate.' },
     { skill: 'Node.js & Express REST APIs', key: 'node', proj: 'backops-wib', evidence: 'Modernized backend REST endpoints with LRU caching, keyset pagination, and sub-100ms loads.' },
     { skill: 'Laravel & PHP Backend', key: 'laravel', proj: 'client-project-tracker', evidence: 'Built decoupled REST API backend with form request validation and Eloquent ORM.' },
     { skill: 'MySQL & Relational Data', key: 'mysql', proj: 'backops-wib', evidence: 'Designed relational schemas, compound indexes, and optimized query pipelines.' },
+    { skill: 'MongoDB & Document Databases', key: 'mongo', proj: 'client-project-tracker', evidence: 'Proficient in document database schema design, querying, and integration.' },
+    { skill: 'Python Programming', key: 'python', proj: 'backops-wib', evidence: 'Core language proficiency in Python for scripting, rapid prototyping, and backend integrations.' },
     { skill: 'Firebase & Push Notifications', key: 'firebase', proj: 'backops-wib', evidence: 'Engineered high-reliability FCM HTTP v1 notification pipelines with token normalization.' },
     { skill: 'Payment Gateways & Webhooks', key: 'payment', proj: 'backops-wib', evidence: 'Integrated PayMongo automated webhooks for GCash, Maya, and card transaction settlement.' },
     { skill: 'Geospatial & Mapping (GIS)', key: 'map', proj: 'backops-wib', evidence: 'Implemented Leaflet GIS polygon validation and Haversine distance mountain surcharges.' },
@@ -277,6 +281,9 @@ function generateLocalMatchFallback(jd) {
   }
 
   const transferableChecks = [
+    { key: 'langchain', skill: 'LangChain / AI Agent Frameworks', bridge: 'Deep daily experience with AI-assisted and agentic development (Cursor, Claude Code, OpenAI Codex, Copilot) combined with Python and Node.js REST API engineering enables rapid adoption of LangChain and agentic orchestration.' },
+    { key: 'llama', skill: 'LlamaIndex / RAG Pipelines', bridge: 'Strong understanding of prompt engineering, context window management, and structured JSON output from LLM integrations.' },
+    { key: 'vector', skill: 'Vector Databases / Embeddings', bridge: 'Relational data modeling, query optimization, and fast indexing background easily transfers to vector search and embedding retrieval.' },
     { key: 'postgresql', skill: 'PostgreSQL', bridge: 'Relational data modeling, compound indexing, and SQL optimization from MySQL transfer directly.' },
     { key: 'next.js', skill: 'Next.js', bridge: 'Deep component lifecycle and React 19 / Vite SPA experience enable fast SSR/Next.js onboarding.' },
     { key: 'nextjs', skill: 'Next.js', bridge: 'Deep component lifecycle and React 19 / Vite SPA experience enable fast SSR/Next.js onboarding.' },
@@ -295,8 +302,8 @@ function generateLocalMatchFallback(jd) {
     { key: 'kubernetes', name: 'Kubernetes' },
     { key: 'aws', name: 'AWS' },
     { key: 'graphql', name: 'GraphQL' },
-    { key: 'python', name: 'Python / Django' },
     { key: 'golang', name: 'Go' },
+    { key: 'rust', name: 'Rust' },
   ];
 
   for (const g of gapChecks) {
@@ -328,9 +335,23 @@ function generateLocalMatchFallback(jd) {
 
 function generateLocalChatFallback(message, conversationHistory = []) {
   const m = (message || '').toLowerCase();
-
-  // Inspect recent context for follow-up questions
   const lastUserMsg = conversationHistory.slice(-2).find((h) => h.role === 'user')?.content?.toLowerCase() || '';
+
+  // Case: AI-Assisted Development / Agentic Workflows
+  if (m.includes('ai') || m.includes('cursor') || m.includes('claude') || m.includes('copilot') || m.includes('codex') || m.includes('agent') || m.includes('chatgpt') || m.includes('gemini') || m.includes('llm')) {
+    return {
+      message: 'Maurik is an **AI-augmented software developer** who integrates AI-assisted and agentic workflows into daily production engineering:\n\n- **AI Tooling Mastery**: Daily use of **Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, and Gemini** for rapid implementation, in-depth technical research, and automated debugging.\n- **Agentic Workflow Integration**: Uses AI agents to explore unfamiliar codebases, scaffold complex architectures, and automate repetitive tasks while maintaining **complete ownership of technical decisions, code reviews, and shipped quality**.\n- **High Engineering Velocity**: Leverages AI to dramatically compress development cycles without compromising architecture, test coverage, or production stability.',
+      evidence: [
+        { projectId: 'backops-wib', projectName: 'When in Baguio Operations', highlight: 'Rapid full-stack delivery with AI-assisted workflows & Node.js/React 19' },
+        { projectId: 'wibav3', projectName: 'When in Baguio Eats', highlight: 'Accelerated Flutter debugging & FCM push notification pipeline architecture' },
+      ],
+      confidence: 'confirmed',
+      actions: [
+        { type: 'HIGHLIGHT_SKILLS', target: 'skills', highlightTags: ['Cursor', 'Claude Code', 'GitHub Copilot', 'OpenAI Codex'] },
+      ],
+      suggestedFollowUps: ['How does Maurik maintain code quality with AI?', 'What is his core tech stack?', 'Show me the Flutter mobile app'],
+    };
+  }
 
   // Case: Mobile / Flutter
   if (m.includes('mobile') || m.includes('flutter') || m.includes('ios') || m.includes('android') || (m.includes('app') && !m.includes('web'))) {

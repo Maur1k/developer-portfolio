@@ -3,24 +3,26 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const portfolioKnowledge = {
   profile: {
     name: 'Maurik Angelo L. Fernandez',
-    title: 'Software Developer',
-    subtitle: 'Full Stack · Web · Mobile',
+    title: 'Software Developer | Full-Stack & AI-Assisted Development',
+    subtitle: 'Full Stack · Web · Mobile · AI-Assisted Development',
     location: 'Urdaneta City, Pangasinan, Philippines',
-    education: 'BS Information Technology, Major in Web and Mobile Technologies — Pangasinan State University, Urdaneta Campus (Graduated July 2026)',
+    education: 'BS Information Technology, Major in Web and Mobile Technologies — Pangasinan State University, Urdaneta Campus (2022–2026)',
     availability: 'Open to Opportunities',
     contact: {
       email: 'maurikfernandez123@gmail.com',
       phone: '+63 927 797 5100',
     },
-    coreSummary: 'Full-stack software developer with production engineering experience building high-performance web dashboards in React 19 and Node.js, cross-platform mobile apps in Flutter serving 60,000+ users, and decoupled REST APIs with Laravel and MySQL.',
+    coreSummary: 'Full-stack software developer experienced in building and shipping production systems across web and mobile using React, Node.js, Laravel, PHP, MySQL, Firebase, and Flutter. Highly proficient in AI-accelerated engineering, seamlessly integrating AI-assisted and agentic workflows (Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, Gemini) into technical research, rapid implementation, debugging, documentation, and refactoring while maintaining complete ownership of architectural decisions and shipped code quality.',
   },
   skills: {
-    frontend: ['React', 'React 19', 'JavaScript (ES6+)', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion'],
-    mobile: ['Flutter', 'Dart', 'Android (Google Play)', 'iOS (App Store)', 'Provider State Management'],
-    backend: ['Node.js', 'Express', 'Laravel', 'PHP', 'REST APIs', 'Middleware Design'],
-    database: ['MySQL', 'Relational Schema Design', 'Compound Indexing', 'Keyset Pagination', 'LRU Caching', 'Firebase Firestore'],
-    apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS', 'Google Maps API'],
-    toolsAndDevOps: ['Git', 'GitHub', 'Vite', 'Postman', 'VS Code', 'Gemini'],
+    languages: ['PHP', 'JavaScript', 'Dart', 'Java', 'Python'],
+    frontendAndMobile: ['React', 'React 19', 'Flutter', 'Tailwind CSS', 'Vite', 'TypeScript', 'Framer Motion', 'HTML5/CSS3'],
+    backend: ['Node.js', 'Express.js', 'Laravel', 'PHP', 'REST APIs', 'Middleware Design', 'cPanel', 'API Security'],
+    databases: ['MySQL', 'MongoDB', 'Firebase Firestore', 'Realtime Database', 'Relational Schema Design', 'Compound Indexing', 'Keyset Pagination', 'LRU In-Memory Caching'],
+    aiAssistedDevelopment: ['Cursor', 'GitHub Copilot', 'Claude Code', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'Prompt Engineering', 'Rapid AI Prototyping', 'AI Debugging & Refactoring'],
+    practices: ['Unit Testing', 'Code Review', 'Technical Documentation', 'Agile Development', 'API Integration', 'Testing & Debugging'],
+    apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS', 'Google Maps API', 'Axios', 'Postman'],
+    developmentTools: ['Git', 'GitHub', 'Postman', 'VS Code', 'cPanel', 'Vite'],
   },
   projects: [
     {
@@ -34,6 +36,7 @@ const portfolioKnowledge = {
         'High-reliability FCM HTTP v1 push pipeline with token normalization — zero dropped notifications.',
         'Interactive geospatial delivery zone polygon mapping and mountain route surcharge calculations using Leaflet GIS.',
         'Instant PayMongo webhook reconciliation for GCash, Maya, and credit/debit card transactions.',
+        'Leveraged AI-assisted workflows for rapid full-stack iteration while retaining architectural ownership.',
       ],
     },
     {
@@ -47,6 +50,7 @@ const portfolioKnowledge = {
         'Maintains a 99.2% crash-free session rate across diverse Android and iOS hardware.',
         'Offline-first Provider cart persistence reducing checkout latency by 40%.',
         'Seamless GCash QR and PayMongo payment integration with automatic payment reconciliation.',
+        'Used agentic AI workflows to accelerate debugging, investigate unfamiliar issues, and rapidly ship releases.',
       ],
     },
     {
@@ -77,33 +81,61 @@ const portfolioKnowledge = {
   ],
   boundaries: {
     confirmedProduction: [
-      'React', 'React 19', 'JavaScript', 'TypeScript', 'Flutter', 'Dart', 'Node.js', 'Express',
-      'Laravel', 'PHP', 'MySQL', 'Firebase (FCM, Firestore)', 'PayMongo (GCash, Cards)',
-      'Leaflet GIS', 'Google Maps API', 'REST APIs', 'Vite', 'Tailwind CSS', 'Git'
+      'React', 'React 19', 'JavaScript', 'TypeScript', 'Flutter', 'Dart', 'Node.js', 'Express.js',
+      'Laravel', 'PHP', 'MySQL', 'MongoDB', 'Firebase (FCM, Firestore, Auth)', 'PayMongo (GCash, Cards)',
+      'Leaflet GIS', 'Google Maps API', 'REST APIs', 'Vite', 'Tailwind CSS', 'Git', 'GitHub',
+      'Python', 'Java', 'AI-Assisted Development', 'Cursor', 'Claude Code', 'GitHub Copilot',
+      'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'AI-Accelerated Engineering', 'cPanel'
+    ],
+    transferable: [
+      {
+        skill: 'AI / LLM Frameworks (LangChain, LlamaIndex, pgvector, AI Agents)',
+        basis: 'Extensive daily hands-on experience with AI-assisted and agentic development (Cursor, Claude Code, Codex, Copilot, ChatGPT, Gemini), prompt engineering, Python/Node.js API integration, and architectural verification enables rapid adoption of LangChain, LlamaIndex, and vector databases.',
+      },
+      {
+        skill: 'PostgreSQL',
+        basis: 'Strong relational modeling, indexing, and SQL query optimization in MySQL directly transfers.',
+      },
+      {
+        skill: 'Next.js / SSR',
+        basis: 'Deep production experience in React 19, Vite, and component lifecycle makes Next.js adaptation seamless.',
+      },
+      {
+        skill: 'React Native',
+        basis: 'Extensive React fundamentals combined with native iOS/Android mobile architecture from Flutter.',
+      },
+      {
+        skill: 'Docker / Containerization',
+        basis: 'Solid understanding of Node/PHP environments and environment parity; fast learner on container tooling.',
+      },
+      {
+        skill: 'Stripe / Other Payment Gateways',
+        basis: 'Production webhook reconciliation and QR payment integration with PayMongo directly translates to Stripe workflows.',
+      },
     ],
     notUsedInProduction: [
-      'PostgreSQL', 'MongoDB', 'Redis', 'Kubernetes', 'Docker', 'AWS', 'Azure', 'GCP',
-      'GraphQL', 'Next.js', 'Vue.js', 'Angular', 'Django', 'Python', 'Go', 'Rust',
-      'Java', 'Spring Boot', 'Microservices architecture', 'CI/CD pipelines', 'Terraform', 'Kafka', 'Stripe'
+      'PostgreSQL', 'Redis', 'Kubernetes', 'Docker', 'AWS', 'Azure', 'GCP',
+      'GraphQL', 'Next.js', 'Vue.js', 'Angular', 'Django', 'Go', 'Rust',
+      'Spring Boot', 'Microservices architecture', 'CI/CD pipelines', 'Terraform', 'Kafka', 'Stripe'
     ],
   },
 };
 
-const SYSTEM_PROMPT = `You are Maurik AI, the portfolio copilot and technical representative for Maurik Angelo L. Fernandez — a Software Developer specializing in Full-Stack Web and Mobile Development.
+const SYSTEM_PROMPT = `You are Maurik AI, the portfolio copilot and technical representative for Maurik Angelo L. Fernandez — a Software Developer specializing in Full-Stack Web and Mobile Development, and an AI-augmented developer proficient in AI-assisted & agentic workflows.
 
 Your purpose is to help recruiters, hiring managers, and engineers evaluate Maurik's qualifications, explore his projects, inspect his code architecture, and verify his hands-on experience.
 
 ## CORE PERSONA & COMMUNICATION RULES
 - Professional, direct, articulate, and evidence-driven.
-- Confident but honest. Avoid empty marketing buzzwords and fake enthusiasm (do NOT say "Awesome question!", "Sure thing!", etc.).
+- Confident but honest. Avoid empty marketing buzzwords and informal jargon.
 - Do NOT use emojis anywhere in your messages or actions. Keep text clean and engineering-grade.
 - Format messages using Markdown (bullet points, bold highlights, concise inline code where relevant).
 - Be concise by default (2-4 punchy paragraphs or structured bullet points).
 
 ## EVIDENCE-FIRST ACCURACY RULES
-1. CONFIRMED EXPERIENCE: Only claim production experience for technologies documented in the PORTFOLIO DATA. Always cite the specific project name, metric, or technical responsibility.
-2. TRANSFERABLE EXPERIENCE: If asked about adjacent technologies (e.g. PostgreSQL, Next.js, React Native, Docker, Stripe), explicitly state: "This is not explicitly documented in Maurik's production work, but his strong background in [related technology e.g. MySQL / React 19 / PayMongo] provides a fast learning curve."
-3. MISSING / UNDOCUMENTED EXPERIENCE: If asked about technologies Maurik has NOT used (e.g. Kubernetes, AWS, GraphQL, Python, Go, Java Spring Boot), clearly state: "Maurik does not have documented experience with this technology in his portfolio." Never invent companies, certifications, or projects.
+1. CONFIRMED EXPERIENCE: Maurik has confirmed production experience in React 19, Node.js, Flutter, Laravel, PHP, MySQL, MongoDB, Python, Firebase, and daily mastery of AI-assisted & agentic workflows (Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, Gemini). Always cite the specific project name, metric, or technical responsibility.
+2. TRANSFERABLE EXPERIENCE: If asked about adjacent technologies (e.g. LangChain, LlamaIndex, pgvector, PostgreSQL, Next.js, React Native, Docker, Stripe), highlight his strong foundational background (e.g. AI-assisted development mastery, Python/Node.js, MySQL, PayMongo) providing a rapid ramp-up curve.
+3. MISSING / UNDOCUMENTED EXPERIENCE: If asked about technologies Maurik has NOT used (e.g. Kubernetes, AWS, GraphQL, Go, Java Spring Boot, Rust), clearly state: "Maurik does not have documented production experience with this technology in his portfolio." Never invent companies or certifications.
 4. ACTION DISPATCH: You can recommend UI actions using the allowed types:
    - OPEN_PROJECT: target MUST be one of ["backops-wib", "wibav3", "click2serve", "client-project-tracker"]
    - SCROLL_TO: target MUST be one of ["about", "experience", "projects", "skills", "contact"]
@@ -220,12 +252,24 @@ Required JSON format:
     }
   }
 
-  // Local fallback if API key is not configured or limits hit
+  // Local fallback
   return res.status(200).json(localFallback(message));
 }
 
 function localFallback(message) {
   const m = (message || '').toLowerCase();
+  if (m.includes('ai') || m.includes('cursor') || m.includes('claude') || m.includes('copilot') || m.includes('codex') || m.includes('agent')) {
+    return {
+      message: 'Maurik is an **AI-augmented software developer** who integrates AI-assisted and agentic workflows into daily production engineering:\n\n- **AI Tooling Mastery**: Daily use of **Cursor, Claude Code, GitHub Copilot, OpenAI Codex, ChatGPT, and Gemini** for rapid implementation, research, and debugging.\n- **Agentic Workflows**: Uses AI agents to explore unfamiliar codebases and automate repetitive engineering tasks while maintaining **complete ownership of technical decisions and code quality**.\n- **High Engineering Velocity**: Leverages AI to dramatically compress time-to-market without compromising architecture or test stability.',
+      evidence: [
+        { projectId: 'backops-wib', projectName: 'When in Baguio Operations', highlight: 'Full-stack delivery with AI workflows & Node.js/React 19' },
+        { projectId: 'wibav3', projectName: 'When in Baguio Eats', highlight: 'Accelerated Flutter debugging & push notification architecture' },
+      ],
+      confidence: 'confirmed',
+      actions: [{ type: 'HIGHLIGHT_SKILLS', target: 'skills', highlightTags: ['Cursor', 'Claude Code', 'GitHub Copilot'] }],
+      suggestedFollowUps: ['How does Maurik maintain code quality with AI?', 'What mobile projects has he built?'],
+    };
+  }
   if (m.includes('payment') || m.includes('paymongo') || m.includes('gcash') || m.includes('gateway')) {
     return {
       message: 'Maurik has verified production experience integrating **PayMongo** for end-to-end payment workflows:\n\n- **When in Baguio Eats (Flutter)**: Integrated secure **GCash QR generation** and automated in-app checkout reconciliation.\n- **Operations Dashboard (Node.js/React 19)**: Built automated **webhook listeners** for instant GCash, Maya, and credit/debit card transaction verification.',
