@@ -9,7 +9,6 @@ import Footer from '../components/Footer';
 import ResumeModal from '../components/ResumeModal';
 import ProfilePhotoModal from '../components/ProfilePhotoModal';
 import ScrollProgressBar from '../components/ScrollProgressBar';
-import CustomCursor from '../components/CustomCursor';
 import CopilotModal from '../components/CopilotModal';
 import CopilotFloatingTrigger from '../components/CopilotFloatingTrigger';
 import { useCopilot } from '../context/CopilotContext';
@@ -96,9 +95,6 @@ export default function Home() {
     <div className="min-h-screen bg-[#050507] text-[#ededed]">
       {/* Scroll Progress Bar at very top */}
       <ScrollProgressBar />
-
-      {/* Modern Cursor Tracking & Touch Feedback */}
-      <CustomCursor />
 
       <div className="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <div className="flex flex-col lg:flex-row lg:gap-8 xl:gap-12">
