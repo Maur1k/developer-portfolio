@@ -7,6 +7,9 @@ import Skills from './Skills';
 import Contact from './Contact';
 import Footer from '../components/Footer';
 import ResumeModal from '../components/ResumeModal';
+import ProfilePhotoModal from '../components/ProfilePhotoModal';
+import ScrollProgressBar from '../components/ScrollProgressBar';
+import CustomCursor from '../components/CustomCursor';
 import CopilotModal from '../components/CopilotModal';
 import CopilotFloatingTrigger from '../components/CopilotFloatingTrigger';
 import { useCopilot } from '../context/CopilotContext';
@@ -20,6 +23,7 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState('about');
   const [isShortcutOpen, setIsShortcutOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Watch for pending UI actions like OPEN_RESUME
@@ -76,6 +80,7 @@ export default function Home() {
       } else if (e.key === 'Escape') {
         setIsShortcutOpen(false);
         setIsResumeOpen(false);
+        setIsPhotoOpen(false);
       }
     };
 
@@ -89,6 +94,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050507] text-[#ededed]">
+      {/* Scroll Progress Bar at very top */}
+      <ScrollProgressBar />
+
+      {/* Modern Cursor Tracking & Touch Feedback */}
+      <CustomCursor />
+
       <div className="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <div className="flex flex-col lg:flex-row lg:gap-8 xl:gap-12">
           {/* Left Column: Fixed / Sticky Profile Sidebar */}
@@ -97,6 +108,7 @@ export default function Home() {
             activeSection={activeSection}
             onNavigate={scrollToSection}
             onOpenResume={() => setIsResumeOpen(true)}
+            onOpenPhoto={() => setIsPhotoOpen(true)}
           />
 
           {/* Right Column: Main Content Stream */}
@@ -110,6 +122,14 @@ export default function Home() {
           </main>
         </div>
       </div>
+
+      {/* Profile Photo Lightbox Modal */}
+      <ProfilePhotoModal
+        isOpen={isPhotoOpen}
+        onClose={() => setIsPhotoOpen(false)}
+        photoSrc={profile?.profilePhoto || '/img/Fernandez_Maurik_Angelo_L.jpg'}
+        profile={profile}
+      />
 
       {/* Maurik AI Portfolio Copilot Modal */}
       <CopilotModal />

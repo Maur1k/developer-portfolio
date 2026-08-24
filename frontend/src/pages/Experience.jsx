@@ -15,28 +15,45 @@ export default function Experience() {
   return (
     <section id="experience" className="py-16 border-b border-zinc-900">
       {/* Section Tag */}
-      <div className="section-tag mb-4">[Experience]</div>
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="section-tag mb-4"
+      >
+        [Experience]
+      </motion.div>
 
-      <div className="mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className="mb-8"
+      >
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Where I've Been Building
         </h2>
         <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
           My professional journey started with an internship and quickly turned into an opportunity to continue working on production software.
         </p>
-      </div>
+      </motion.div>
 
       <div className="space-y-3">
         {/* Experience Entries */}
-        {experiences.map((exp) => {
+        {experiences.map((exp, idx) => {
           const isExpanded = expandedId === exp.id;
           return (
-            <div
+            <motion.div
               key={exp.id}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.35, delay: idx * 0.08 }}
               className={`rounded-xl border transition-all duration-200 ${
                 isExpanded
-                  ? 'border-zinc-700/80 bg-[#0d0e12]'
-                  : 'border-zinc-900 bg-[#09090b]/60 hover:border-zinc-800 hover:bg-[#0c0d10]'
+                  ? 'border-zinc-700/80 bg-[#0d0e12] shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
+                  : 'border-zinc-900 bg-[#09090b]/60 hover:border-zinc-700/80 hover:bg-[#0c0d10]'
               }`}
             >
               {/* Header / Clickable Row */}
@@ -129,20 +146,24 @@ export default function Experience() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
           );
         })}
 
         {/* Education Timeline Row */}
-        {education.map((edu) => {
+        {education.map((edu, idx) => {
           const isExpanded = expandedId === edu.id;
           return (
-            <div
+            <motion.div
               key={edu.id}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.35, delay: (experiences.length + idx) * 0.08 }}
               className={`rounded-xl border transition-all duration-200 ${
                 isExpanded
-                  ? 'border-zinc-700/80 bg-[#0d0e12]'
-                  : 'border-zinc-900 bg-[#09090b]/60 hover:border-zinc-800 hover:bg-[#0c0d10]'
+                  ? 'border-zinc-700/80 bg-[#0d0e12] shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
+                  : 'border-zinc-900 bg-[#09090b]/60 hover:border-zinc-700/80 hover:bg-[#0c0d10]'
               }`}
             >
               <button
@@ -214,7 +235,7 @@ export default function Experience() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
           );
         })}
       </div>

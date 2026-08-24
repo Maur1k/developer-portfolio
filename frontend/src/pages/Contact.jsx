@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
 
@@ -17,9 +18,21 @@ export default function Contact() {
   return (
     <section id="contact" className="py-16 pb-24">
       {/* Section Tag */}
-      <div className="section-tag mb-8">[Contact]</div>
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="section-tag mb-8"
+      >
+        [Contact]
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+      >
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           Let's Build Something.
         </h2>
@@ -31,7 +44,13 @@ export default function Contact() {
         {/* Contact Cards Grid */}
         <div className="grid sm:grid-cols-2 gap-3.5 mt-8">
           {/* Email Card */}
-          <div className="rounded-xl border border-zinc-900 bg-[#09090b]/80 p-5 flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: 0.1 }}
+            className="rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-700/80 p-5 flex flex-col justify-between glow-card"
+          >
             <div>
               <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Email</span>
               <p className="text-sm font-medium text-zinc-200 mt-1 truncate">
@@ -48,15 +67,21 @@ export default function Contact() {
               <button
                 type="button"
                 onClick={copyEmail}
-                className="px-3 h-8 inline-flex items-center justify-center rounded border border-zinc-800 bg-[#121318] text-xs font-mono text-zinc-300 hover:text-white transition"
+                className="px-3 h-8 inline-flex items-center justify-center rounded border border-zinc-800 bg-[#121318] text-xs font-mono text-zinc-300 hover:text-white transition cursor-pointer"
               >
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Phone Card */}
-          <div className="rounded-xl border border-zinc-900 bg-[#09090b]/80 p-5 flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: 0.2 }}
+            className="rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-700/80 p-5 flex flex-col justify-between glow-card"
+          >
             <div>
               <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Phone</span>
               <p className="text-sm font-medium text-zinc-200 mt-1">
@@ -71,11 +96,17 @@ export default function Contact() {
                 Call / Message ↗
               </a>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Social Links */}
-        <div className="mt-8 pt-8 border-t border-zinc-900">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.35, delay: 0.3 }}
+          className="mt-8 pt-8 border-t border-zinc-900"
+        >
           <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-3">
             Follow My Work & Professional Profiles
           </p>
@@ -85,7 +116,7 @@ export default function Contact() {
                 href={profile.socialLinks.linkedin}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-700 hover:text-white text-xs font-mono text-zinc-300 transition"
               >
                 <span className="text-blue-400">in</span>
                 <span>LinkedIn</span>
@@ -97,7 +128,7 @@ export default function Contact() {
                 href={profile.socialLinks.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-700 hover:text-white text-xs font-mono text-zinc-300 transition"
               >
                 <span>GitHub</span>
                 <span className="text-[10px] text-zinc-600">↗</span>
@@ -108,7 +139,7 @@ export default function Contact() {
                 href={profile.socialLinks.jobstreet}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-800 text-xs font-mono text-zinc-300 hover:text-white transition"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-900 bg-[#09090b] hover:border-zinc-700 hover:text-white text-xs font-mono text-zinc-300 transition"
               >
                 <span className="text-purple-400">JS</span>
                 <span>JobStreet</span>
@@ -116,8 +147,8 @@ export default function Contact() {
               </a>
             )}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

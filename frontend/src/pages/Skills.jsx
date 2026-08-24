@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackSkills } from '../data/fallbackPortfolio';
 import { useCopilot } from '../context/CopilotContext';
@@ -36,29 +37,46 @@ export default function Skills() {
   return (
     <section id="skills" className="py-16 border-b border-zinc-900">
       {/* Section Tag */}
-      <div className="section-tag mb-4">[Tech Stack]</div>
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="section-tag mb-4"
+      >
+        [Tech Stack]
+      </motion.div>
 
-      <div className="mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className="mb-8"
+      >
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Tools I Use to Build
         </h2>
         <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
           I don't try to use every technology. I focus on understanding the tools I work with and choosing what fits the problem.
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {coreSkillsMeta.map((category) => {
+        {coreSkillsMeta.map((category, idx) => {
           const items = skills?.[category.key] || fallbackSkills[category.key] || [];
           const isHighlighted = isCategoryHighlighted(category, items);
 
           return (
-            <div
+            <motion.div
               key={category.key}
-              className={`rounded-xl border p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 ${
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.35, delay: idx * 0.05 }}
+              className={`rounded-xl border p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 glow-card ${
                 isHighlighted
                   ? 'border-amber-400/80 bg-amber-500/10 shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-400/50 scale-[1.02]'
-                  : 'border-zinc-900 bg-[#09090b]/70 hover:border-zinc-800'
+                  : 'border-zinc-900 bg-[#09090b]/70 hover:border-zinc-700/80 hover:bg-[#0c0d10]'
               }`}
             >
               <div>
@@ -83,7 +101,7 @@ export default function Skills() {
                   ))}
                 </ul>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>

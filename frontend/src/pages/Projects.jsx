@@ -214,7 +214,13 @@ function ProjectCard({ project, index, onLearnMore }) {
   const technologies = project.technologies || [];
 
   return (
-    <article className="rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-800 transition-all duration-200 flex flex-col overflow-hidden">
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.4, delay: (index % 2) * 0.1 }}
+      className="rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-700/80 transition-all duration-200 flex flex-col overflow-hidden glow-card"
+    >
       {screenshots.length > 0 && (
         <div className="p-3 border-b border-zinc-900/80">
           <ScreenshotCarousel screenshots={screenshots} compact />
@@ -291,7 +297,7 @@ function ProjectCard({ project, index, onLearnMore }) {
           )}
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -543,8 +549,12 @@ function PlaygroundCard({ project, onLearnMore }) {
   const screenshots = project.screenshots || [];
 
   return (
-    <article
-      className={`relative rounded-xl border bg-[#09090b]/60 flex flex-col transition-all duration-200 overflow-hidden
+    <motion.article
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-30px' }}
+      transition={{ duration: 0.35 }}
+      className={`relative rounded-xl border bg-[#09090b]/60 flex flex-col transition-all duration-200 overflow-hidden glow-card
         ${isPlaceholder
           ? 'border-dashed border-zinc-800 opacity-60'
           : 'border-zinc-900 hover:border-zinc-700'
@@ -633,7 +643,7 @@ function PlaygroundCard({ project, onLearnMore }) {
           </div>
         )}
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -687,20 +697,39 @@ export default function Projects() {
   return (
     <section id="projects" className="py-16 border-b border-zinc-900">
       {/* Section Tag */}
-      <div className="section-tag mb-4">[Projects]</div>
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="section-tag mb-4"
+      >
+        [Projects]
+      </motion.div>
 
-      <div className="mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className="mb-8"
+      >
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Things I've Built
         </h2>
         <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
           Not every project started with a perfect specification. Some started as school projects. Some started as assessments. Some started because there was a problem worth solving. What they have in common is that each one taught me something new about building software.
         </p>
-      </div>
+      </motion.div>
 
       {/* Featured Main Project */}
       {featuredProject && (
-        <div className="mb-10 rounded-xl border border-zinc-800 bg-[#0d0e12] overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.45 }}
+          className="mb-10 rounded-xl border border-zinc-800 bg-[#0d0e12] overflow-hidden glow-card"
+        >
           <div className="grid lg:grid-cols-[1.1fr_1fr] xl:grid-cols-[1.05fr_1.15fr] gap-0 items-stretch">
             <div className="p-6 sm:p-8 flex flex-col justify-between">
               <div>
@@ -787,7 +816,7 @@ export default function Projects() {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Other Selected Projects Grid */}

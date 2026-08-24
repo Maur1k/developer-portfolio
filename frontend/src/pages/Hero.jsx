@@ -111,19 +111,29 @@ export default function Hero({ onThemeToggle }) {
       </div>
 
       {/* Quote / Ethos Badge */}
-      <div className="mt-8">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="mt-8"
+      >
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-800/80 bg-[#09090b] font-mono text-xs text-zinc-400 shadow-inner">
           <span className="text-zinc-600">✦</span>
           <span>{profile.tagline || 'build. break. learn. repeat.'}</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* 4 Approach Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-8">
-        {approachCards.map((item) => (
-          <div
+        {approachCards.map((item, idx) => (
+          <motion.div
             key={item.title}
-            className="p-3.5 rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-800 hover:bg-[#0c0d12] transition-all group"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 * idx }}
+            className="p-3.5 rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-700/80 hover:bg-[#0c0d12] transition-all duration-200 group glow-card"
           >
             <p className="text-xs font-semibold text-white group-hover:text-amber-400 transition-colors">
               {item.title}
@@ -131,7 +141,7 @@ export default function Hero({ onThemeToggle }) {
             <p className="text-[11px] text-zinc-500 mt-1 leading-snug">
               {item.description}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>

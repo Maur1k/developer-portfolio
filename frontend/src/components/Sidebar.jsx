@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Sidebar({ profile, activeSection, onNavigate, onOpenResume }) {
+export default function Sidebar({ profile, activeSection, onNavigate, onOpenResume, onOpenPhoto }) {
   const navLinks = [
     { label: 'about', id: 'about' },
     { label: 'experience', id: 'experience' },
@@ -19,23 +19,35 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
       <div className="space-y-4 lg:space-y-6">
         {/* Profile Image + Name & Title: Always side-by-side in a row on all screens */}
         <div className="flex items-center gap-3 sm:gap-3.5">
-          {/* Profile Image & Status */}
+          {/* Clickable Profile Image & Status */}
           <div className="relative group shrink-0">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 flex items-center justify-center shadow-xl relative">
+            <button
+              type="button"
+              onClick={onOpenPhoto}
+              aria-label="View profile photo"
+              title="Click to view full photo & info"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-[#121318] border border-zinc-800 hover:border-amber-500/50 flex items-center justify-center shadow-xl relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            >
               <img
                 src={photoSrc}
                 alt={profile?.name || 'Maurik Angelo L. Fernandez'}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-110"
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = '/img/Fernandez_Maurik_Angelo_L.jpg';
                 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none group-hover:opacity-40 transition-opacity" />
+              {/* Subtle hover icon overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                <svg className="w-5 h-5 text-white/90 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+              </div>
+            </button>
             {/* Online / Open Indicator */}
             <div
-              className="absolute -bottom-1 -right-1 bg-[#09090b] border border-zinc-800 rounded-full p-0.5 sm:p-1 shadow-lg"
+              className="absolute -bottom-1 -right-1 bg-[#09090b] border border-zinc-800 rounded-full p-0.5 sm:p-1 shadow-lg pointer-events-none"
               title="Open to opportunities"
             >
               <span className="block w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 animate-pulse" />
