@@ -1,6 +1,5 @@
 import { fallbackProjects, fallbackProfile, fallbackSkills, fallbackExperience } from '../data/fallbackPortfolio';
 
-const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000' : '');
 
 // Built-in grounded dataset for standalone/Vercel client execution
 const clientKnowledge = {
@@ -237,56 +236,81 @@ function localExplain(projectId, question) {
  * 1. Tries backend endpoint if VITE_API_URL or localhost is reachable.
  * 2. Seamlessly falls back to local client engine if offline / deployed on Vercel.
  */
+function getEndpoint(path) {
+  // 1. Explicit env var — used in production/hosted deployments
+  if (import.meta.env.VITE_API_URL) {
+    return `${import.meta.env.VITE_API_URL}${path}`;
+  }
+  // 2. Localhost dev — use RELATIVE path so Vite's built-in proxy handles it
+  //    (vite.config.js proxies /api → http://localhost:5000)
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return path; // e.g. "/api/copilot/chat" → Vite proxy → localhost:5000
+    }
+  }
+  // 3. Fallback for other environments (static hosting, Vercel, etc.)
+  return path;
+}
+
+/**
+ * Universal Copilot API Service
+ * 1. Always attempts backend endpoint first (local node server or hosted API).
+ * 2. Gracefully falls back to local grounded engine only if network/server is unreachable.
+ */
 export const copilotService = {
   async matchJobDescription(jobDescription) {
-    if (API_BASE) {
-      try {
-        const res = await fetch(`${API_BASE}/api/copilot/match`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ jobDescription }),
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn('Backend unavailable, using client match engine:', e.message);
+    try {
+      const endpoint = getEndpoint('/api/copilot/match');
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobDescription }),
+      });
+      if (res.ok) {
+        return await res.json();
       }
+    } catch (e) {
+      console.warn('Backend unavailable, using client match engine:', e.message);
     }
     // Instant client fallback
     return localMatch(jobDescription);
   },
 
   async chat(message, history = []) {
-    if (API_BASE) {
-      try {
-        const res = await fetch(`${API_BASE}/api/copilot/chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, history }),
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn('Backend unavailable, using client chat engine:', e.message);
+    try {
+      const endpoint = getEndpoint('/api/copilot/chat');
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, history }),
+      });
+      if (res.ok) {
+        return await res.json();
       }
+    } catch (e) {
+      console.warn('Backend unavailable, using client chat engine:', e.message);
     }
     // Instant client fallback
     return localChat(message, history);
   },
 
   async explainArchitecture(projectId, question) {
-    if (API_BASE) {
-      try {
-        const res = await fetch(`${API_BASE}/api/copilot/explain`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ projectId, question }),
-        });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn('Backend unavailable, using client explain engine:', e.message);
+    try {
+      const endpoint = getEndpoint('/api/copilot/explain');
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, question }),
+      });
+      if (res.ok) {
+        return await res.json();
       }
+    } catch (e) {
+      console.warn('Backend unavailable, using client explain engine:', e.message);
     }
     // Instant client fallback
     return localExplain(projectId, question);
   },
 };
+
 
