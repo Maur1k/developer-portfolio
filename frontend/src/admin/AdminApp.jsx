@@ -2273,7 +2273,7 @@ function ResumeSyncView() {
 
   const handleApplyChanges = async (approvedDiffs) => {
     if (!isSupabaseConfigured || !supabase) {
-      console.warn('Supabase not configured, changes applied to memory session.');
+      console.warn('Supabase not configured, changes applied to current session.');
       return;
     }
 
@@ -2281,59 +2281,83 @@ function ResumeSyncView() {
       for (const diff of approvedDiffs) {
         if (diff.section && diff.section.startsWith('Skills >')) {
           const category = diff.section.replace('Skills >', '').trim();
-          if (diff.category === 'NEW' && diff.cvValue) {
-            const currentList = skills?.[category] || [];
-            if (!currentList.includes(diff.cvValue)) {
-              const updatedSkills = { ...skills, [category]: [...currentList, diff.cvValue] };
-              await supabase.from('siteContent').upsert({ id: 'skills', data: updatedSkills });
-            }
+          const currentSkills = { ...(skills || fallbackSkills) };
+          const targetKey = currentSkills[category]
+            ? category
+            : category === 'cloudAndAI'
+            ? 'aidev'
+            : Object.keys(currentSkills)[0];
+          const currentList = Array.isArray(currentSkills[targetKey]) ? currentSkills[targetKey] : [];
+          if (diff.cvValue && !currentList.includes(diff.cvValue)) {
+            currentSkills[targetKey] = [...currentList, diff.cvValue];
+            await supabase.from('site_content').upsert({
+              key: 'skills',
+              data: currentSkills,
+              updated_at: new Date().toISOString(),
+            });
           }
         } else if (diff.section === 'Experience' && diff.category === 'NEW' && diff.cvValue) {
+          const company = diff.cvValue.company || 'Company';
+          const position = diff.cvValue.role || diff.cvValue.position || 'Software Developer';
           const newExp = {
-            id: slugify(diff.cvValue.role + '-' + diff.cvValue.company),
-            role: diff.cvValue.role || '',
-            company: diff.cvValue.company || '',
-            period: diff.cvValue.period || '',
-            location: diff.cvValue.location || '',
-            summary: diff.cvValue.summary || '',
-            responsibilities: diff.cvValue.highlights || [],
-            displayOrder: experience.length + 1,
+            id: slugify(`${position}-${company}-${Date.now()}`),
+            company,
+            position,
+            duration: diff.cvValue.period || diff.cvValue.duration || '2026 - Present',
+            description: diff.cvValue.summary || diff.cvValue.description || '',
+            responsibilities: Array.isArray(diff.cvValue.highlights)
+              ? diff.cvValue.highlights
+              : [diff.cvValue.highlights || ''],
+            technologies: diff.cvValue.technologies || [],
+            display_order: Number(experience.length + 1),
+            updated_at: new Date().toISOString(),
           };
-          await supabase.from('experience').insert(newExp);
+          await supabase.from('experience').upsert(newExp, { onConflict: 'id' });
         } else if (diff.section === 'Projects' && diff.category === 'NEW' && diff.cvValue) {
-          const newProj = {
-            id: slugify(diff.cvValue.name),
-            title: diff.cvValue.name || '',
+          const title = diff.cvValue.name || diff.cvValue.title || 'New Project';
+          const payload = normalizeProject({
+            id: slugify(`${title}-${Date.now()}`),
+            title,
+            name: title,
             shortDescription: diff.cvValue.summary || '',
             longDescription: diff.cvValue.summary || '',
             technologies: diff.cvValue.technologies || [],
-            highlights: diff.cvValue.achievements || [],
+            highlights: diff.cvValue.achievements || diff.cvValue.highlights || [],
             status: 'Completed',
-            displayOrder: projects.length + 1,
-          };
-          await supabase.from('projects').insert(newProj);
+            displayOrder: Number(projects.length + 1),
+          });
+          await supabase.from('projects').upsert(payload, { onConflict: 'id' });
         } else if (diff.section === 'Education' && diff.category === 'NEW' && diff.cvValue) {
+          const degree = diff.cvValue.degree || 'Degree';
+          const institution = diff.cvValue.school || diff.cvValue.institution || 'University';
           const newEdu = {
-            id: slugify(diff.cvValue.degree + '-' + diff.cvValue.school),
-            degree: diff.cvValue.degree || '',
-            institution: diff.cvValue.school || '',
-            period: diff.cvValue.period || '',
-            displayOrder: education.length + 1,
+            id: slugify(`${degree}-${institution}-${Date.now()}`),
+            degree,
+            institution,
+            duration: diff.cvValue.period || diff.cvValue.duration || '',
+            description: diff.cvValue.description || '',
+            display_order: Number(education.length + 1),
+            updated_at: new Date().toISOString(),
           };
-          await supabase.from('education').insert(newEdu);
+          await supabase.from('education').upsert(newEdu, { onConflict: 'id' });
         } else if (diff.section === 'Certificates' && diff.category === 'NEW' && diff.cvValue) {
-          const certName = typeof diff.cvValue === 'string' ? diff.cvValue : diff.cvValue.name;
+          const certTitle = typeof diff.cvValue === 'string' ? diff.cvValue : diff.cvValue.name || diff.cvValue.title;
           const newCert = {
-            id: slugify(certName),
-            title: certName,
+            id: slugify(`${certTitle}-${Date.now()}`),
+            title: certTitle,
             issuer: diff.cvValue?.issuer || '',
-            date: diff.cvValue?.year || '',
-            displayOrder: certificates.length + 1,
+            date: diff.cvValue?.year || diff.cvValue?.date || '',
+            display_order: Number(certificates.length + 1),
+            updated_at: new Date().toISOString(),
           };
-          await supabase.from('certificates').insert(newCert);
+          await supabase.from('certificates').upsert(newCert, { onConflict: 'id' });
         } else if (diff.section === 'Profile' && diff.cvValue) {
-          const updatedProfile = { ...profile, [diff.field]: diff.cvValue };
-          await supabase.from('siteContent').upsert({ id: 'profile', data: updatedProfile });
+          const currentProfile = { ...(profile || fallbackProfile), [diff.field]: diff.cvValue };
+          await supabase.from('site_content').upsert({
+            key: 'profile',
+            data: currentProfile,
+            updated_at: new Date().toISOString(),
+          });
         }
       }
     } catch (err) {
