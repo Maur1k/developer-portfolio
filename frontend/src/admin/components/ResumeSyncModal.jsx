@@ -73,8 +73,8 @@ export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
       return;
     }
 
-    // Safety check: Detect if raw binary PDF was pasted
-    if (cvText.includes('%PDF-') || (cvText.includes('') && cvText.length > 500)) {
+    // Safety check: Detect if raw binary PDF header was pasted
+    if (cvText.trim().startsWith('%PDF-')) {
       setError('The text contains raw binary data. Please upload your PDF using the "Choose File" button so it can be extracted cleanly into readable text.');
       return;
     }
