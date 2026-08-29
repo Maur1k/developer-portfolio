@@ -335,9 +335,14 @@ function getFallbackAnalytics() {
 /**
  * Fetch and aggregate analytics dashboard metrics
  * @param {string} range - '7d' | '30d' | 'all'
+ * @param {boolean} forceDemo - if true, returns the mockup showcase data
  */
-export async function fetchAnalyticsData(range = '30d') {
+export async function fetchAnalyticsData(range = '30d', forceDemo = false) {
   const fallback = getFallbackAnalytics();
+
+  if (forceDemo) {
+    return { ...fallback, isLive: false, totalRealEvents: 0 };
+  }
 
   // Read any locally stored client events
   let localEvents = [];
@@ -347,27 +352,70 @@ export async function fetchAnalyticsData(range = '30d') {
     localEvents = [];
   }
 
+  // If Supabase not connected, calculate purely from local client events
   if (!isSupabaseConfigured || !supabase) {
-    // If Supabase not connected, merge local events with fallback
     if (localEvents.length > 0) {
-      const mergedEvents = [
-        ...localEvents,
-        ...fallback.recentEvents.filter((fe) => !localEvents.some((le) => le.id === fe.id)),
-      ].slice(0, 15);
+      const visitorsSet = new Set(localEvents.map((e) => e.visitor_id));
+      const viewsCount = localEvents.filter((e) => e.event_type === 'page_view').length;
+      const resumeCount = localEvents.filter((e) => e.event_type.startsWith('resume')).length;
+      const projectClickCount = localEvents.filter((e) => e.event_type.startsWith('project')).length;
+
+      // Sources aggregation
+      const sourceCounts = {};
+      localEvents.forEach((e) => {
+        const src = e.referrer || 'Direct';
+        sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+      });
+
+      const totalEvents = localEvents.length || 1;
+      const topSources = Object.entries(sourceCounts)
+        .map(([source, count]) => ({
+          source,
+          count,
+          percentage: Math.round((count / totalEvents) * 100),
+        }))
+        .sort((a, b) => b.count - a.count);
+
+      // Most viewed projects
+      const projectCounts = {};
+      localEvents
+        .filter((e) => e.event_type === 'project_view' || e.event_type === 'project_click')
+        .forEach((e) => {
+          const title = e.event_target || 'General Project';
+          projectCounts[title] = (projectCounts[title] || 0) + 1;
+        });
+
+      const mostViewedProjects = Object.entries(projectCounts)
+        .map(([title, views]) => ({ title, views }))
+        .sort((a, b) => b.views - a.views);
 
       return {
-        ...fallback,
+        isLive: true,
+        isSupabase: false,
+        totalRealEvents: localEvents.length,
         metrics: {
-          ...fallback.metrics,
-          visitors: fallback.metrics.visitors + new Set(localEvents.map((e) => e.visitor_id)).size,
-          views: fallback.metrics.views + localEvents.filter((e) => e.event_type === 'page_view').length,
-          resumeViews: fallback.metrics.resumeViews + localEvents.filter((e) => e.event_type.startsWith('resume')).length,
-          projectClicks: fallback.metrics.projectClicks + localEvents.filter((e) => e.event_type.startsWith('project')).length,
+          visitors: visitorsSet.size,
+          visitorsGrowth: '+100%',
+          views: viewsCount,
+          viewsGrowth: viewsCount > 0 ? '+100%' : '0%',
+          resumeViews: resumeCount,
+          resumeGrowth: resumeCount > 0 ? '+100%' : '0%',
+          projectClicks: projectClickCount,
+          projectClicksGrowth: projectClickCount > 0 ? '+100%' : '0%',
         },
-        recentEvents: mergedEvents,
+        traffic: calculateTrafficFromEvents(localEvents),
+        topSources: topSources.length ? topSources : [{ source: 'Direct', percentage: 100, count: 1 }],
+        mostViewedProjects,
+        recentEvents: localEvents.slice(0, 20),
       };
     }
-    return fallback;
+
+    return {
+      isLive: false,
+      isSupabase: false,
+      totalRealEvents: 0,
+      ...fallback,
+    };
   }
 
   try {
@@ -388,21 +436,54 @@ export async function fetchAnalyticsData(range = '30d') {
     }
 
     const { data: dbEvents, error } = await query;
-    if (error) throw error;
-
-    const allEvents = Array.isArray(dbEvents) && dbEvents.length > 0 ? dbEvents : localEvents;
-
-    if (allEvents.length === 0) {
-      return fallback;
+    if (error) {
+      console.warn('Supabase analytics query note:', error.message);
+      // If table doesn't exist yet or query fails, fallback gracefully
+      return {
+        isLive: false,
+        isSupabase: false,
+        totalRealEvents: 0,
+        errorMessage: error.message,
+        ...fallback,
+      };
     }
 
-    // Distinct visitors
+    const allEvents = Array.isArray(dbEvents) ? dbEvents : [];
+
+    // If 0 events in Supabase yet, check local events or return clean zero state
+    if (allEvents.length === 0) {
+      if (localEvents.length > 0) {
+        return fetchAnalyticsData(range, false);
+      }
+
+      return {
+        isLive: true,
+        isSupabase: true,
+        totalRealEvents: 0,
+        metrics: {
+          visitors: 0,
+          visitorsGrowth: '0%',
+          views: 0,
+          viewsGrowth: '0%',
+          resumeViews: 0,
+          resumeGrowth: '0%',
+          projectClicks: 0,
+          projectClicksGrowth: '0%',
+        },
+        traffic: calculateTrafficFromEvents([]),
+        topSources: [{ source: 'Direct', percentage: 100, count: 0 }],
+        mostViewedProjects: [],
+        recentEvents: [],
+      };
+    }
+
+    // Calculate genuine distinct visitors
     const visitorsSet = new Set(allEvents.map((e) => e.visitor_id));
     const viewsCount = allEvents.filter((e) => e.event_type === 'page_view').length;
     const resumeCount = allEvents.filter((e) => e.event_type.startsWith('resume')).length;
     const projectClickCount = allEvents.filter((e) => e.event_type.startsWith('project')).length;
 
-    // Sources aggregation
+    // Calculate real sources
     const sourceCounts = {};
     allEvents.forEach((e) => {
       const src = e.referrer || 'Direct';
@@ -416,62 +497,71 @@ export async function fetchAnalyticsData(range = '30d') {
         count,
         percentage: Math.round((count / totalEvents) * 100),
       }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
+      .sort((a, b) => b.count - a.count);
 
-    // Most viewed projects
+    // Calculate real most viewed projects
     const projectCounts = {};
     allEvents
       .filter((e) => e.event_type === 'project_view' || e.event_type === 'project_click')
       .forEach((e) => {
-        const title = e.event_target || 'General Project';
+        const title = e.event_target || 'Project';
         projectCounts[title] = (projectCounts[title] || 0) + 1;
       });
 
     const mostViewedProjects = Object.entries(projectCounts)
       .map(([title, views]) => ({ title, views }))
-      .sort((a, b) => b.views - a.views)
-      .slice(0, 5);
-
-    // Group traffic by past 7 days for the chart
-    const daysMap = {};
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const key = d.toLocaleDateString('en-US', { weekday: 'short' });
-      daysMap[key] = 0;
-    }
-
-    allEvents.forEach((e) => {
-      const d = new Date(e.created_at);
-      const key = d.toLocaleDateString('en-US', { weekday: 'short' });
-      if (daysMap[key] !== undefined) {
-        daysMap[key]++;
-      }
-    });
-
-    const traffic = Object.entries(daysMap).map(([day, count]) => ({
-      day,
-      count: count || Math.floor(Math.random() * 20 + 10), // sensible visual baseline
-    }));
+      .sort((a, b) => b.views - a.views);
 
     return {
+      isLive: true,
+      isSupabase: true,
+      totalRealEvents: allEvents.length,
       metrics: {
-        visitors: Math.max(visitorsSet.size, fallback.metrics.visitors),
-        visitorsGrowth: '+18.4%',
-        views: Math.max(viewsCount, fallback.metrics.views),
-        viewsGrowth: '+24.1%',
-        resumeViews: Math.max(resumeCount, fallback.metrics.resumeViews),
-        resumeGrowth: '+31%',
-        projectClicks: Math.max(projectClickCount, fallback.metrics.projectClicks),
-        projectClicksGrowth: '+12%',
+        visitors: visitorsSet.size,
+        visitorsGrowth: '+100%',
+        views: viewsCount,
+        viewsGrowth: viewsCount > 0 ? '+100%' : '0%',
+        resumeViews: resumeCount,
+        resumeGrowth: resumeCount > 0 ? '+100%' : '0%',
+        projectClicks: projectClickCount,
+        projectClicksGrowth: projectClickCount > 0 ? '+100%' : '0%',
       },
-      traffic: traffic.length ? traffic : fallback.traffic,
-      topSources: topSources.length ? topSources : fallback.topSources,
-      mostViewedProjects: mostViewedProjects.length ? mostViewedProjects : fallback.mostViewedProjects,
-      recentEvents: allEvents.slice(0, 15),
+      traffic: calculateTrafficFromEvents(allEvents),
+      topSources,
+      mostViewedProjects,
+      recentEvents: allEvents.slice(0, 20),
     };
   } catch (err) {
-    console.debug('Analytics fetch fallback:', err);
-    return fallback;
+    console.debug('Analytics fetch fallback note:', err);
+    return {
+      isLive: false,
+      isSupabase: false,
+      totalRealEvents: 0,
+      ...fallback,
+    };
   }
+}
+
+function calculateTrafficFromEvents(events = []) {
+  const now = new Date();
+  const daysMap = {};
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    const key = d.toLocaleDateString('en-US', { weekday: 'short' });
+    daysMap[key] = 0;
+  }
+
+  events.forEach((e) => {
+    const d = new Date(e.created_at);
+    const key = d.toLocaleDateString('en-US', { weekday: 'short' });
+    if (daysMap[key] !== undefined) {
+      daysMap[key]++;
+    }
+  });
+
+  return Object.entries(daysMap).map(([day, count]) => ({
+    day,
+    count,
+  }));
 }

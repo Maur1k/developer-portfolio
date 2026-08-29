@@ -21,6 +21,7 @@ export const portfolioKnowledge = {
     frontendAndMobile: ['React', 'React 19', 'Flutter', 'Tailwind CSS', 'Vite', 'TypeScript', 'Framer Motion', 'HTML5/CSS3'],
     backend: ['Node.js', 'Express.js', 'Laravel', 'PHP', 'REST APIs', 'Middleware Design', 'cPanel', 'API Security'],
     databases: ['MySQL', 'MongoDB', 'Firebase Firestore', 'Realtime Database', 'Relational Schema Design', 'Compound Indexing', 'Keyset Pagination', 'LRU In-Memory Caching'],
+    cloudAndAI: ['Azure OpenAI Service (GPT-4o-mini)', 'Multi-Cloud AI Gateway Architecture', 'Token Throttling & Governance', 'AI Resume Ingestion & Additive Sync Pipeline', 'Google Gemini Flash'],
     aiAssistedDevelopment: ['Cursor', 'GitHub Copilot', 'Claude Code', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'Prompt Engineering', 'Rapid AI Prototyping', 'AI Debugging & Refactoring'],
     practices: ['Unit Testing', 'Code Review', 'Technical Documentation', 'Agile Development', 'API Integration', 'Testing & Debugging'],
     apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS', 'Google Maps API', 'Axios', 'Postman'],
@@ -200,6 +201,7 @@ export const portfolioKnowledge = {
     confirmedProduction: [
       'React', 'React 19', 'JavaScript', 'TypeScript', 'Flutter', 'Dart', 'Node.js', 'Express.js',
       'Laravel', 'PHP', 'MySQL', 'MongoDB', 'Firebase (FCM, Firestore, Auth)', 'PayMongo (GCash, Cards)',
+      'Azure OpenAI Service (GPT-4o-mini)', 'Multi-Cloud AI Gateway', 'Token Governance', 'AI Resume Sync',
       'Leaflet GIS', 'Google Maps API', 'REST APIs', 'Vite', 'Tailwind CSS', 'Git', 'GitHub',
       'Python', 'Java', 'AI-Assisted Development', 'Cursor', 'Claude Code', 'GitHub Copilot',
       'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'AI-Accelerated Engineering', 'cPanel'
@@ -231,7 +233,7 @@ export const portfolioKnowledge = {
       },
     ],
     notUsedInProduction: [
-      'PostgreSQL', 'Redis', 'Kubernetes', 'Docker', 'AWS', 'Azure', 'GCP',
+      'PostgreSQL', 'Redis', 'Kubernetes', 'Docker', 'AWS', 'GCP',
       'GraphQL', 'Next.js', 'Vue.js', 'Angular', 'Django', 'Go', 'Rust',
       'Spring Boot', 'Microservices architecture', 'CI/CD pipelines', 'Terraform', 'Kafka', 'Stripe'
     ],

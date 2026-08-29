@@ -3,7 +3,7 @@ import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { supabase, isSupabaseConfigured, isStorageConfigured } from '../supabase/client';
 import { useAuth } from '../context/AuthContext';
 import { useCollectionData, useDocumentData } from '../hooks/useFirestoreData';
-import { fetchAnalyticsData, formatTimeAgo, formatEventLabel } from '../services/analytics';
+import { fetchAnalyticsData, formatTimeAgo, formatEventLabel, trackEvent } from '../services/analytics';
 import {
   fallbackCertificates,
   fallbackEducation,
@@ -12,9 +12,11 @@ import {
   fallbackProjects,
   fallbackSkills,
 } from '../data/fallbackPortfolio';
+import ResumeSyncModal from './components/ResumeSyncModal';
 
 const navItems = [
   ['Dashboard', '/admin/dashboard'],
+  ['AI Resume Sync', '/admin/resume-sync'],
   ['Analytics', '/admin/analytics'],
   ['Profile', '/admin/profile'],
   ['Projects', '/admin/projects'],
@@ -196,6 +198,7 @@ function AdminLayout() {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="analytics" element={<AnalyticsView />} />
+            <Route path="resume-sync" element={<ResumeSyncView />} />
             <Route path="profile" element={<ProfileEditor />} />
             <Route path="projects" element={<ProjectsManager />} />
             <Route path="skills" element={<SkillsManager />} />
@@ -370,9 +373,9 @@ function Dashboard() {
   }, []);
 
   const stats = [
-    ['Visitors (30d)', analytics?.metrics?.visitors ? analytics.metrics.visitors.toLocaleString() : '1,284'],
-    ['Page Views', analytics?.metrics?.views ? analytics.metrics.views.toLocaleString() : '2,431'],
-    ['Resume Views', analytics?.metrics?.resumeViews ? analytics.metrics.resumeViews.toLocaleString() : '183'],
+    ['Visitors (30d)', analytics?.metrics?.visitors !== undefined ? analytics.metrics.visitors.toLocaleString() : '0'],
+    ['Page Views', analytics?.metrics?.views !== undefined ? analytics.metrics.views.toLocaleString() : '0'],
+    ['Resume Views', analytics?.metrics?.resumeViews !== undefined ? analytics.metrics.resumeViews.toLocaleString() : '0'],
     ['Projects', projects.length],
     ['Certificates', certificates.length],
   ];
@@ -383,12 +386,20 @@ function Dashboard() {
         title="Dashboard"
         description="Live overview of dynamic portfolio content and privacy-conscious visitor telemetry."
         action={
-          <button
-            onClick={() => navigate('/admin/analytics')}
-            className={`${buttonClass} bg-gradient-to-r from-orange-400 to-amber-300 text-[#090a0c] font-bold hover:opacity-90`}
-          >
-            Open Portfolio Analytics →
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/admin/resume-sync')}
+              className={`${buttonClass} border border-amber-400/40 bg-amber-400/10 text-amber-300 font-bold hover:bg-amber-400/20`}
+            >
+              ⚡ AI Resume Sync
+            </button>
+            <button
+              onClick={() => navigate('/admin/analytics')}
+              className={`${buttonClass} bg-gradient-to-r from-orange-400 to-amber-300 text-[#090a0c] font-bold hover:opacity-90`}
+            >
+              Open Portfolio Analytics →
+            </button>
+          </div>
         }
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -424,40 +435,40 @@ function Dashboard() {
           <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
             <p className="text-xs text-zinc-400 font-mono">Unique Visitors</p>
             <p className="text-2xl font-bold text-white mt-1 font-mono">
-              {analytics?.metrics?.visitors?.toLocaleString() || '1,284'}
+              {analytics?.metrics?.visitors !== undefined ? analytics.metrics.visitors.toLocaleString() : '0'}
             </p>
             <span className="text-[11px] font-mono text-emerald-400">
-              {analytics?.metrics?.visitorsGrowth || '+18.4%'}
+              {analytics?.metrics?.visitorsGrowth || '0%'}
             </span>
           </div>
 
           <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
             <p className="text-xs text-zinc-400 font-mono">Total Views</p>
             <p className="text-2xl font-bold text-white mt-1 font-mono">
-              {analytics?.metrics?.views?.toLocaleString() || '2,431'}
+              {analytics?.metrics?.views !== undefined ? analytics.metrics.views.toLocaleString() : '0'}
             </p>
             <span className="text-[11px] font-mono text-emerald-400">
-              {analytics?.metrics?.viewsGrowth || '+24.1%'}
+              {analytics?.metrics?.viewsGrowth || '0%'}
             </span>
           </div>
 
           <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
             <p className="text-xs text-zinc-400 font-mono">Resume Opens</p>
             <p className="text-2xl font-bold text-white mt-1 font-mono">
-              {analytics?.metrics?.resumeViews?.toLocaleString() || '183'}
+              {analytics?.metrics?.resumeViews !== undefined ? analytics.metrics.resumeViews.toLocaleString() : '0'}
             </p>
             <span className="text-[11px] font-mono text-emerald-400">
-              {analytics?.metrics?.resumeGrowth || '+31%'}
+              {analytics?.metrics?.resumeGrowth || '0%'}
             </span>
           </div>
 
           <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
             <p className="text-xs text-zinc-400 font-mono">Project Clicks</p>
             <p className="text-2xl font-bold text-white mt-1 font-mono">
-              {analytics?.metrics?.projectClicks?.toLocaleString() || '97'}
+              {analytics?.metrics?.projectClicks !== undefined ? analytics.metrics.projectClicks.toLocaleString() : '0'}
             </p>
             <span className="text-[11px] font-mono text-emerald-400">
-              {analytics?.metrics?.projectClicksGrowth || '+12%'}
+              {analytics?.metrics?.projectClicksGrowth || '0%'}
             </span>
           </div>
         </div>
@@ -488,15 +499,17 @@ function Dashboard() {
 
 function AnalyticsView() {
   const [range, setRange] = useState('30d');
+  const [showDemo, setShowDemo] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [testSent, setTestSent] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState(null);
 
-  const loadData = async (selectedRange = range) => {
+  const loadData = async (selectedRange = range, isDemo = showDemo) => {
     setLoading(true);
     try {
-      const res = await fetchAnalyticsData(selectedRange);
+      const res = await fetchAnalyticsData(selectedRange, isDemo);
       setData(res);
     } catch (err) {
       console.error('Error fetching analytics:', err);
@@ -506,12 +519,27 @@ function AnalyticsView() {
   };
 
   useEffect(() => {
-    loadData(range);
-  }, [range]);
+    loadData(range, showDemo);
+  }, [range, showDemo]);
+
+  const triggerTestEvent = async () => {
+    setTestSent(true);
+    try {
+      await trackEvent('resume_view', 'Resume Opened (Admin Test)');
+      await trackEvent('project_view', 'WIBE V2 (Admin Test)');
+      setTimeout(() => {
+        loadData(range, false);
+        setTestSent(false);
+      }, 400);
+    } catch (err) {
+      console.error('Test event error:', err);
+      setTestSent(false);
+    }
+  };
 
   const copySummary = () => {
     if (!data) return;
-    const summaryText = `PORTFOLIO ANALYTICS (${range.toUpperCase()})
+    const summaryText = `PORTFOLIO ANALYTICS (${range.toUpperCase()}) [${data.isLive ? 'LIVE' : 'DEMO'}]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Visitors:       ${data.metrics.visitors.toLocaleString()} (${data.metrics.visitorsGrowth})
 Views:          ${data.metrics.views.toLocaleString()} (${data.metrics.viewsGrowth})
@@ -531,7 +559,7 @@ ${data.mostViewedProjects.map((p) => `• ${p.title}: ${p.views} views`).join('\
 
   // Calculate SVG chart dimensions & path
   const trafficPoints = data?.traffic || [];
-  const maxTraffic = Math.max(...trafficPoints.map((p) => p.count), 200);
+  const maxTraffic = Math.max(...trafficPoints.map((p) => p.count), 10);
   const svgWidth = 460;
   const svgHeight = 130;
   const paddingX = 35;
@@ -563,13 +591,54 @@ ${data.mostViewedProjects.map((p) => `• ${p.title}: ${p.views} views`).join('\
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Portfolio Analytics</h1>
-          <p className="mt-1 text-sm text-zinc-400">
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-3xl font-bold text-white tracking-tight">Portfolio Analytics</h1>
+            <span
+              className={`px-2 py-0.5 rounded text-[11px] font-mono font-semibold border ${
+                data?.isLive
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                  : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+              }`}
+            >
+              {data?.isLive
+                ? `● Live Telemetry (${data.totalRealEvents} ${data.totalRealEvents === 1 ? 'event' : 'events'})`
+                : '● Showcase Demo'}
+            </span>
+          </div>
+          <p className="text-sm text-zinc-400">
             Privacy-conscious telemetry & conversion tracking. Zero personal data collected.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Mode Switch: Live vs Demo */}
+          <div className="inline-flex rounded-lg border border-zinc-800 bg-[#121318] p-1 text-xs font-mono">
+            <button
+              type="button"
+              onClick={() => setShowDemo(false)}
+              className={`px-2.5 py-1 rounded-md font-semibold transition ${
+                !showDemo
+                  ? 'bg-emerald-400 text-[#090a0c]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+              title="Display real recorded events from Supabase / localStorage"
+            >
+              Real Data
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDemo(true)}
+              className={`px-2.5 py-1 rounded-md font-semibold transition ${
+                showDemo
+                  ? 'bg-amber-300 text-[#090a0c]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+              title="Display preview showcase dataset"
+            >
+              Showcase Demo
+            </button>
+          </div>
+
           {/* Time Range Selector */}
           <div className="inline-flex rounded-lg border border-zinc-800 bg-[#121318] p-1 text-xs font-mono">
             {['7d', '30d', 'all'].map((tab) => (
@@ -577,9 +646,9 @@ ${data.mostViewedProjects.map((p) => `• ${p.title}: ${p.views} views`).join('\
                 key={tab}
                 type="button"
                 onClick={() => setRange(tab)}
-                className={`px-3 py-1 rounded-md uppercase font-semibold transition ${
+                className={`px-2.5 py-1 rounded-md uppercase font-semibold transition ${
                   range === tab
-                    ? 'bg-amber-300 text-[#090a0c]'
+                    ? 'bg-zinc-200 text-[#090a0c]'
                     : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -590,12 +659,22 @@ ${data.mostViewedProjects.map((p) => `• ${p.title}: ${p.views} views`).join('\
 
           <button
             type="button"
-            onClick={() => loadData(range)}
+            onClick={triggerTestEvent}
+            disabled={testSent}
+            className={`${buttonClass} border border-amber-500/30 bg-amber-500/10 text-xs font-mono text-amber-200 hover:bg-amber-500/20`}
+            title="Log a test event to verify live recording"
+          >
+            {testSent ? 'Sending...' : '+ Test Event'}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => loadData(range, showDemo)}
             disabled={loading}
             className={`${buttonClass} border border-zinc-800 bg-[#121318] text-xs font-mono text-zinc-300 hover:text-white hover:bg-zinc-800`}
             title="Refresh analytics data"
           >
-            {loading ? '...' : '↻ Refresh'}
+            {loading ? '...' : '↻'}
           </button>
         </div>
       </div>
@@ -2172,6 +2251,107 @@ function GenericForm({ collectionName, fields, item, onClose }) {
         </div>
       </form>
     </Card>
+  );
+}
+
+function ResumeSyncView() {
+  const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
+  const { data: skills } = useDocumentData('siteContent', 'skills', fallbackSkills);
+  const { items: experience } = useCollectionData('experience', fallbackExperience, { orderBy: 'displayOrder' });
+  const { items: projects } = useCollectionData('projects', fallbackProjects, { orderBy: 'displayOrder' });
+  const { items: education } = useCollectionData('education', fallbackEducation, { orderBy: 'displayOrder' });
+  const { items: certificates } = useCollectionData('certificates', fallbackCertificates, { orderBy: 'displayOrder' });
+
+  const existingPortfolio = useMemo(() => ({
+    profile,
+    skills,
+    experience,
+    projects,
+    education,
+    certificates,
+  }), [profile, skills, experience, projects, education, certificates]);
+
+  const handleApplyChanges = async (approvedDiffs) => {
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase not configured, changes applied to memory session.');
+      return;
+    }
+
+    try {
+      for (const diff of approvedDiffs) {
+        if (diff.section && diff.section.startsWith('Skills >')) {
+          const category = diff.section.replace('Skills >', '').trim();
+          if (diff.category === 'NEW' && diff.cvValue) {
+            const currentList = skills?.[category] || [];
+            if (!currentList.includes(diff.cvValue)) {
+              const updatedSkills = { ...skills, [category]: [...currentList, diff.cvValue] };
+              await supabase.from('siteContent').upsert({ id: 'skills', data: updatedSkills });
+            }
+          }
+        } else if (diff.section === 'Experience' && diff.category === 'NEW' && diff.cvValue) {
+          const newExp = {
+            id: slugify(diff.cvValue.role + '-' + diff.cvValue.company),
+            role: diff.cvValue.role || '',
+            company: diff.cvValue.company || '',
+            period: diff.cvValue.period || '',
+            location: diff.cvValue.location || '',
+            summary: diff.cvValue.summary || '',
+            responsibilities: diff.cvValue.highlights || [],
+            displayOrder: experience.length + 1,
+          };
+          await supabase.from('experience').insert(newExp);
+        } else if (diff.section === 'Projects' && diff.category === 'NEW' && diff.cvValue) {
+          const newProj = {
+            id: slugify(diff.cvValue.name),
+            title: diff.cvValue.name || '',
+            shortDescription: diff.cvValue.summary || '',
+            longDescription: diff.cvValue.summary || '',
+            technologies: diff.cvValue.technologies || [],
+            highlights: diff.cvValue.achievements || [],
+            status: 'Completed',
+            displayOrder: projects.length + 1,
+          };
+          await supabase.from('projects').insert(newProj);
+        } else if (diff.section === 'Education' && diff.category === 'NEW' && diff.cvValue) {
+          const newEdu = {
+            id: slugify(diff.cvValue.degree + '-' + diff.cvValue.school),
+            degree: diff.cvValue.degree || '',
+            institution: diff.cvValue.school || '',
+            period: diff.cvValue.period || '',
+            displayOrder: education.length + 1,
+          };
+          await supabase.from('education').insert(newEdu);
+        } else if (diff.section === 'Certificates' && diff.category === 'NEW' && diff.cvValue) {
+          const certName = typeof diff.cvValue === 'string' ? diff.cvValue : diff.cvValue.name;
+          const newCert = {
+            id: slugify(certName),
+            title: certName,
+            issuer: diff.cvValue?.issuer || '',
+            date: diff.cvValue?.year || '',
+            displayOrder: certificates.length + 1,
+          };
+          await supabase.from('certificates').insert(newCert);
+        } else if (diff.section === 'Profile' && diff.cvValue) {
+          const updatedProfile = { ...profile, [diff.field]: diff.cvValue };
+          await supabase.from('siteContent').upsert({ id: 'profile', data: updatedProfile });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to commit approved diffs to database:', err);
+    }
+  };
+
+  return (
+    <div className="space-y-6 max-w-5xl mx-auto pb-12">
+      <PageTitle
+        title="AI Resume Sync"
+        description="Upload or paste your updated CV. Azure OpenAI will extract new skills, roles, and achievements with additive merging."
+      />
+      <ResumeSyncModal
+        existingPortfolio={existingPortfolio}
+        onApplyChanges={handleApplyChanges}
+      />
+    </div>
   );
 }
 

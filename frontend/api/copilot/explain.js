@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { callAI, sanitizeInput } from '../_lib/aiGateway.js';
 
 const projects = {
   'backops-wib': {
@@ -23,7 +24,7 @@ const projects = {
   },
 };
 
-const FREE_TIER_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+const EXPLAIN_SYSTEM_PROMPT = `You are Maurik AI, a technical portfolio copilot. Explain project architectures accurately based ONLY on verified project specifications. Use Markdown formatting with bullet points and bold highlights. No emojis. Be concise and engineering-grade.`;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -35,8 +36,9 @@ export default async function handler(req, res) {
 
   const { projectId, question } = req.body || {};
   const project = projects[projectId] || projects['backops-wib'];
+  const sanitizedQuestion = sanitizeInput(question || 'Explain the architecture', 500);
 
-  const prompt = `The visitor is inspecting "${project.name}" and asked: "${question || 'Explain the architecture'}"
+  const prompt = `The visitor is inspecting "${project.name}" and asked: "${sanitizedQuestion}"
 
 Project Specs:
 - Stack: ${project.stack}
@@ -49,30 +51,29 @@ Return ONLY JSON:
   "relatedTopics": ["<2-3 technical deep-dive questions>"]
 }`;
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    for (const modelName of FREE_TIER_MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig: { temperature: 0.2, responseMimeType: 'application/json' },
-        });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text().trim();
-        const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
-        const parsed = JSON.parse(cleaned);
-        if (parsed && typeof parsed.answer === 'string') {
-          return res.status(200).json(parsed);
-        }
-      } catch (err) {
-        console.warn(`[Gemini Serverless Explain] Model ${modelName}:`, err.message);
-      }
-    }
-  }
-
-  return res.status(200).json({
+  const localFallbackResponse = {
     answer: `### Architecture of ${project.name}\n\n**Core Stack**: ${project.stack}\n\n${project.details}`,
     relatedTopics: ['How does state management work?', 'What database optimizations were applied?'],
+  };
+
+  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+                   req.headers['x-real-ip'] ||
+                   req.socket?.remoteAddress || 'unknown';
+
+  // Multi-provider AI Gateway: Azure OpenAI → Gemini → Local fallback
+  const { response, provider } = await callAI({
+    systemPrompt: EXPLAIN_SYSTEM_PROMPT,
+    userPrompt: prompt,
+    history: [],
+    parseResponse: (text) => {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed.answer === 'string') return parsed;
+      return null;
+    },
+    localFallback: () => localFallbackResponse,
+    clientIp,
   });
+
+  console.log(`[Copilot Explain] Provider: ${provider}`);
+  return res.status(200).json(response);
 }

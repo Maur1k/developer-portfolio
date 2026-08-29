@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { callAI, detectFastPath, sanitizeInput, sanitizeHistory } from '../_lib/aiGateway.js';
 
 const portfolioKnowledge = {
   profile: {
@@ -180,14 +181,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Please provide a valid message.' });
   }
 
-  const sanitizedHistory = Array.isArray(history)
-    ? history
-        .filter((item) => item && typeof item.content === 'string' && (item.role === 'user' || item.role === 'assistant'))
-        .slice(-14)
-        .map((item) => ({ role: item.role, content: String(item.content).slice(0, 1500) }))
-    : [];
+  // Sanitize inputs (token protection)
+  const sanitizedMessage = sanitizeInput(message, 500);
+  const sanitizedHistory = sanitizeHistory(history, 4, 1000);
 
-  const prompt = `Visitor message: "${message.trim().slice(0, 1000)}"
+  // Fast-path: greetings and off-topic (zero tokens consumed)
+  const fastPathResponse = detectFastPath(sanitizedMessage);
+  if (fastPathResponse) {
+    return res.status(200).json(fastPathResponse);
+  }
+
+  const prompt = `Visitor message: "${sanitizedMessage}"
 
 Respond strictly as Maurik AI adhering to all persona and accuracy rules. Return ONLY valid JSON (no markdown fences, no emojis).
 
@@ -212,48 +216,35 @@ Required JSON format:
   "suggestedFollowUps": ["<2-3 relevant follow-up questions>"]
 }`;
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const formattedHistory = formatGeminiHistory(sanitizedHistory);
+  // Get client IP for rate limiting
+  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+                   req.headers['x-real-ip'] ||
+                   req.socket?.remoteAddress || 'unknown';
 
-    for (const modelName of FREE_TIER_MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          systemInstruction: SYSTEM_PROMPT,
-          generationConfig: { temperature: 0.2, responseMimeType: 'application/json' },
-        });
-
-        let text = '';
-        if (formattedHistory.length > 0) {
-          const chat = model.startChat({ history: formattedHistory });
-          const result = await chat.sendMessage(prompt);
-          text = result.response.text().trim();
-        } else {
-          const result = await model.generateContent(prompt);
-          text = result.response.text().trim();
-        }
-
-        const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
-        const parsed = JSON.parse(cleaned);
-        if (parsed && typeof parsed.message === 'string') {
-          return res.status(200).json({
-            message: parsed.message,
-            evidence: Array.isArray(parsed.evidence) ? parsed.evidence : [],
-            confidence: parsed.confidence || 'confirmed',
-            actions: Array.isArray(parsed.actions) ? parsed.actions : [],
-            suggestedFollowUps: Array.isArray(parsed.suggestedFollowUps) ? parsed.suggestedFollowUps : [],
-          });
-        }
-      } catch (err) {
-        console.warn(`[Gemini Serverless Chat] Model ${modelName}:`, err.message);
+  // Multi-provider AI Gateway: Azure OpenAI → Gemini → Local fallback
+  const { response, provider } = await callAI({
+    systemPrompt: SYSTEM_PROMPT,
+    userPrompt: prompt,
+    history: sanitizedHistory,
+    parseResponse: (text) => {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed.message === 'string') {
+        return {
+          message: parsed.message,
+          evidence: Array.isArray(parsed.evidence) ? parsed.evidence : [],
+          confidence: parsed.confidence || 'confirmed',
+          actions: Array.isArray(parsed.actions) ? parsed.actions : [],
+          suggestedFollowUps: Array.isArray(parsed.suggestedFollowUps) ? parsed.suggestedFollowUps : [],
+        };
       }
-    }
-  }
+      return null;
+    },
+    localFallback: () => localFallback(sanitizedMessage),
+    clientIp,
+  });
 
-  // Local fallback
-  return res.status(200).json(localFallback(message));
+  console.log(`[Copilot Chat] Provider: ${provider}`);
+  return res.status(200).json(response);
 }
 
 function localFallback(message) {

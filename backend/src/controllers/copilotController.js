@@ -1,4 +1,10 @@
-import { matchJobDescription, chatCopilot, explainArchitecture } from '../services/geminiService.js';
+import { matchJobDescription, chatCopilot, explainArchitecture } from '../services/aiGatewayService.js';
+
+function getClientIp(req) {
+  return req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+         req.headers['x-real-ip'] ||
+         req.socket?.remoteAddress || 'unknown';
+}
 
 export async function handleMatch(req, res) {
   try {
@@ -6,7 +12,8 @@ export async function handleMatch(req, res) {
     if (!jobDescription || typeof jobDescription !== 'string' || jobDescription.trim().length < 10) {
       return res.status(400).json({ error: 'Please provide a valid job description (at least 10 characters).' });
     }
-    const result = await matchJobDescription(jobDescription.trim());
+    const clientIp = getClientIp(req);
+    const result = await matchJobDescription(jobDescription.trim().slice(0, 3000), clientIp);
     res.json(result);
   } catch (error) {
     console.error('Copilot Match Error:', error);
@@ -21,18 +28,19 @@ export async function handleChat(req, res) {
       return res.status(400).json({ error: 'Please provide a valid message.' });
     }
 
-    // Sanitize conversation history: allow maximum 14 recent turns to stay token-efficient
+    // Token protection: Limit to 4 recent turns and 500 chars message
     const sanitizedHistory = Array.isArray(history)
       ? history
           .filter((item) => item && typeof item.content === 'string' && (item.role === 'user' || item.role === 'assistant'))
-          .slice(-14)
+          .slice(-4)
           .map((item) => ({
             role: item.role,
-            content: String(item.content).slice(0, 1500),
+            content: String(item.content).slice(0, 1000),
           }))
       : [];
 
-    const result = await chatCopilot(message.trim().slice(0, 1000), sanitizedHistory);
+    const clientIp = getClientIp(req);
+    const result = await chatCopilot(message.trim().slice(0, 500), sanitizedHistory, clientIp);
     res.json(result);
   } catch (error) {
     console.error('Copilot Chat Error:', error);
@@ -46,11 +54,11 @@ export async function handleExplain(req, res) {
     if (!projectId || !question) {
       return res.status(400).json({ error: 'Please provide both projectId and question.' });
     }
-    const result = await explainArchitecture(projectId, String(question).trim().slice(0, 500));
+    const clientIp = getClientIp(req);
+    const result = await explainArchitecture(projectId, String(question).trim().slice(0, 500), clientIp);
     res.json(result);
   } catch (error) {
     console.error('Copilot Explain Error:', error);
     res.status(500).json({ error: 'Failed to explain architecture. Please try again.' });
   }
 }
-

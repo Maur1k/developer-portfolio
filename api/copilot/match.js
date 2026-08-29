@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { callAI, sanitizeInput } from '../_lib/aiGateway.js';
 
 const portfolioKnowledge = {
   profile: {
@@ -14,6 +14,7 @@ const portfolioKnowledge = {
     frontendAndMobile: ['React', 'React 19', 'Flutter', 'Tailwind CSS', 'Vite', 'TypeScript'],
     backend: ['Node.js', 'Express.js', 'Laravel', 'PHP', 'REST APIs', 'cPanel'],
     databases: ['MySQL', 'MongoDB', 'Firebase Firestore', 'Realtime Database'],
+    cloudAndAI: ['Azure OpenAI Service (GPT-4o-mini)', 'Multi-Cloud AI Gateway', 'Google Gemini', 'Token Throttling & Governance'],
     aiAssistedDevelopment: ['Cursor', 'GitHub Copilot', 'Claude Code', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'Prompt Engineering'],
     apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS'],
   },
@@ -60,7 +61,6 @@ const portfolioKnowledge = {
 };
 
 const SYSTEM_PROMPT = `You are Maurik AI, the portfolio copilot and technical representative for Maurik Angelo L. Fernandez. Evaluate Maurik against job descriptions strictly using verified portfolio data. Recognize his dual strengths in full-stack web/mobile engineering and AI-assisted/agentic engineering workflows (Cursor, Claude Code, Copilot, Codex). Do NOT use emojis.`;
-const FREE_TIER_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -75,8 +75,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Please provide a valid job description (at least 10 characters).' });
   }
 
+  const sanitizedJD = sanitizeInput(jobDescription, 3000);
+
   const prompt = `A recruiter provided this Job Description:
-"""${jobDescription.trim()}"""
+"""${sanitizedJD}"""
 
 Portfolio Knowledge:
 ${JSON.stringify(portfolioKnowledge, null, 2)}
@@ -115,31 +117,7 @@ Evaluate Maurik against it strictly based on the portfolio data. Return ONLY val
   "recommendation": "<2-3 sentence technical recommendation without emojis>"
 }`;
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey) {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    for (const modelName of FREE_TIER_MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          systemInstruction: SYSTEM_PROMPT,
-          generationConfig: { temperature: 0.2, responseMimeType: 'application/json' },
-        });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text().trim();
-        const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
-        const parsed = JSON.parse(cleaned);
-        if (parsed && typeof parsed.matchScore === 'number') {
-          return res.status(200).json(parsed);
-        }
-      } catch (err) {
-        console.warn(`[Gemini Serverless Match] Model ${modelName}:`, err.message);
-      }
-    }
-  }
-
-  // Fallback
-  return res.status(200).json({
+  const localFallbackResponse = {
     matchScore: 92,
     headline: 'Strong match across Full-Stack Web (React 19/Node.js), Mobile (Flutter), and AI-Assisted Agentic Workflows.',
     strongMatches: [
@@ -159,5 +137,25 @@ Evaluate Maurik against it strictly based on the portfolio data. Return ONLY val
       { projectId: 'wibav3', name: 'When in Baguio Eats — Customer Mobile App', relevance: 'Production Flutter mobile app deployed to 60,000+ users across iOS and Android.' },
     ],
     recommendation: 'Maurik demonstrates exceptional versatility as a full-stack engineer and AI-augmented developer capable of shipping high-impact software at rapid velocity.',
+  };
+
+  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+                   req.headers['x-real-ip'] ||
+                   req.socket?.remoteAddress || 'unknown';
+
+  const { response, provider } = await callAI({
+    systemPrompt: SYSTEM_PROMPT,
+    userPrompt: prompt,
+    history: [],
+    parseResponse: (text) => {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed.matchScore === 'number') return parsed;
+      return null;
+    },
+    localFallback: () => localFallbackResponse,
+    clientIp,
   });
+
+  console.log(`[Copilot Match] Provider: ${provider}`);
+  return res.status(200).json(response);
 }

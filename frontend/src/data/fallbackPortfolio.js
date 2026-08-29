@@ -406,6 +406,12 @@ export const fallbackSkills = {
     'Accelerated prototyping, testing, and debugging',
     'Automating repetitive coding tasks with developer control',
   ],
+  azureai: [
+    'Azure OpenAI Service (GPT-4o-mini) & Azure AI Services',
+    'Multi-Provider AI Gateway Architecture & Failover Resilience',
+    'Token Throttling, Quota Governance & Cost Optimization',
+    'AI Document Parsing & Additive Knowledge Sync Pipeline',
+  ],
 };
 
 export const fallbackExperience = [
