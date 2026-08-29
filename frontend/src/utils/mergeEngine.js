@@ -23,6 +23,41 @@ function normalize(str) {
 }
 
 /**
+ * Known project aliases — projects that go by different names but are the same thing.
+ * Each group is an array of substrings; if two project names each match a different
+ * entry in the SAME group, they are the same project.
+ */
+const PROJECT_ALIAS_GROUPS = [
+  ['when in baguio', 'wibe', 'baguio eats', 'customer mobile app'],
+  ['click2serve', 'alaminos', 'municipal information kiosk', 'smart municipal'],
+  ['projex', 'project management'],
+];
+
+/**
+ * Check if two project names refer to the same project using alias groups
+ */
+function isProjectMatch(a, b) {
+  const na = normalize(a);
+  const nb = normalize(b);
+  if (na === nb) return true;
+  if (na.includes(nb) || nb.includes(na)) return true;
+
+  // Check alias groups
+  for (const group of PROJECT_ALIAS_GROUPS) {
+    const aMatches = group.some((alias) => na.includes(alias));
+    const bMatches = group.some((alias) => nb.includes(alias));
+    if (aMatches && bMatches) return true;
+  }
+
+  // Word overlap check
+  const wordsA = new Set(na.split(/\s+/).filter(w => w.length > 2));
+  const wordsB = new Set(nb.split(/\s+/).filter(w => w.length > 2));
+  const intersection = [...wordsA].filter((w) => wordsB.has(w));
+  const union = new Set([...wordsA, ...wordsB]);
+  return union.size > 0 && intersection.length / union.size > 0.5;
+}
+
+/**
  * Check if two strings are semantically similar enough to be considered the same item
  */
 function isSimilar(a, b) {
@@ -226,7 +261,7 @@ function diffProjects(cvProjects, portfolioProjects) {
 
   for (const cvProj of cvProjects || []) {
     const match = (portfolioProjects || []).find((pProj) =>
-      isSimilar(cvProj.name || '', pProj.name || pProj.title || '')
+      isProjectMatch(cvProj.name || '', pProj.name || pProj.title || '')
     );
 
     if (!match) {
@@ -268,7 +303,7 @@ function diffProjects(cvProjects, portfolioProjects) {
   // PORTFOLIO_ONLY projects
   for (const pProj of portfolioProjects || []) {
     const match = (cvProjects || []).find((cProj) =>
-      isSimilar(cProj.name || '', pProj.name || pProj.title || '')
+      isProjectMatch(cProj.name || '', pProj.name || pProj.title || '')
     );
 
     if (!match) {
@@ -337,7 +372,7 @@ export function extractStructuredCVFallback(rawText) {
   if (/baguio.*eats|wibav3|wibe|customer mobile/i.test(text)) {
     projects.push({
       name: 'When in Baguio Eats — Customer Mobile App',
-      technologies: ['Flutter', 'Dart', 'Provider', 'Google Maps', 'PayMongo (GCash)', 'Codemagic'],
+      technologies: ['Flutter', 'Dart', 'Provider', 'Google Maps', 'PayMongo (GCash)', 'Firebase'],
       achievements: [
         '60,000+ registered users across Apple App Store and Google Play.',
         '99.2% crash-free session stability.',

@@ -2280,22 +2280,53 @@ function ResumeSyncView() {
     try {
       for (const diff of approvedDiffs) {
         if (diff.section && diff.section.startsWith('Skills >')) {
-          const category = diff.section.replace('Skills >', '').trim();
+          const rawCat = diff.section.replace('Skills >', '').trim();
           const currentSkills = { ...(skills || fallbackSkills) };
-          const targetKey = currentSkills[category]
-            ? category
-            : category === 'cloudAndAI'
-            ? 'aidev'
-            : Object.keys(currentSkills)[0];
-          const currentList = Array.isArray(currentSkills[targetKey]) ? currentSkills[targetKey] : [];
-          if (diff.cvValue && !currentList.includes(diff.cvValue)) {
-            currentSkills[targetKey] = [...currentList, diff.cvValue];
-            await supabase.from('site_content').upsert({
-              key: 'skills',
-              data: currentSkills,
-              updated_at: new Date().toISOString(),
-            });
+          
+          // Clean up any previously misplaced Codemagic from React category
+          if (Array.isArray(currentSkills.react)) {
+            currentSkills.react = currentSkills.react.filter(
+              (item) => !item.toLowerCase().includes('codemagic')
+            );
           }
+
+          // Smart category resolution
+          let targetKey = rawCat;
+          const val = diff.cvValue || '';
+          const normVal = val.toLowerCase();
+
+          if (normVal.includes('codemagic') || normVal.includes('flutter') || normVal.includes('dart') || normVal.includes('provider')) {
+            targetKey = 'flutter';
+          } else if (normVal.includes('react') || normVal.includes('vite') || normVal.includes('typescript') || normVal.includes('tailwind') || normVal.includes('framer')) {
+            targetKey = 'react';
+          } else if (normVal.includes('node') || normVal.includes('express')) {
+            targetKey = 'nodejs';
+          } else if (normVal.includes('laravel') || normVal.includes('php')) {
+            targetKey = 'laravel';
+          } else if (normVal.includes('mysql') || normVal.includes('postgres') || normVal.includes('mongo') || normVal.includes('sql')) {
+            targetKey = 'mysql';
+          } else if (normVal.includes('firebase') || normVal.includes('firestore') || normVal.includes('fcm')) {
+            targetKey = 'firebase';
+          } else if (normVal.includes('paymongo') || normVal.includes('rest') || normVal.includes('api') || normVal.includes('leaflet') || normVal.includes('postman')) {
+            targetKey = 'restapis';
+          } else if (normVal.includes('azure')) {
+            targetKey = 'azureai';
+          } else if (normVal.includes('cursor') || normVal.includes('claude') || normVal.includes('copilot') || normVal.includes('ai') || normVal.includes('chatgpt') || normVal.includes('gemini')) {
+            targetKey = 'aidev';
+          } else if (!currentSkills[targetKey]) {
+            targetKey = 'aidev';
+          }
+
+          const currentList = Array.isArray(currentSkills[targetKey]) ? currentSkills[targetKey] : [];
+          if (diff.cvValue && !currentList.some((item) => item.toLowerCase() === val.toLowerCase())) {
+            currentSkills[targetKey] = [...currentList, diff.cvValue];
+          }
+
+          await supabase.from('site_content').upsert({
+            key: 'skills',
+            data: currentSkills,
+            updated_at: new Date().toISOString(),
+          });
         } else if (diff.section === 'Experience' && diff.category === 'NEW' && diff.cvValue) {
           const company = diff.cvValue.company || 'Company';
           const position = diff.cvValue.role || diff.cvValue.position || 'Software Developer';
