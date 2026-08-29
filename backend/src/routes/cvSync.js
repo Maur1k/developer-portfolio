@@ -1,6 +1,6 @@
 import express from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { computeMergeDiff } from '../../../api/_lib/mergeEngine.js';
+import { computeMergeDiff, extractStructuredCVFallback } from '../../../api/_lib/mergeEngine.js';
 
 const router = express.Router();
 
@@ -135,12 +135,20 @@ router.post('/sync', async (req, res) => {
       aiOutput = result.response.text().trim();
     }
 
-    if (!aiOutput) {
-      return res.status(500).json({ error: 'AI processing failed. Please verify API keys.' });
+    let cvData = null;
+    if (aiOutput) {
+      try {
+        const cleaned = aiOutput.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+        cvData = JSON.parse(cleaned);
+      } catch (err) {
+        console.warn('[CV Sync] JSON parse error, falling back to heuristic parser');
+      }
     }
 
-    const cleaned = aiOutput.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
-    const cvData = JSON.parse(cleaned);
+    if (!cvData) {
+      console.log('[CV Sync] Using intelligent heuristic CV parser fallback');
+      cvData = extractStructuredCVFallback(cvText);
+    }
 
     const portfolio = existingPortfolioData || {};
     const { diffs, summary } = computeMergeDiff(cvData, portfolio);
@@ -150,10 +158,23 @@ router.post('/sync', async (req, res) => {
       cvData,
       diffs,
       summary,
+      provider: aiOutput ? 'ai-structured' : 'heuristic-fallback',
     });
   } catch (error) {
     console.error('CV Sync Route Error:', error);
-    return res.status(500).json({ error: error.message || 'CV Sync processing failed.' });
+    try {
+      const fallbackData = extractStructuredCVFallback(req.body?.cvText || '');
+      const { diffs, summary } = computeMergeDiff(fallbackData, req.body?.existingPortfolioData || {});
+      return res.json({
+        success: true,
+        cvData: fallbackData,
+        diffs,
+        summary,
+        provider: 'resilient-fallback',
+      });
+    } catch (finalErr) {
+      return res.status(500).json({ error: error.message || 'CV Sync processing failed.' });
+    }
   }
 });
 

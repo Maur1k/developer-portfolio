@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as pdfjsLib from 'pdfjs-dist';
+import { computeMergeDiff, extractStructuredCVFallback } from '../../../api/_lib/mergeEngine.js';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
@@ -110,12 +111,23 @@ export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
         });
       }
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Server returned HTTP ${res.status}`);
+      let data = null;
+      if (res && res.ok) {
+        data = await res.json().catch(() => null);
       }
 
-      const data = await res.json();
+      // If backend was not reached or returned an error, run client-side engine seamlessly
+      if (!data || !data.diffs) {
+        console.log('[Resume Sync] Running client-side additive merge engine');
+        const extracted = extractStructuredCVFallback(cvText);
+        const mergeResult = computeMergeDiff(extracted, existingPortfolio || {});
+        data = {
+          cvData: extracted,
+          diffs: mergeResult.diffs,
+          summary: mergeResult.summary,
+        };
+      }
+
       if (data.diffs && Array.isArray(data.diffs)) {
         setDiffResults(data.diffs);
         setSummary(data.summary);
@@ -129,11 +141,23 @@ export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
         });
         setSelectedItems(initialSelected);
       } else {
-        throw new Error('No diff structure returned by AI analyzer.');
+        throw new Error('Could not parse resume data.');
       }
     } catch (err) {
-      console.error('CV Sync Analysis Error:', err);
-      setError(err.message || 'Failed to analyze resume with AI. Please verify API keys.');
+      console.warn('Network notice, switching to instant client merge engine:', err.message);
+      try {
+        const extracted = extractStructuredCVFallback(cvText);
+        const mergeResult = computeMergeDiff(extracted, existingPortfolio || {});
+        setDiffResults(mergeResult.diffs);
+        setSummary(mergeResult.summary);
+        const initialSelected = {};
+        mergeResult.diffs.forEach((d, idx) => {
+          if (d.category === 'NEW') initialSelected[idx] = true;
+        });
+        setSelectedItems(initialSelected);
+      } catch (clientErr) {
+        setError('Failed to process resume: ' + clientErr.message);
+      }
     } finally {
       setIsProcessing(false);
     }

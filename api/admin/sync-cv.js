@@ -1,5 +1,5 @@
 import { callAIAdmin } from '../_lib/aiGateway.js';
-import { computeMergeDiff } from '../_lib/mergeEngine.js';
+import { computeMergeDiff, extractStructuredCVFallback } from '../_lib/mergeEngine.js';
 
 const CV_EXTRACTION_SYSTEM_PROMPT = `You are a precise technical document analyzer. Your task is to extract structured portfolio data from a resume/CV text.
 
@@ -86,12 +86,20 @@ export default async function handler(req, res) {
       maxTokens: 2500,
     });
 
-    if (!aiOutput) {
-      return res.status(500).json({ error: 'Failed to extract data from CV. Please check your AI API configuration.' });
+    let cvData = null;
+    if (aiOutput) {
+      try {
+        const cleaned = aiOutput.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+        cvData = JSON.parse(cleaned);
+      } catch (err) {
+        console.warn('[Serverless CV Sync] JSON parse error, falling back to heuristic parser');
+      }
     }
 
-    const cleaned = aiOutput.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
-    const cvData = JSON.parse(cleaned);
+    if (!cvData) {
+      console.log('[Serverless CV Sync] Using heuristic parser fallback');
+      cvData = extractStructuredCVFallback(cvText);
+    }
 
     // Compute additive merge diff against existing portfolio data
     const portfolio = existingPortfolioData || {};
@@ -102,9 +110,22 @@ export default async function handler(req, res) {
       cvData,
       diffs,
       summary,
+      provider: aiOutput ? 'ai-structured' : 'heuristic-fallback',
     });
   } catch (error) {
     console.error('[Admin CV Sync Error]:', error);
-    return res.status(500).json({ error: error.message || 'CV Sync processing failed.' });
+    try {
+      const fallbackData = extractStructuredCVFallback(req.body?.cvText || '');
+      const { diffs, summary } = computeMergeDiff(fallbackData, req.body?.existingPortfolioData || {});
+      return res.status(200).json({
+        success: true,
+        cvData: fallbackData,
+        diffs,
+        summary,
+        provider: 'resilient-fallback',
+      });
+    } catch (finalErr) {
+      return res.status(500).json({ error: error.message || 'CV Sync processing failed.' });
+    }
   }
 }

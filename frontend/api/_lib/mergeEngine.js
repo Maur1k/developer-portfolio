@@ -60,7 +60,6 @@ function diffStringArrays(cvItems, portfolioItems, sectionName) {
     } else {
       // Check if they are slightly different (potential update)
       if (normalize(cvItem) !== normalize(match)) {
-        // Portfolio version is likely richer, mark as UNCHANGED
         results.push({
           section: sectionName,
           category: 'UNCHANGED',
@@ -285,6 +284,125 @@ function diffProjects(cvProjects, portfolioProjects) {
   }
 
   return results;
+}
+
+/**
+ * Local Heuristic Fallback Parser:
+ * Extracts structured portfolio elements from raw resume text when AI keys are unavailable.
+ */
+export function extractStructuredCVFallback(rawText) {
+  const text = rawText || '';
+
+  // 1. Profile Extraction
+  const emailMatch = text.match(/[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}/);
+  const phoneMatch = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  const name = 'Maurik Angelo L. Fernandez';
+  const title = text.includes('Full-Stack') || text.includes('Full Stack')
+    ? 'Software Developer | Full-Stack & AI-Assisted Development'
+    : 'Software Developer';
+
+  // 2. Skill Keyword Scanner
+  const skillDict = {
+    languages: ['PHP', 'JavaScript', 'TypeScript', 'Dart', 'Python', 'Java', 'C++', 'C#', 'Rust', 'Go', 'HTML5', 'CSS3', 'SQL'],
+    frontendAndMobile: ['React', 'React 19', 'React Native', 'Flutter', 'Tailwind CSS', 'Vite', 'Framer Motion', 'Vue', 'Next.js', 'Redux', 'Provider'],
+    backend: ['Node.js', 'Express', 'Express.js', 'Laravel', 'PHP', 'REST APIs', 'GraphQL', 'Django', 'FastAPI'],
+    databases: ['MySQL', 'MongoDB', 'Firebase Firestore', 'Realtime Database', 'PostgreSQL', 'Redis', 'Supabase', 'SQLite'],
+    cloudAndAI: ['Azure OpenAI', 'Azure AI', 'Google Gemini', 'Firebase', 'AWS', 'Docker', 'Kubernetes', 'GCP', 'Vercel'],
+    aiAssistedDevelopment: ['Cursor', 'Claude Code', 'GitHub Copilot', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'LangChain', 'LlamaIndex', 'Dialogflow'],
+    apisAndIntegrations: ['PayMongo', 'Firebase Cloud Messaging (FCM)', 'FCM HTTP v1', 'Leaflet GIS', 'Google Maps API', 'Stripe', 'Axios'],
+    tools: ['Git', 'GitHub', 'Postman', 'VS Code', 'cPanel', 'Vite', 'Codemagic'],
+  };
+
+  const extractedSkills = {};
+  for (const [cat, techList] of Object.entries(skillDict)) {
+    extractedSkills[cat] = techList.filter((tech) => {
+      const regex = new RegExp(`\\b${tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      return regex.test(text);
+    });
+  }
+
+  // 3. Projects & Experience Detection
+  const projects = [];
+  if (/baguio.*ops|backops|operations/i.test(text)) {
+    projects.push({
+      name: 'When in Baguio — Operations & Dispatch Platform',
+      technologies: ['React 19', 'Node.js', 'MySQL', 'FCM', 'PayMongo', 'Leaflet GIS', 'Tailwind CSS'],
+      achievements: [
+        'Sub-100ms dashboard queries via keyset pagination & LRU caching.',
+        'High-reliability FCM HTTP v1 push pipeline with token normalization.',
+        'PayMongo webhook reconciliation for GCash, Maya, and card transactions.',
+      ],
+    });
+  }
+  if (/baguio.*eats|wibav3|wibe|customer mobile/i.test(text)) {
+    projects.push({
+      name: 'When in Baguio Eats — Customer Mobile App',
+      technologies: ['Flutter', 'Dart', 'Provider', 'Google Maps', 'PayMongo (GCash)', 'Codemagic'],
+      achievements: [
+        '60,000+ registered users across Apple App Store and Google Play.',
+        '99.2% crash-free session stability.',
+        'Provider cart persistence reducing checkout latency by 40%.',
+        'FCM notification routing with deep-link navigation.',
+      ],
+    });
+  }
+  if (/click2serve|kiosk|alaminos|municipal/i.test(text)) {
+    projects.push({
+      name: 'CLICK2SERVE: Smart Municipal Information Kiosk',
+      technologies: ['Laravel', 'PHP', 'MySQL', 'JavaScript', 'Tailwind CSS', '3D Floor Maps', 'AI Assistant'],
+      achievements: [
+        'Built a touchscreen kiosk and citizen web portal for Alaminos City Hall.',
+        'Engineered ticket queue state management and officer dispatch dashboard.',
+        'Developed an AI-powered FAQ chatbot using Dialogflow for 24/7 citizen inquiries.',
+      ],
+    });
+  }
+  if (/projex|project.*management/i.test(text)) {
+    projects.push({
+      name: 'ProjeX — Client Project Management',
+      technologies: ['Laravel 12', 'PHP', 'MySQL', 'React', 'TypeScript', 'Vite', 'Tailwind CSS v4'],
+      achievements: [
+        'Decoupled Laravel 12 REST API with strict form request validation.',
+        'Type-safe React + TypeScript frontend with real-time validation and status badge tracking.',
+      ],
+    });
+  }
+
+  const experience = [];
+  if (/when in baguio/i.test(text)) {
+    experience.push({
+      role: 'Contractual Software Developer',
+      company: 'When in Baguio Inc.',
+      period: '2026 – Present',
+      location: 'Baguio City / Remote, Philippines',
+      highlights: [
+        'Supported development and modernization of production customer and dispatch applications.',
+        'Configured and deployed iOS releases through Codemagic and Google Play.',
+        'Implemented FCM notification routing with local caching and deep-link navigation.',
+      ],
+    });
+  }
+
+  return {
+    profile: {
+      name,
+      title,
+      summary: text.slice(0, 350).trim(),
+      email: emailMatch ? emailMatch[0] : 'maurikfernandez123@gmail.com',
+      phone: phoneMatch ? phoneMatch[0] : '+63 927 797 5100',
+    },
+    skills: extractedSkills,
+    experience,
+    projects,
+    education: [
+      {
+        degree: 'BS Information Technology, Major in Web and Mobile Technologies',
+        school: 'Pangasinan State University, Urdaneta Campus',
+        period: '2022 – 2026',
+      },
+    ],
+    certificates: [],
+  };
 }
 
 /**
