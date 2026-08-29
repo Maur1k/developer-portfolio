@@ -1,9 +1,30 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
+
+async function extractTextFromPdf(arrayBuffer) {
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdf = await loadingTask.promise;
+  let fullText = '';
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items
+      .map((item) => item.str)
+      .join(' ')
+      .replace(/\s+/g, ' ');
+    fullText += `\n--- Page ${pageNum} ---\n` + pageText;
+  }
+  return fullText.trim();
+}
 
 export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
   const [cvText, setCvText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isExtractingPdf, setIsExtractingPdf] = useState(false);
   const [diffResults, setDiffResults] = useState(null);
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState('');
@@ -17,32 +38,44 @@ export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
     setError('');
     setSuccessMessage('');
 
-    if (file.type === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+    if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
+      setIsExtractingPdf(true);
+      try {
+        const buffer = await file.arrayBuffer();
+        const extractedText = await extractTextFromPdf(buffer);
+        if (extractedText && extractedText.length > 20) {
+          setCvText(extractedText);
+          setSuccessMessage(`✓ Successfully extracted ${extractedText.length} characters from "${file.name}". You can review or edit before analyzing.`);
+        } else {
+          setError('Could not extract readable text from this PDF (it might be a scanned image). Please copy and paste the text directly.');
+        }
+      } catch (err) {
+        console.error('PDF Extraction error:', err);
+        setError('Failed to extract text from PDF: ' + err.message + '. Please copy and paste your resume text instead.');
+      } finally {
+        setIsExtractingPdf(false);
+      }
+    } else if (file.type === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
       const reader = new FileReader();
       reader.onload = (event) => {
         setCvText(event.target?.result || '');
+        setSuccessMessage(`✓ Loaded "${file.name}".`);
       };
       reader.readAsText(file);
     } else {
-      // For PDF or DOCX, read text or prompt user to paste text
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target?.result;
-        if (typeof content === 'string') {
-          // If plain text extract
-          setCvText(content);
-        } else {
-          // Instruct user
-          setError('For optimal parsing, please copy and paste your resume text into the box below, or upload a .txt / .md version.');
-        }
-      };
-      reader.readAsText(file);
+      setError('Please upload a .pdf, .txt, or .md file, or paste your resume text directly.');
     }
   };
 
   const handleAnalyze = async () => {
     if (!cvText || cvText.trim().length < 30) {
-      setError('Please paste or upload at least 30 characters of resume text.');
+      setError('Please paste or upload at least 30 characters of readable resume text.');
+      return;
+    }
+
+    // Safety check: Detect if raw binary PDF was pasted
+    if (cvText.includes('%PDF-') || (cvText.includes('') && cvText.length > 500)) {
+      setError('The text contains raw binary data. Please upload your PDF using the "Choose File" button so it can be extracted cleanly into readable text.');
       return;
     }
 
@@ -155,7 +188,7 @@ export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
           <div className="space-y-1">
             <h3 className="font-semibold text-white">AI-Powered Additive Resume Sync</h3>
             <p className="text-sm text-gray-300">
-              Upload or paste your updated CV. Azure OpenAI will extract new skills, roles, and achievements, comparing them against your existing portfolio.
+              Upload your PDF/TXT resume or paste the content below. Azure OpenAI (`gpt-4o-mini`) / Gemini extracts new skills, roles, and achievements with additive merging.
             </p>
             <p className="text-xs text-amber-300/90 font-medium pt-1">
               🛡️ <strong>Additive Merge Guarantee:</strong> Existing portfolio entries, code metrics, and evidence points will NEVER be deleted or downgraded.
@@ -183,29 +216,37 @@ export default function ResumeSyncModal({ existingPortfolio, onApplyChanges }) {
             <label className="text-sm font-semibold uppercase tracking-wider text-gray-300">
               Paste Resume Content or Upload File
             </label>
-            <input
-              type="file"
-              accept=".txt,.md,.pdf,.doc,.docx"
-              onChange={handleFileUpload}
-              className="text-xs text-gray-400 file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-white/20"
-            />
+            <div className="flex items-center gap-2">
+              {isExtractingPdf && (
+                <span className="text-xs text-amber-300 font-mono animate-pulse">
+                  Extracting PDF text...
+                </span>
+              )}
+              <input
+                type="file"
+                accept=".pdf,.txt,.md"
+                onChange={handleFileUpload}
+                disabled={isExtractingPdf || isProcessing}
+                className="text-xs text-gray-400 file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-white/20 cursor-pointer"
+              />
+            </div>
           </div>
 
           <textarea
             rows={10}
             value={cvText}
             onChange={(e) => setCvText(e.target.value)}
-            placeholder="Paste raw resume text here (including summary, skills, work experience, and projects)..."
+            placeholder="Upload your PDF above or paste readable resume text here (summary, skills, experience, projects)..."
             className="w-full rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm text-white font-mono placeholder:text-gray-600 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none"
           />
 
           <div className="flex items-center justify-between pt-2">
             <span className="text-xs text-gray-500 font-mono">
-              {cvText.length} characters
+              {cvText.length} characters {cvText.length > 0 ? '(Clean text)' : ''}
             </span>
             <button
               onClick={handleAnalyze}
-              disabled={isProcessing || cvText.trim().length < 30}
+              disabled={isProcessing || isExtractingPdf || cvText.trim().length < 30}
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-2.5 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-lg shadow-orange-500/20"
             >
               {isProcessing ? (

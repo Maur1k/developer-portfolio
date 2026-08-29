@@ -84,24 +84,39 @@ router.post('/sync', async (req, res) => {
     const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview';
 
     if (apiKey && endpoint) {
-      const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+      const isAzureInference = endpoint.includes('models.inference.ai.azure.com') || endpoint.includes('inference.ai.azure.com');
+      const url = isAzureInference
+        ? `${endpoint.replace(/\/$/, '')}/chat/completions`
+        : `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(isAzureInference ? { Authorization: `Bearer ${apiKey}` } : { 'api-key': apiKey }),
+      };
+
+      const body = {
+        messages: [
+          { role: 'system', content: CV_EXTRACTION_SYSTEM_PROMPT },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.1,
+        max_tokens: 2500,
+        response_format: { type: 'json_object' },
+        ...(isAzureInference ? { model: deployment } : {}),
+      };
+
       try {
         const azureResp = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
-          body: JSON.stringify({
-            messages: [
-              { role: 'system', content: CV_EXTRACTION_SYSTEM_PROMPT },
-              { role: 'user', content: userPrompt },
-            ],
-            temperature: 0.1,
-            max_tokens: 2500,
-            response_format: { type: 'json_object' },
-          }),
+          headers,
+          body: JSON.stringify(body),
         });
         if (azureResp.ok) {
           const data = await azureResp.json();
           aiOutput = data.choices?.[0]?.message?.content?.trim();
+        } else {
+          const errText = await azureResp.text();
+          console.warn(`[CV Sync Azure] HTTP ${azureResp.status}:`, errText);
         }
       } catch (err) {
         console.warn('[CV Sync] Azure error:', err.message);
