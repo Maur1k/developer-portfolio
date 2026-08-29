@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCollectionData } from '../hooks/useFirestoreData';
-import { fallbackExperience, fallbackEducation } from '../data/fallbackPortfolio';
+import { fallbackExperience, fallbackEducation, fallbackCertificates } from '../data/fallbackPortfolio';
 
 export default function Experience() {
   const { items: experiences } = useCollectionData('experience', fallbackExperience, { orderBy: 'displayOrder' });
   const { items: education } = useCollectionData('education', fallbackEducation, { orderBy: 'displayOrder' });
+  const { items: certificates } = useCollectionData('certificates', fallbackCertificates, { orderBy: 'displayOrder' });
   const [expandedId, setExpandedId] = useState(experiences[0]?.id || 'when-in-baguio-contract');
 
   const toggleExpand = (id) => {
@@ -239,6 +240,81 @@ export default function Experience() {
           );
         })}
       </div>
+
+      {/* Certificates & Credentials Section */}
+      {certificates.length > 0 && (
+        <div className="mt-12 pt-8 border-t border-zinc-900">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-mono font-semibold uppercase tracking-wider text-zinc-400">
+              Certificates & Credentials
+            </h3>
+            <span className="text-xs font-mono text-zinc-500">
+              {certificates.length} {certificates.length === 1 ? 'Credential' : 'Credentials'}
+            </span>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {certificates.map((cert) => {
+              const credUrl = cert.credentialUrl || cert.credential_url;
+              const pdf = cert.pdfUrl || cert.pdf_url;
+              const img = cert.imageUrl || cert.image_url;
+
+              return (
+                <div
+                  key={cert.id}
+                  className="p-5 rounded-xl border border-zinc-900 bg-[#09090b]/80 flex flex-col justify-between transition hover:border-amber-400/30 hover:bg-[#0c0d10]"
+                >
+                  <div>
+                    {img && (
+                      <img
+                        src={img}
+                        alt={cert.title}
+                        className="w-full h-36 object-cover rounded-lg mb-3 border border-zinc-800"
+                      />
+                    )}
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="text-sm font-semibold text-white leading-snug">{cert.title}</h4>
+                      {cert.date && (
+                        <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/50">
+                          {cert.date}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-1">{cert.issuer}</p>
+                  </div>
+
+                  {(credUrl || pdf) && (
+                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-zinc-800/60">
+                      {credUrl && (
+                        <a
+                          href={credUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition"
+                        >
+                          <span>Verify Credential</span>
+                          <span className="text-[10px]">↗</span>
+                        </a>
+                      )}
+                      {pdf && (
+                        <a
+                          href={pdf}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition"
+                        >
+                          <span>View PDF</span>
+                          <span className="text-[10px]">↗</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
