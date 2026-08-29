@@ -8,6 +8,7 @@ import {
   fallbackCertificates,
   fallbackEducation,
   fallbackExperience,
+  fallbackPlaygroundProjects,
   fallbackProfile,
   fallbackProjects,
   fallbackSkills,
@@ -2177,19 +2178,55 @@ function GenericForm({ collectionName, fields, item, onClose }) {
     setSaving(true);
     setError('');
 
-    const payload = { ...draft, updated_at: new Date().toISOString() };
-    fields.forEach(([key, , type]) => {
-      if (type === 'list') payload[key] = splitList(payload[key]);
-      if (type === 'number') payload[key] = Number(payload[key] || 0);
-    });
+    const cName = collectionName.toLowerCase();
+    const id = draft.id || `${cName}-${Date.now()}`;
+    const display_order = Number(draft.displayOrder ?? draft.display_order ?? 0);
+    const updated_at = new Date().toISOString();
 
-    if (!payload.id) {
-      payload.id = `${collectionName}-${Date.now()}`;
+    let payload;
+    if (cName === 'certificates') {
+      payload = {
+        id,
+        title: draft.title || '',
+        issuer: draft.issuer || '',
+        date: draft.date || '',
+        credential_url: draft.credentialUrl ?? draft.credential_url ?? '',
+        pdf_url: draft.pdfUrl ?? draft.pdf_url ?? '',
+        image_url: draft.imageUrl ?? draft.image_url ?? '',
+        display_order,
+        updated_at,
+      };
+    } else if (cName === 'experience') {
+      payload = {
+        id,
+        company: draft.company || '',
+        position: draft.position || draft.role || '',
+        duration: draft.duration || draft.period || '',
+        description: draft.description || draft.summary || '',
+        responsibilities: splitList(draft.responsibilities || draft.highlights),
+        technologies: splitList(draft.technologies),
+        logo_url: draft.logoUrl ?? draft.logo_url ?? '',
+        display_order,
+        updated_at,
+      };
+    } else if (cName === 'education') {
+      payload = {
+        id,
+        degree: draft.degree || '',
+        institution: draft.institution || draft.school || '',
+        campus: draft.campus || '',
+        duration: draft.duration || draft.period || '',
+        description: draft.description || '',
+        display_order,
+        updated_at,
+      };
+    } else {
+      payload = { ...draft, id, display_order, updated_at };
     }
 
     try {
       const { error: upsertError } = await supabase
-        .from(collectionName.toLowerCase())
+        .from(cName)
         .upsert(payload, { onConflict: 'id' });
 
       if (upsertError) throw upsertError;

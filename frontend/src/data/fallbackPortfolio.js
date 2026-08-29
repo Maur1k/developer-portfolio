@@ -484,5 +484,14 @@ export const fallbackEducation = [
   },
 ];
 
-export const fallbackCertificates = [];
+export const fallbackCertificates = [
+  {
+    id: 'azure-ai-essentials',
+    title: 'Microsoft Azure AI Essentials',
+    issuer: 'Microsoft & LinkedIn',
+    date: '2026',
+    credentialUrl: 'https://lnkd.in/geYdUKpw',
+    displayOrder: 1,
+  },
+];
 
