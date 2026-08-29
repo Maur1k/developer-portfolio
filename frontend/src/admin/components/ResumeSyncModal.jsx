@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as pdfjsLib from 'pdfjs-dist';
-import { computeMergeDiff, extractStructuredCVFallback } from '../../../api/_lib/mergeEngine.js';
+import { computeMergeDiff, extractStructuredCVFallback } from '../../utils/mergeEngine.js';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
