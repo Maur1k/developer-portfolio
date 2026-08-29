@@ -687,7 +687,36 @@ export default function Projects() {
     p.id === 'client-project-tracker' ||
     p.id === 'playground-placeholder';
 
-  const mainProjects = allProjects.filter((p) => !isPlayground(p));
+  const isWibCustomerApp = (p) => {
+    if (!p) return false;
+    if (p.id === 'wibav3') return true;
+    const title = (p.title || p.name || '').toLowerCase();
+    return (title.includes('baguio') || title.includes('wibe')) &&
+      (title.includes('eat') || title.includes('mobile') || title === 'when in baguio (wibe)');
+  };
+
+  const rawMainProjects = allProjects.filter((p) => !isPlayground(p));
+  
+  // Deduplicate main projects (prevent duplicate WIBE customer mobile app cards)
+  const mainProjects = useMemo(() => {
+    const seenWibCustomerApp = { seen: false };
+    const seenIds = new Set();
+    const result = [];
+
+    for (const p of rawMainProjects) {
+      if (isWibCustomerApp(p)) {
+        if (!seenWibCustomerApp.seen) {
+          seenWibCustomerApp.seen = true;
+          result.push(p);
+        }
+      } else if (!seenIds.has(p.id)) {
+        seenIds.add(p.id);
+        result.push(p);
+      }
+    }
+    return result;
+  }, [rawMainProjects]);
+
   const playgroundProjects = allProjects.filter((p) => isPlayground(p));
 
   // If no playground projects from DB, use fallback placeholder
@@ -696,14 +725,14 @@ export default function Projects() {
   // Ensure 'backops-wib' is always the featured project
   const featuredProject =
     mainProjects.find((p) => p.id === 'backops-wib') ||
-    mainProjects.find((p) => p.featured && p.id !== 'wibav3') ||
+    mainProjects.find((p) => p.featured && !isWibCustomerApp(p)) ||
     mainProjects[0];
 
   const otherProjects = mainProjects
-    .filter((p) => p.id !== featuredProject?.id)
+    .filter((p) => p.id !== featuredProject?.id && p !== featuredProject)
     .sort((a, b) => {
       const getOrder = (p) => {
-        if (p.id === 'wibav3') return 1;
+        if (isWibCustomerApp(p)) return 1;
         if (p.id === 'click2serve') return 2;
         return p.displayOrder ?? p.display_order ?? 99;
       };

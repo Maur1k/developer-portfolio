@@ -71,20 +71,45 @@ export function useCollectionData(collectionName, fallback = [], options = {}) {
             const dbItems = data.map(normalizeRow);
             const dbMap = new Map(dbItems.map((item) => [item.id, item]));
 
-            // Map fallback items with db overrides if available, and add any new DB-only items
+            // Helper to check if two project entries are aliases of the same project
+            const isSameProjectAlias = (a, b) => {
+              if (!a || !b) return false;
+              if (a.id === b.id) return true;
+              const titleA = (a.title || a.name || '').toLowerCase();
+              const titleB = (b.title || b.name || '').toLowerCase();
+              if (titleA === titleB) return true;
+              const isWibA = (titleA.includes('baguio') || titleA.includes('wibe')) && (titleA.includes('eat') || titleA.includes('mobile') || a.id === 'wibav3');
+              const isWibB = (titleB.includes('baguio') || titleB.includes('wibe')) && (titleB.includes('eat') || titleB.includes('mobile') || b.id === 'wibav3');
+              if (isWibA && isWibB) return true;
+              return false;
+            };
+
+            // Map fallback items with db overrides
             const merged = fallback.map((fallbackItem) => {
+              // Direct ID match
               if (fallbackItem.id && dbMap.has(fallbackItem.id)) {
                 const dbItem = dbMap.get(fallbackItem.id);
                 return { ...fallbackItem, ...dbItem };
               }
+              // Alias match (e.g. wibav3 matched with a sync-inserted Baguio Eats entry)
+              if (collectionName.toLowerCase() === 'projects') {
+                const aliasMatch = dbItems.find((d) => isSameProjectAlias(d, fallbackItem));
+                if (aliasMatch) {
+                  return { ...fallbackItem, ...aliasMatch, id: fallbackItem.id };
+                }
+              }
               return fallbackItem;
             });
 
-            // Add any database items not present in fallback
+            // Add any database items not present in fallback and not matching an existing project alias
             const fallbackIds = new Set(fallback.map((f) => f.id));
             dbItems.forEach((dbItem) => {
               if (dbItem.id && !fallbackIds.has(dbItem.id)) {
-                merged.push(dbItem);
+                const isAlreadyMerged = collectionName.toLowerCase() === 'projects' &&
+                  merged.some((m) => isSameProjectAlias(m, dbItem));
+                if (!isAlreadyMerged) {
+                  merged.push(dbItem);
+                }
               }
             });
 
