@@ -27,7 +27,7 @@ function FormattedMessage({ text }) {
       const token = match[0];
       if (token.startsWith('**') && token.endsWith('**')) {
         parts.push(
-          <strong key={`b-${match.index}`} className="font-semibold text-white">
+          <strong key={`b-${match.index}`} className="font-semibold text-slate-900 dark:text-white">
             {token.slice(2, -2)}
           </strong>
         );
@@ -35,7 +35,7 @@ function FormattedMessage({ text }) {
         parts.push(
           <code
             key={`c-${match.index}`}
-            className="bg-zinc-800/90 text-amber-300 px-1 py-0.5 rounded font-mono text-[11px] border border-zinc-700/60"
+            className="bg-amber-500/10 dark:bg-zinc-800/90 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded font-mono text-[11px] border border-amber-500/20 dark:border-zinc-700/60"
           >
             {token.slice(1, -1)}
           </code>
@@ -60,7 +60,7 @@ function FormattedMessage({ text }) {
         elements.push(
           <pre
             key={`cb-${idx}`}
-            className="bg-[#08090d] border border-zinc-800/90 p-2.5 rounded-md font-mono text-[11px] text-amber-300 overflow-x-auto my-1.5 leading-relaxed"
+            className="bg-slate-100 dark:bg-[#08090d] border border-slate-200 dark:border-zinc-800/90 p-2.5 rounded-md font-mono text-[11px] text-amber-800 dark:text-amber-300 overflow-x-auto my-1.5 leading-relaxed"
           >
             <code>{codeBlockContent.join('\n')}</code>
           </pre>
@@ -88,7 +88,7 @@ function FormattedMessage({ text }) {
     // Headers
     if (trimmed.startsWith('### ')) {
       elements.push(
-        <h4 key={`h3-${idx}`} className="text-xs font-bold text-amber-400 mt-2 mb-1 uppercase tracking-wider font-mono">
+        <h4 key={`h3-${idx}`} className="text-xs font-bold text-amber-600 dark:text-amber-400 mt-2 mb-1 uppercase tracking-wider font-mono">
           {formatInline(trimmed.slice(4))}
         </h4>
       );
@@ -96,7 +96,7 @@ function FormattedMessage({ text }) {
     }
     if (trimmed.startsWith('## ')) {
       elements.push(
-        <h3 key={`h2-${idx}`} className="text-xs font-bold text-white mt-2.5 mb-1 font-mono">
+        <h3 key={`h2-${idx}`} className="text-xs font-bold text-slate-900 dark:text-white mt-2.5 mb-1 font-mono">
           {formatInline(trimmed.slice(3))}
         </h3>
       );
@@ -106,8 +106,8 @@ function FormattedMessage({ text }) {
     // Unordered list item (- or *)
     if (/^[-*]\s+/.test(trimmed)) {
       elements.push(
-        <div key={`li-${idx}`} className="flex items-start gap-1.5 my-0.5 text-zinc-300">
-          <span className="text-amber-400 font-bold shrink-0 mt-0.5">•</span>
+        <div key={`li-${idx}`} className="flex items-start gap-1.5 my-0.5 text-slate-700 dark:text-zinc-300">
+          <span className="text-amber-500 dark:text-amber-400 font-bold shrink-0 mt-0.5">•</span>
           <span className="flex-1 min-w-0">{formatInline(trimmed.replace(/^[-*]\s+/, ''))}</span>
         </div>
       );
@@ -118,8 +118,8 @@ function FormattedMessage({ text }) {
     const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
     if (numMatch) {
       elements.push(
-        <div key={`nli-${idx}`} className="flex items-start gap-1.5 my-0.5 text-zinc-300">
-          <span className="text-amber-400 font-mono text-[11px] shrink-0 font-semibold">{numMatch[1]}.</span>
+        <div key={`nli-${idx}`} className="flex items-start gap-1.5 my-0.5 text-slate-700 dark:text-zinc-300">
+          <span className="text-amber-600 dark:text-amber-400 font-mono text-[11px] shrink-0 font-semibold">{numMatch[1]}.</span>
           <span className="flex-1 min-w-0">{formatInline(numMatch[2])}</span>
         </div>
       );
@@ -128,7 +128,7 @@ function FormattedMessage({ text }) {
 
     // Regular paragraph
     elements.push(
-      <p key={`p-${idx}`} className="my-0.5 leading-relaxed text-zinc-300">
+      <p key={`p-${idx}`} className="my-0.5 leading-relaxed text-slate-700 dark:text-zinc-300">
         {formatInline(line)}
       </p>
     );
@@ -139,7 +139,7 @@ function FormattedMessage({ text }) {
     elements.push(
       <pre
         key="cb-tail"
-        className="bg-[#08090d] border border-zinc-800/90 p-2.5 rounded-md font-mono text-[11px] text-amber-300 overflow-x-auto my-1.5 leading-relaxed"
+        className="bg-slate-100 dark:bg-[#08090d] border border-slate-200 dark:border-zinc-800/90 p-2.5 rounded-md font-mono text-[11px] text-amber-800 dark:text-amber-300 overflow-x-auto my-1.5 leading-relaxed"
       >
         <code>{codeBlockContent.join('\n')}</code>
       </pre>
@@ -161,7 +161,7 @@ function ScoreRing({ score }) {
   return (
     <div className="relative flex items-center justify-center shrink-0">
       <svg width="88" height="88" className="-rotate-90">
-        <circle cx="44" cy="44" r={radius} fill="none" stroke="#27272a" strokeWidth={stroke} />
+        <circle cx="44" cy="44" r={radius} fill="none" className="stroke-slate-200 dark:stroke-zinc-800" strokeWidth={stroke} />
         <circle
           cx="44"
           cy="44"
@@ -175,7 +175,7 @@ function ScoreRing({ score }) {
           className="transition-all duration-1000 ease-out"
         />
       </svg>
-      <span className="absolute text-xl font-bold text-white font-mono">{score}%</span>
+      <span className="absolute text-xl font-bold text-slate-900 dark:text-white font-mono">{score}%</span>
     </div>
   );
 }
@@ -246,37 +246,37 @@ export default function CopilotModal() {
             exit={{ scale: 0.96, opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl max-h-[88vh] rounded-xl border border-zinc-800 bg-[#0b0c10] shadow-2xl flex flex-col overflow-hidden"
+            className="w-full max-w-2xl max-h-[88vh] rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#0b0c10] shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-zinc-800/80 px-5 py-3.5 bg-[#09090b] shrink-0">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800/80 px-5 py-3.5 bg-slate-50 dark:bg-[#09090b] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded border border-zinc-700 bg-zinc-800 flex items-center justify-center font-mono text-[10px] font-bold text-amber-400">
+                <div className="w-6 h-6 rounded border border-amber-500/30 dark:border-zinc-700 bg-amber-500/10 dark:bg-zinc-800 flex items-center justify-center font-mono text-[10px] font-bold text-amber-600 dark:text-amber-400">
                   AI
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Maurik AI</h3>
-                  <p className="text-[10px] text-zinc-500 font-mono">Portfolio Copilot & Technical Representative</p>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Maurik AI</h3>
+                  <p className="text-[10px] text-slate-500 dark:text-zinc-500 font-mono">Portfolio Copilot & Technical Representative</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={closeCopilot}
-                className="text-xs font-mono text-zinc-500 hover:text-white transition p-1"
+                className="text-xs font-mono text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white transition p-1 cursor-pointer"
               >
                 ESC
               </button>
             </div>
 
             {/* Tab Switcher */}
-            <div className="flex border-b border-zinc-800/60 shrink-0">
+            <div className="flex border-b border-slate-200 dark:border-zinc-800/60 bg-slate-50/50 dark:bg-transparent shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveTab('explore')}
                 className={`flex-1 px-4 py-2.5 text-xs font-mono font-medium transition-colors ${
                   activeTab === 'explore'
-                    ? 'text-amber-400 border-b-2 border-amber-400 bg-amber-400/5'
-                    : 'text-zinc-500 hover:text-zinc-300'
+                    ? 'text-amber-600 dark:text-amber-400 border-b-2 border-amber-500 dark:border-amber-400 bg-amber-500/10 dark:bg-amber-400/5 font-semibold'
+                    : 'text-slate-500 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-300'
                 }`}
               >
                 Ask Maurik
@@ -286,8 +286,8 @@ export default function CopilotModal() {
                 onClick={() => setActiveTab('match')}
                 className={`flex-1 px-4 py-2.5 text-xs font-mono font-medium transition-colors ${
                   activeTab === 'match'
-                    ? 'text-amber-400 border-b-2 border-amber-400 bg-amber-400/5'
-                    : 'text-zinc-500 hover:text-zinc-300'
+                    ? 'text-amber-600 dark:text-amber-400 border-b-2 border-amber-500 dark:border-amber-400 bg-amber-500/10 dark:bg-amber-400/5 font-semibold'
+                    : 'text-slate-500 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-zinc-300'
                 }`}
               >
                 Recruiter Match
@@ -367,43 +367,43 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
     return (
       <div className="p-5 space-y-4">
         <div>
-          <p className="text-xs text-zinc-400 mb-3 leading-relaxed">
+          <p className="text-xs text-slate-600 dark:text-zinc-400 mb-3 leading-relaxed">
             Paste a Job Description below. Maurik AI will evaluate it against verified production experience, identify transferable capabilities, cite projects as evidence, and distinguish any gaps.
           </p>
           <textarea
             value={jdText}
             onChange={(e) => setJdText(e.target.value)}
             placeholder="Paste a job description here... (e.g. Full Stack Developer — React, Node.js, REST APIs, MySQL, remote)"
-            className="w-full h-28 px-3.5 py-3 rounded-lg border border-zinc-800 bg-[#0d0e12] text-sm text-zinc-200 placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-600 font-mono"
+            className="w-full h-28 px-3.5 py-3 rounded-lg border border-slate-300 dark:border-zinc-800 bg-slate-50 dark:bg-[#0d0e12] text-sm text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-600 resize-none focus:outline-none focus:border-amber-500 dark:focus:border-zinc-600 font-mono"
           />
         </div>
 
         {/* Sample JD Chips */}
         <div className="flex flex-wrap gap-1.5">
-          <span className="text-[10px] text-zinc-600 font-mono mr-1 self-center">Try Sample JD:</span>
+          <span className="text-[10px] text-slate-500 dark:text-zinc-600 font-mono mr-1 self-center">Try Sample JD:</span>
           {sampleJDs.map((s) => (
             <button
               key={s.label}
               type="button"
               onClick={() => setJdText(s.jd)}
-              className="px-2.5 py-1 rounded-md border border-zinc-800 bg-zinc-900/60 text-[11px] font-mono text-zinc-400 hover:text-white hover:border-zinc-700 transition-colors"
+              className="px-2.5 py-1 rounded-md border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900/60 text-[11px] font-mono text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors cursor-pointer"
             >
               {s.label}
             </button>
           ))}
         </div>
 
-        {error && <p className="text-xs text-red-400 font-mono">{error}</p>}
+        {error && <p className="text-xs text-red-500 dark:text-red-400 font-mono">{error}</p>}
 
         <button
           type="button"
           onClick={analyzeJD}
           disabled={loading}
-          className="w-full py-2.5 rounded-lg bg-white text-zinc-950 font-mono text-xs font-semibold hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-2.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-zinc-950 font-mono text-xs font-semibold hover:bg-slate-800 dark:hover:bg-zinc-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 cursor-pointer"
         >
           {loading ? (
             <>
-              <span className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin" />
+              <span className="w-3.5 h-3.5 border-2 border-slate-300 dark:border-zinc-400 border-t-white dark:border-t-zinc-900 rounded-full animate-spin" />
               <span>Analyzing against portfolio evidence...</span>
             </>
           ) : (
@@ -421,42 +421,42 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
       <div className="flex items-center gap-4">
         <ScoreRing score={result.matchScore || 0} />
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Portfolio Evaluation</p>
-          <p className="text-sm text-zinc-200 leading-relaxed font-medium">{result.headline}</p>
+          <p className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-1">Portfolio Evaluation</p>
+          <p className="text-sm text-slate-800 dark:text-zinc-200 leading-relaxed font-medium">{result.headline}</p>
         </div>
       </div>
 
       {/* Strong Matches */}
       {result.strongMatches && result.strongMatches.length > 0 && (
         <div>
-          <h4 className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <h4 className="text-[11px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
             Strong Matches
           </h4>
           <div className="space-y-1.5">
             {result.strongMatches.map((m, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs bg-zinc-900/40 p-2 rounded-lg border border-zinc-800/60">
-                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
+              <div key={i} className="flex items-start gap-2 text-xs bg-slate-50 dark:bg-zinc-900/40 p-2.5 rounded-lg border border-slate-200 dark:border-zinc-800/60">
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="font-semibold text-white">{m.skill}</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{m.skill}</span>
                     {m.confidence && (
                       <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono ${
-                        m.confidence === 'production' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                        m.confidence === 'academic' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                        'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                        m.confidence === 'production' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' :
+                        m.confidence === 'academic' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20' :
+                        'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-400 border border-slate-300 dark:border-zinc-700'
                       }`}>
                         {m.confidence}
                       </span>
                     )}
                   </div>
-                  <p className="text-zinc-400 mt-0.5 text-[11px]">{m.evidence}</p>
+                  <p className="text-slate-600 dark:text-zinc-400 mt-0.5 text-[11px]">{m.evidence}</p>
                 </div>
                 {m.projectId && (
                   <button
                     type="button"
                     onClick={() => handleViewEvidence(m.projectId)}
-                    className="shrink-0 px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-[10px] font-mono text-zinc-300 hover:text-white hover:bg-zinc-700 transition cursor-pointer"
+                    className="shrink-0 px-2 py-1 rounded bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-[10px] font-mono text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-700 transition cursor-pointer"
                   >
                     View ↗
                   </button>
@@ -470,15 +470,15 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
       {/* Transferable Skills */}
       {result.transferableSkills && result.transferableSkills.length > 0 && (
         <div>
-          <h4 className="text-[11px] font-mono uppercase tracking-wider text-sky-400 mb-2 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+          <h4 className="text-[11px] font-mono uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-sky-400" />
             Transferable Skills
           </h4>
           <div className="space-y-1.5">
             {result.transferableSkills.map((t, i) => (
               <div key={i} className="p-2.5 rounded-lg border border-sky-500/20 bg-sky-500/5 text-xs">
-                <span className="font-semibold text-sky-300 font-mono">{t.skill}</span>
-                <p className="text-zinc-400 mt-0.5 text-[11px]">{t.bridge}</p>
+                <span className="font-semibold text-sky-700 dark:text-sky-300 font-mono">{t.skill}</span>
+                <p className="text-slate-600 dark:text-zinc-400 mt-0.5 text-[11px]">{t.bridge}</p>
               </div>
             ))}
           </div>
@@ -488,15 +488,15 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
       {/* Skill Gaps */}
       {result.gaps && result.gaps.length > 0 && (
         <div>
-          <h4 className="text-[11px] font-mono uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          <h4 className="text-[11px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400" />
             Skill Gaps (Not in Production)
           </h4>
           <div className="space-y-1.5">
             {result.gaps.map((g, i) => (
-              <div key={i} className="p-2.5 rounded-lg border border-zinc-800/60 bg-zinc-900/30 text-xs">
-                <span className="font-semibold text-amber-300">{g.skill}</span>
-                <p className="text-zinc-400 mt-0.5 text-[11px]">{g.assessment}</p>
+              <div key={i} className="p-2.5 rounded-lg border border-slate-200 dark:border-zinc-800/60 bg-slate-50 dark:bg-zinc-900/30 text-xs">
+                <span className="font-semibold text-amber-700 dark:text-amber-300">{g.skill}</span>
+                <p className="text-slate-600 dark:text-zinc-400 mt-0.5 text-[11px]">{g.assessment}</p>
               </div>
             ))}
           </div>
@@ -506,18 +506,18 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
       {/* Relevant Projects */}
       {result.relevantProjects && result.relevantProjects.length > 0 && (
         <div>
-          <h4 className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 mb-2">Best Evidence Projects</h4>
+          <h4 className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-400 mb-2">Best Evidence Projects</h4>
           <div className="space-y-1.5">
             {result.relevantProjects.map((p, i) => (
-              <div key={i} className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-800/60 bg-zinc-900/30">
+              <div key={i} className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-zinc-800/60 bg-slate-50 dark:bg-zinc-900/30">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-white truncate">{p.name}</p>
-                  <p className="text-[11px] text-zinc-500 truncate">{p.relevance}</p>
+                  <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">{p.name}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-500 truncate">{p.relevance}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleViewEvidence(p.projectId)}
-                  className="shrink-0 px-2.5 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-[10px] font-mono text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors ml-2 cursor-pointer"
+                  className="shrink-0 px-2.5 py-1 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-[10px] font-mono text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-700 transition-colors ml-2 cursor-pointer"
                 >
                   View Evidence ↗
                 </button>
@@ -530,8 +530,8 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
       {/* Recommendation */}
       {result.recommendation && (
         <div className="p-3 rounded-lg border border-amber-500/20 bg-amber-500/5">
-          <h4 className="text-[11px] font-mono uppercase tracking-wider text-amber-400 mb-1">Recommendation</h4>
-          <p className="text-xs text-zinc-200 leading-relaxed">{result.recommendation}</p>
+          <h4 className="text-[11px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">Recommendation</h4>
+          <p className="text-xs text-slate-700 dark:text-zinc-200 leading-relaxed">{result.recommendation}</p>
         </div>
       )}
 
@@ -540,7 +540,7 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
         <button
           type="button"
           onClick={handleCopySummary}
-          className="flex-1 py-2.5 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 text-xs font-mono text-white transition flex items-center justify-center gap-1.5 cursor-pointer"
+          className="flex-1 py-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-slate-900 dark:bg-zinc-800/80 hover:bg-slate-800 dark:hover:bg-zinc-700 text-xs font-mono text-white transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
         >
           <span>{copiedSummary ? 'Copied to Clipboard!' : 'Copy Summary for Hiring Manager'}</span>
         </button>
@@ -548,7 +548,7 @@ Recommendation: ${result.recommendation || 'Strong candidate for full-stack web 
         <button
           type="button"
           onClick={() => { setResult(null); setJdText(''); }}
-          className="px-4 py-2.5 rounded-lg border border-zinc-800 bg-transparent text-xs font-mono text-zinc-400 hover:text-white hover:bg-zinc-900 transition cursor-pointer shrink-0"
+          className="px-4 py-2.5 rounded-lg border border-slate-300 dark:border-zinc-800 bg-transparent text-xs font-mono text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition cursor-pointer shrink-0"
         >
           ← Reset
         </button>
@@ -643,7 +643,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {messages.length === 0 && (
           <div className="space-y-3">
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
               Ask Maurik AI anything about technical experience, system architecture, verified production evidence, or skill transferability.
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -652,7 +652,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
                   key={s}
                   type="button"
                   onClick={() => sendMessage(s)}
-                  className="px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900/40 text-[11px] font-mono text-zinc-400 hover:text-white hover:border-zinc-700 transition-colors text-left cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900/40 text-[11px] font-mono text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors text-left cursor-pointer"
                 >
                   {s}
                 </button>
@@ -666,8 +666,8 @@ function ExploreTab({ executeAction, closeCopilot }) {
             <div
               className={`max-w-[88%] rounded-xl px-4 py-3 text-xs leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-zinc-800 text-zinc-100 font-medium'
-                  : 'bg-[#0d0e14] border border-zinc-800/80 text-zinc-300 shadow-sm'
+                  ? 'bg-amber-500/10 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-amber-500/20 dark:border-transparent font-medium'
+                  : 'bg-slate-50 dark:bg-[#0d0e14] border border-slate-200 dark:border-zinc-800/80 text-slate-700 dark:text-zinc-300 shadow-xs'
               }`}
             >
               {msg.role === 'user' ? (
@@ -678,22 +678,22 @@ function ExploreTab({ executeAction, closeCopilot }) {
 
                   {/* Evidence Cards */}
                   {msg.evidence && msg.evidence.length > 0 && (
-                    <div className="mt-3 pt-2.5 border-t border-zinc-800/60 space-y-1.5">
-                      <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Verified Evidence:</p>
+                    <div className="mt-3 pt-2.5 border-t border-slate-200 dark:border-zinc-800/60 space-y-1.5">
+                      <p className="text-[10px] font-mono text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Verified Evidence:</p>
                       {msg.evidence.map((ev, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between p-2 rounded bg-zinc-900/60 border border-zinc-800/60 text-[11px]"
+                          className="flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/60 shadow-xs text-[11px]"
                         >
                           <div className="min-w-0 flex-1">
-                            <span className="font-semibold text-white">{ev.projectName || ev.projectId}</span>
-                            <span className="text-zinc-400 block truncate">{ev.highlight}</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">{ev.projectName || ev.projectId}</span>
+                            <span className="text-slate-600 dark:text-zinc-400 block truncate">{ev.highlight}</span>
                           </div>
                           {ev.projectId && (
                             <button
                               type="button"
                               onClick={() => handleAction({ type: 'OPEN_PROJECT', target: ev.projectId })}
-                              className="shrink-0 px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-[10px] font-mono text-zinc-300 hover:text-white ml-2 transition cursor-pointer"
+                              className="shrink-0 px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-[10px] font-mono text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-700 ml-2 transition cursor-pointer"
                             >
                               Inspect ↗
                             </button>
@@ -705,16 +705,16 @@ function ExploreTab({ executeAction, closeCopilot }) {
 
                   {/* UI Action Buttons */}
                   {msg.actions && msg.actions.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-3 pt-2 border-t border-zinc-800/40">
+                    <div className="flex flex-wrap gap-1.5 mt-3 pt-2 border-t border-slate-200 dark:border-zinc-800/40">
                       {msg.actions.map((action, j) => (
                         <button
                           key={j}
                           type="button"
                           onClick={() => handleAction(action)}
-                          className="px-2.5 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-[11px] font-mono text-amber-300 hover:text-white hover:bg-zinc-700 transition-colors cursor-pointer flex items-center gap-1"
+                          className="px-2.5 py-1 rounded-md border border-amber-500/30 dark:border-zinc-700 bg-amber-500/10 dark:bg-zinc-800 text-[11px] font-mono text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-white hover:bg-amber-500/20 dark:hover:bg-zinc-700 transition-colors cursor-pointer flex items-center gap-1"
                         >
                           <span>{getActionLabel(action)}</span>
-                          <span className="text-zinc-500">↗</span>
+                          <span className="text-amber-600/70 dark:text-zinc-500">↗</span>
                         </button>
                       ))}
                     </div>
@@ -722,14 +722,14 @@ function ExploreTab({ executeAction, closeCopilot }) {
 
                   {/* Dynamic Follow-up Suggestions */}
                   {msg.followUps && msg.followUps.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-3 pt-2.5 border-t border-zinc-800/40">
-                      <span className="text-[10px] font-mono text-zinc-500 self-center mr-1">Suggested:</span>
+                    <div className="flex flex-wrap gap-1.5 mt-3 pt-2.5 border-t border-slate-200 dark:border-zinc-800/40">
+                      <span className="text-[10px] font-mono text-slate-500 dark:text-zinc-500 self-center mr-1">Suggested:</span>
                       {msg.followUps.map((q, j) => (
                         <button
                           key={j}
                           type="button"
                           onClick={() => sendMessage(q)}
-                          className="px-2 py-1 rounded-md text-[10px] font-mono text-zinc-400 hover:text-zinc-200 bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 transition-colors cursor-pointer text-left"
+                          className="px-2.5 py-1 rounded-md text-[10px] font-mono text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200 bg-slate-100 dark:bg-zinc-900/80 border border-slate-200 dark:border-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors cursor-pointer text-left"
                         >
                           {q}
                         </button>
@@ -744,9 +744,9 @@ function ExploreTab({ executeAction, closeCopilot }) {
 
         {loading && (
           <div className="flex justify-start">
-            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#0d0e14] border border-zinc-800/60">
-              <span className="w-3 h-3 border-2 border-zinc-600 border-t-amber-400 rounded-full animate-spin" />
-              <span className="text-[11px] text-zinc-400 font-mono">Synthesizing verified portfolio evidence...</span>
+            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#0d0e14] border border-slate-200 dark:border-zinc-800/60">
+              <span className="w-3 h-3 border-2 border-slate-300 dark:border-zinc-600 border-t-amber-500 dark:border-t-amber-400 rounded-full animate-spin" />
+              <span className="text-[11px] text-slate-600 dark:text-zinc-400 font-mono">Synthesizing verified portfolio evidence...</span>
             </div>
           </div>
         )}
@@ -755,7 +755,7 @@ function ExploreTab({ executeAction, closeCopilot }) {
       </div>
 
       {/* Input Form */}
-      <div className="border-t border-zinc-800/60 p-3 shrink-0 bg-[#09090b]">
+      <div className="border-t border-slate-200 dark:border-zinc-800/60 p-3 shrink-0 bg-slate-50 dark:bg-[#09090b]">
         <div className="flex gap-2">
           <input
             ref={inputRef}
@@ -764,13 +764,13 @@ function ExploreTab({ executeAction, closeCopilot }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Ask Maurik anything about projects, stack, or evidence..."
-            className="flex-1 px-3.5 py-2.5 rounded-lg border border-zinc-800 bg-[#0d0e12] text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 font-mono"
+            className="flex-1 px-3.5 py-2.5 rounded-lg border border-slate-300 dark:border-zinc-800 bg-white dark:bg-[#0d0e12] text-xs text-slate-900 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-amber-500 dark:focus:border-zinc-600 font-mono"
           />
           <button
             type="button"
             onClick={() => sendMessage()}
             disabled={loading || !input.trim()}
-            className="px-4 py-2.5 rounded-lg bg-white text-zinc-950 text-xs font-mono font-semibold hover:bg-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
+            className="px-4 py-2.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-zinc-950 text-xs font-mono font-semibold hover:bg-slate-800 dark:hover:bg-zinc-200 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
           >
             Send
           </button>

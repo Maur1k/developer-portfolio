@@ -58,16 +58,16 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/CV.pd
           exit={{ scale: 0.96, opacity: 0, y: 10 }}
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className="relative h-[92vh] w-full max-w-5xl rounded-2xl border border-zinc-800 bg-[#0d0e12] shadow-2xl flex flex-col overflow-hidden"
+          className="relative h-[92vh] w-full max-w-5xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#0d0e12] shadow-2xl flex flex-col overflow-hidden"
         >
           {/* Header Bar */}
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-[#09090b] shrink-0">
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-[#09090b] shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs sm:text-sm font-mono font-semibold text-white">
+              <span className="text-xs sm:text-sm font-mono font-semibold text-slate-900 dark:text-white">
                 Maurik Angelo L. Fernandez — Resume
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 uppercase">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 uppercase">
                 {isPdf ? 'PDF' : 'Image'}
               </span>
             </div>
@@ -79,7 +79,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/CV.pd
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => trackEvent('resume_download', downloadFilename)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-700 bg-white text-zinc-950 text-xs font-mono font-medium hover:bg-zinc-200 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-slate-900 dark:bg-white text-white dark:text-zinc-950 text-xs font-mono font-medium hover:bg-slate-800 dark:hover:bg-zinc-200 transition shadow-sm"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -92,7 +92,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/CV.pd
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => trackEvent('resume_view', 'Resume Full Tab')}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900 text-xs font-mono text-zinc-300 hover:text-white transition"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-xs font-mono text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition"
                 title="Open in new tab"
               >
                 <span>Full Tab</span>
@@ -103,7 +103,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/CV.pd
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="p-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
+                className="p-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
