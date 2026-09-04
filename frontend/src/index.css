@@ -256,6 +256,12 @@ html.light .bg-\[\#050507\]\/90 {
   background-color: rgba(248, 250, 252, 0.92);
 }
 
+html.light [class*="bg-[#09090b]"],
+html.light [class*="bg-[#0c0d"],
+html.light [class*="bg-[#0d0e"],
+html.light [class*="bg-[#1213"],
+html.light [class*="bg-[#1415"],
+html.light [class*="bg-[#0809"],
 html.light .bg-\[\#0c0d10\],
 html.light .bg-\[\#121318\],
 html.light .bg-\[\#0d0e12\],
@@ -264,12 +270,15 @@ html.light .bg-\[\#14151a\] {
   background-color: #ffffff;
 }
 
-html.light .bg-\[\#09090b\] {
-  background-color: #f1f5f9;
+html.light [class*="hover:bg-[#0c0d"]:hover,
+html.light [class*="hover:bg-[#0d0e"]:hover,
+html.light [class*="hover:bg-[#1415"]:hover,
+html.light [class*="hover:bg-[#1f20"]:hover {
+  background-color: #f8fafc;
 }
 
-html.light .bg-\[\#09090b\]\/60 {
-  background-color: rgba(241, 245, 249, 0.75);
+html.light .bg-\[\#09090b\] {
+  background-color: #f1f5f9;
 }
 
 html.light .bg-\[\#0d0e14\]\/90 {

@@ -35,7 +35,7 @@ export default function Skills() {
   };
 
   return (
-    <section id="skills" className="py-16 border-b border-zinc-900">
+    <section id="skills" className="py-16 border-b border-slate-200 dark:border-zinc-900">
       {/* Section Tag */}
       <motion.div
         initial={{ opacity: 0, x: -10 }}
@@ -53,10 +53,10 @@ export default function Skills() {
         transition={{ duration: 0.4 }}
         className="mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           Tools I Use to Build
         </h2>
-        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
           I don't try to use every technology. I focus on understanding the tools I work with and choosing what fits the problem.
         </p>
       </motion.div>
@@ -76,26 +76,26 @@ export default function Skills() {
               className={`rounded-xl border p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 glow-card ${
                 isHighlighted
                   ? 'border-amber-400/80 bg-amber-500/10 shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-400/50 scale-[1.02]'
-                  : 'border-zinc-900 bg-[#09090b]/70 hover:border-zinc-700/80 hover:bg-[#0c0d10]'
+                  : 'border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/70 hover:border-slate-300 dark:hover:border-zinc-700/80 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-sm dark:shadow-none'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className={`text-sm font-semibold tracking-tight ${isHighlighted ? 'text-amber-300' : 'text-white'}`}>
+                  <h3 className={`text-sm font-semibold tracking-tight ${isHighlighted ? 'text-amber-500 dark:text-amber-300' : 'text-slate-900 dark:text-white'}`}>
                     {category.title}
                   </h3>
                   {isHighlighted && (
                     <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
                   )}
                 </div>
-                <p className="text-[11px] font-mono text-zinc-500 mt-0.5">
+                <p className="text-[11px] font-mono text-slate-500 dark:text-zinc-500 mt-0.5">
                   {category.subtitle}
                 </p>
 
                 <ul className="mt-3.5 space-y-1.5">
                   {items.map((item) => (
-                    <li key={item} className="flex items-center gap-1.5 text-xs text-zinc-400">
-                      <span className="w-1 h-1 rounded-full bg-zinc-600" />
+                    <li key={item} className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-zinc-400">
+                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-zinc-600" />
                       <span>{item}</span>
                     </li>
                   ))}

@@ -14,7 +14,7 @@ export default function Experience() {
   };
 
   return (
-    <section id="experience" className="py-16 border-b border-zinc-900">
+    <section id="experience" className="py-16 border-b border-slate-200 dark:border-zinc-900">
       {/* Section Tag */}
       <motion.div
         initial={{ opacity: 0, x: -10 }}
@@ -32,10 +32,10 @@ export default function Experience() {
         transition={{ duration: 0.4 }}
         className="mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           Where I've Been Building
         </h2>
-        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
           My professional journey started with an internship and quickly turned into an opportunity to continue working on production software.
         </p>
       </motion.div>
@@ -53,8 +53,8 @@ export default function Experience() {
               transition={{ duration: 0.35, delay: idx * 0.08 }}
               className={`rounded-xl border transition-all duration-200 ${
                 isExpanded
-                  ? 'border-zinc-700/80 bg-[#0d0e12] shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
-                  : 'border-zinc-900 bg-[#09090b]/60 hover:border-zinc-700/80 hover:bg-[#0c0d10]'
+                  ? 'border-slate-300 dark:border-zinc-700/80 bg-white dark:bg-[#0d0e12] shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
+                  : 'border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/60 hover:border-slate-300 dark:hover:border-zinc-700/80 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-xs'
               }`}
             >
               {/* Header / Clickable Row */}
@@ -64,31 +64,31 @@ export default function Experience() {
                 className="w-full p-4 sm:p-5 flex items-start sm:items-center justify-between text-left gap-4"
               >
                 <div className="flex items-start sm:items-center gap-4 sm:gap-6 min-w-0">
-                  <span className="font-mono text-xs sm:text-sm text-zinc-500 font-semibold shrink-0 pt-0.5 sm:pt-0">
+                  <span className="font-mono text-xs sm:text-sm text-slate-500 dark:text-zinc-500 font-semibold shrink-0 pt-0.5 sm:pt-0">
                     {exp.year || '2026'}
                   </span>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                      <h3 className="text-sm sm:text-base font-semibold text-white truncate">
+                      <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
                         {exp.position}
                       </h3>
                       {exp.period && (
-                        <span className="text-xs font-mono text-zinc-400">
+                        <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
                           ({exp.period})
                         </span>
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
-                      <span className="text-zinc-300 font-medium">{exp.company}</span>
-                      {exp.location && <span className="text-zinc-400"> · {exp.location}</span>}
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-0.5">
+                      <span className="text-slate-800 dark:text-zinc-300 font-medium">{exp.company}</span>
+                      {exp.location && <span className="text-slate-500 dark:text-zinc-400"> · {exp.location}</span>}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0 pt-0.5 sm:pt-0">
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center border border-zinc-800 text-zinc-400 transition-transform duration-200 ${
-                      isExpanded ? 'rotate-90 text-white border-zinc-600' : ''
+                    className={`w-6 h-6 rounded-full flex items-center justify-center border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 transition-transform duration-200 ${
+                      isExpanded ? 'rotate-90 text-slate-900 dark:text-white border-slate-400 dark:border-zinc-600' : ''
                     }`}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -108,22 +108,22 @@ export default function Experience() {
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-zinc-900/80 space-y-4">
+                    <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-slate-100 dark:border-zinc-900/80 space-y-4">
                       {exp.leadSummary && (
-                        <p className="text-xs sm:text-sm text-zinc-300 font-medium leading-relaxed">
+                        <p className="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 font-medium leading-relaxed">
                           {exp.leadSummary}
                         </p>
                       )}
 
                       {exp.responsibilities && exp.responsibilities.length > 0 && (
                         <div>
-                          <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-2">
+                          <p className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-2">
                             Key Responsibilities
                           </p>
                           <ul className="space-y-1.5">
                             {exp.responsibilities.map((resp, idx) => (
-                              <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-zinc-400">
-                                <span className="text-zinc-600 select-none mt-1">▪</span>
+                              <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+                                <span className="text-slate-400 dark:text-zinc-600 select-none mt-1">▪</span>
                                 <span className="leading-normal">{resp}</span>
                               </li>
                             ))}
@@ -136,7 +136,7 @@ export default function Experience() {
                           {exp.technologies.map((tech) => (
                             <span
                               key={tech}
-                              className="px-2.5 py-1 rounded bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300"
+                              className="px-2.5 py-1 rounded bg-slate-100 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
                             >
                               {tech}
                             </span>
@@ -163,8 +163,8 @@ export default function Experience() {
               transition={{ duration: 0.35, delay: (experiences.length + idx) * 0.08 }}
               className={`rounded-xl border transition-all duration-200 ${
                 isExpanded
-                  ? 'border-zinc-700/80 bg-[#0d0e12] shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
-                  : 'border-zinc-900 bg-[#09090b]/60 hover:border-zinc-700/80 hover:bg-[#0c0d10]'
+                  ? 'border-slate-300 dark:border-zinc-700/80 bg-white dark:bg-[#0d0e12] shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
+                  : 'border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/60 hover:border-slate-300 dark:hover:border-zinc-700/80 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-xs'
               }`}
             >
               <button
@@ -173,32 +173,32 @@ export default function Experience() {
                 className="w-full p-4 sm:p-5 flex items-start sm:items-center justify-between text-left gap-4"
               >
                 <div className="flex items-start sm:items-center gap-4 sm:gap-6 min-w-0">
-                  <span className="font-mono text-xs sm:text-sm text-zinc-500 font-semibold shrink-0 pt-0.5 sm:pt-0">
+                  <span className="font-mono text-xs sm:text-sm text-slate-500 dark:text-zinc-500 font-semibold shrink-0 pt-0.5 sm:pt-0">
                     {edu.year || '2026'}
                   </span>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                      <h3 className="text-sm sm:text-base font-semibold text-white truncate">
+                      <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
                         {edu.degree}
                       </h3>
                       {edu.major && (
-                        <span className="text-xs font-mono text-zinc-400">
+                        <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
                           ({edu.major})
                         </span>
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
-                      <span className="text-zinc-300 font-medium">{edu.institution}</span>
-                      {edu.campus && <span className="text-zinc-400"> · {edu.campus}</span>}
-                      {edu.duration && <span className="text-zinc-400"> · {edu.duration}</span>}
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-0.5">
+                      <span className="text-slate-800 dark:text-zinc-300 font-medium">{edu.institution}</span>
+                      {edu.campus && <span className="text-slate-500 dark:text-zinc-400"> · {edu.campus}</span>}
+                      {edu.duration && <span className="text-slate-500 dark:text-zinc-400"> · {edu.duration}</span>}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0 pt-0.5 sm:pt-0">
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center border border-zinc-800 text-zinc-400 transition-transform duration-200 ${
-                      isExpanded ? 'rotate-90 text-white border-zinc-600' : ''
+                    className={`w-6 h-6 rounded-full flex items-center justify-center border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 transition-transform duration-200 ${
+                      isExpanded ? 'rotate-90 text-slate-900 dark:text-white border-slate-400 dark:border-zinc-600' : ''
                     }`}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,8 +217,8 @@ export default function Experience() {
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-zinc-900/80 space-y-3">
-                      <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+                    <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-slate-100 dark:border-zinc-900/80 space-y-3">
+                      <p className="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
                         {edu.description ||
                           'Bachelor of Science in Information Technology specializing in Web and Mobile Technologies from Pangasinan State University – Urdaneta Campus.'}
                       </p>
@@ -226,7 +226,7 @@ export default function Experience() {
                         {['Web & Mobile Technologies', 'Full-Stack Architecture', 'Database Systems', 'Software Engineering'].map((item) => (
                           <span
                             key={item}
-                            className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-300"
+                            className="px-2.5 py-1 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
                           >
                             {item}
                           </span>
@@ -243,12 +243,12 @@ export default function Experience() {
 
       {/* Certificates & Credentials Section */}
       {certificates.length > 0 && (
-        <div className="mt-12 pt-8 border-t border-zinc-900">
+        <div className="mt-12 pt-8 border-t border-slate-200 dark:border-zinc-900">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-mono font-semibold uppercase tracking-wider text-zinc-400">
+            <h3 className="text-sm font-mono font-semibold uppercase tracking-wider text-slate-600 dark:text-zinc-400">
               Certificates & Credentials
             </h3>
-            <span className="text-xs font-mono text-zinc-500">
+            <span className="text-xs font-mono text-slate-500 dark:text-zinc-500">
               {certificates.length} {certificates.length === 1 ? 'Credential' : 'Credentials'}
             </span>
           </div>
@@ -262,35 +262,35 @@ export default function Experience() {
               return (
                 <div
                   key={cert.id}
-                  className="p-5 rounded-xl border border-zinc-900 bg-[#09090b]/80 flex flex-col justify-between transition hover:border-amber-400/30 hover:bg-[#0c0d10]"
+                  className="p-5 rounded-xl border border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/80 flex flex-col justify-between transition hover:border-amber-400/40 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-sm"
                 >
                   <div>
                     {img && (
                       <img
                         src={img}
                         alt={cert.title}
-                        className="w-full h-36 object-cover rounded-lg mb-3 border border-zinc-800"
+                        className="w-full h-36 object-cover rounded-lg mb-3 border border-slate-200 dark:border-zinc-800"
                       />
                     )}
                     <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-white leading-snug">{cert.title}</h4>
+                      <h4 className="text-sm font-semibold text-slate-900 dark:text-white leading-snug">{cert.title}</h4>
                       {cert.date && (
-                        <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/50">
+                        <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700/50">
                           {cert.date}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-zinc-400 mt-1">{cert.issuer}</p>
+                    <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1">{cert.issuer}</p>
                   </div>
 
                   {(credUrl || pdf) && (
-                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-zinc-800/60">
+                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-zinc-800/60">
                       {credUrl && (
                         <a
                           href={credUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition"
                         >
                           <span>Verify Credential</span>
                           <span className="text-[10px]">↗</span>
@@ -301,7 +301,7 @@ export default function Experience() {
                           href={pdf}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition"
+                          className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition"
                         >
                           <span>View PDF</span>
                           <span className="text-[10px]">↗</span>

@@ -46,8 +46,8 @@ function ActionButton({ href, children, icon, variant = 'secondary', disabledLab
   const base = 'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 text-xs font-mono transition-all duration-200';
   const styles =
     variant === 'primary'
-      ? 'bg-zinc-100 text-zinc-900 font-semibold hover:bg-white'
-      : 'border border-zinc-800 bg-[#121318] text-zinc-300 hover:border-zinc-700 hover:text-white';
+      ? 'bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold hover:bg-slate-800 dark:hover:bg-white shadow-sm'
+      : 'border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#121318] text-slate-700 dark:text-zinc-300 hover:border-slate-300 dark:hover:border-zinc-700 hover:text-slate-900 dark:hover:text-white shadow-sm';
 
   if (!href) {
     return (
@@ -228,29 +228,29 @@ function ProjectCard({ project, index, onLearnMore }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.4, delay: (index % 2) * 0.1 }}
-      className="rounded-xl border border-zinc-900 bg-[#09090b]/80 hover:border-zinc-700/80 transition-all duration-200 flex flex-col overflow-hidden glow-card"
+      className="rounded-xl border border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/80 hover:border-slate-300 dark:hover:border-zinc-700/80 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden glow-card"
     >
       {screenshots.length > 0 && (
-        <div className="p-3 border-b border-zinc-900/80">
+        <div className="p-3 border-b border-slate-100 dark:border-zinc-900/80">
           <ScreenshotCarousel screenshots={screenshots} compact />
         </div>
       )}
 
       <div className="p-5 sm:p-6 flex flex-col flex-1">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">
             Project {String(index + 1).padStart(2, '0')}
           </span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-zinc-800 text-zinc-400 bg-zinc-900">
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-900">
             {project.status || 'Production'}
           </span>
         </div>
 
-        <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
           {project.name}
         </h3>
 
-        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed flex-1">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed flex-1">
           {project.summary || project.shortDescription || project.description}
         </p>
 
@@ -258,8 +258,8 @@ function ProjectCard({ project, index, onLearnMore }) {
         {project.highlights && (
           <ul className="mt-4 space-y-1">
             {project.highlights.slice(0, 3).map((item, idx) => (
-              <li key={idx} className="flex items-start gap-1.5 text-xs text-zinc-400">
-                <span className="text-zinc-600 select-none">▪</span>
+              <li key={idx} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-zinc-400">
+                <span className="text-slate-400 dark:text-zinc-600 select-none">▪</span>
                 <span className="leading-tight">{item}</span>
               </li>
             ))}
@@ -267,11 +267,11 @@ function ProjectCard({ project, index, onLearnMore }) {
         )}
 
         {/* Tech Stack Tags */}
-        <div className="flex flex-wrap gap-1.5 mt-5 pt-4 border-t border-zinc-900">
+        <div className="flex flex-wrap gap-1.5 mt-5 pt-4 border-t border-slate-100 dark:border-zinc-900">
           {technologies.map((tech) => (
             <span
               key={tech}
-              className="px-2 py-0.5 rounded bg-zinc-900/90 border border-zinc-800 text-[11px] font-mono text-zinc-300"
+              className="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
             >
               {tech}
             </span>
@@ -283,7 +283,7 @@ function ProjectCard({ project, index, onLearnMore }) {
           <button
             type="button"
             onClick={() => onLearnMore(project)}
-            className="flex-1 inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-zinc-800 bg-[#121318] hover:bg-zinc-800 hover:border-zinc-700 text-xs font-mono text-white transition-colors"
+            className="flex-1 inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#121318] hover:bg-slate-50 dark:hover:bg-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 text-xs font-mono text-slate-800 dark:text-white transition-colors shadow-sm"
           >
             <span>Learn More</span>
             <span className="text-[11px] opacity-70">↗</span>
@@ -349,15 +349,15 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
         exit={{ opacity: 0, scale: 0.97, y: 10 }}
         transition={{ duration: 0.2 }}
         onClick={(e) => e.stopPropagation()}
-        className="relative my-auto max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-xl border border-zinc-800 bg-[#0d0e12] shadow-2xl flex flex-col"
+        className="relative my-auto max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#0d0e12] shadow-2xl flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 border-b border-zinc-800/80 px-5 py-4 bg-[#09090b]">
+        <div className="flex items-center justify-between gap-4 border-b border-slate-200 dark:border-zinc-800/80 px-5 py-4 bg-slate-50 dark:bg-[#09090b]">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">
               {project.subtitle || project.category || 'Project Details'}
             </span>
-            <h3 id={titleId} className="text-lg sm:text-xl font-bold text-white">
+            <h3 id={titleId} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
               {project.name}
             </h3>
           </div>
@@ -365,21 +365,21 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="p-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
+            className="p-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition cursor-pointer"
           >
             <Icon name="close" />
           </button>
         </div>
 
         {/* Modal Navigation Tabs */}
-        <div className="flex border-b border-zinc-800/80 bg-[#07080a] px-3">
+        <div className="flex border-b border-slate-200 dark:border-zinc-800/80 bg-slate-100/70 dark:bg-[#07080a] px-3">
           <button
             type="button"
             onClick={() => setModalTab('overview')}
             className={`px-3.5 py-2.5 text-xs font-mono font-medium transition-colors border-b-2 ${
               modalTab === 'overview'
-                ? 'border-white text-white font-semibold'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white font-semibold'
+                : 'border-transparent text-slate-500 dark:text-zinc-500 hover:text-slate-800 dark:hover:text-zinc-300'
             }`}
           >
             Overview
@@ -391,8 +391,8 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
               onClick={() => setModalTab('screenshots')}
               className={`px-3.5 py-2.5 text-xs font-mono font-medium transition-colors border-b-2 ${
                 modalTab === 'screenshots'
-                  ? 'border-white text-white font-semibold'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                  ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white font-semibold'
+                  : 'border-transparent text-slate-500 dark:text-zinc-500 hover:text-slate-800 dark:hover:text-zinc-300'
               }`}
             >
               Screenshots ({project.screenshots.length})
@@ -404,8 +404,8 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
             onClick={() => setModalTab('architecture')}
             className={`px-3.5 py-2.5 text-xs font-mono font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
               modalTab === 'architecture'
-                ? 'border-amber-400 text-amber-400 font-semibold'
-                : 'border-transparent text-zinc-500 hover:text-amber-400/80'
+                ? 'border-amber-500 dark:border-amber-400 text-amber-600 dark:text-amber-400 font-semibold'
+                : 'border-transparent text-slate-500 dark:text-zinc-500 hover:text-amber-600 dark:hover:text-amber-400/80'
             }`}
           >
             <span>[AI]</span>
@@ -563,20 +563,20 @@ function PlaygroundCard({ project, onLearnMore }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-30px' }}
       transition={{ duration: 0.35 }}
-      className={`relative rounded-xl border bg-[#09090b]/60 flex flex-col transition-all duration-200 overflow-hidden glow-card
+      className={`relative rounded-xl border bg-white dark:bg-[#09090b]/60 flex flex-col transition-all duration-200 overflow-hidden shadow-sm dark:shadow-none glow-card
         ${isPlaceholder
-          ? 'border-dashed border-zinc-800 opacity-60'
-          : 'border-zinc-900 hover:border-zinc-700'
+          ? 'border-dashed border-slate-300 dark:border-zinc-800 opacity-60'
+          : 'border-slate-200 dark:border-zinc-900 hover:border-slate-300 dark:hover:border-zinc-700'
         }`}
     >
       {/* Top accent bar */}
       {!isPlaceholder && (
-        <div className="h-0.5 w-full bg-gradient-to-r from-amber-500/0 via-amber-400/30 to-amber-500/0" />
+        <div className="h-0.5 w-full bg-gradient-to-r from-amber-500/0 via-amber-400/40 to-amber-500/0" />
       )}
 
       {/* Thumbnail image */}
       {!isPlaceholder && (thumbnail || screenshots.length > 0) && (
-        <div className="relative w-full aspect-video overflow-hidden bg-zinc-950 border-b border-zinc-900">
+        <div className="relative w-full aspect-video overflow-hidden bg-slate-100 dark:bg-zinc-950 border-b border-slate-200 dark:border-zinc-900">
           <img
             src={thumbnail || screenshots[0]?.src}
             alt={project.name}
@@ -586,7 +586,7 @@ function PlaygroundCard({ project, onLearnMore }) {
               e.currentTarget.parentElement.style.display = 'none';
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/60 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 dark:from-[#09090b]/60 to-transparent pointer-events-none" />
         </div>
       )}
 
@@ -595,23 +595,23 @@ function PlaygroundCard({ project, onLearnMore }) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400/70">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400/70">
                 {project.category || 'Playground'}
               </span>
             </div>
-            <h4 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
+            <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
               {project.name}
             </h4>
           </div>
           {!isPlaceholder && (
-            <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded border border-zinc-800 text-zinc-500 bg-zinc-900">
+            <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-500 bg-slate-100 dark:bg-zinc-900">
               {project.status || 'Done'}
             </span>
           )}
         </div>
 
         {/* Description */}
-        <p className="text-xs text-zinc-500 leading-relaxed flex-1">
+        <p className="text-xs text-slate-500 dark:text-zinc-500 leading-relaxed flex-1">
           {project.summary || project.shortDescription || project.description}
         </p>
 
@@ -621,7 +621,7 @@ function PlaygroundCard({ project, onLearnMore }) {
             {technologies.map((tech) => (
               <span
                 key={tech}
-                className="px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800/60 text-[10px] font-mono text-zinc-400"
+                className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 text-[10px] font-mono text-slate-600 dark:text-zinc-400"
               >
                 {tech}
               </span>
@@ -631,11 +631,11 @@ function PlaygroundCard({ project, onLearnMore }) {
 
         {/* Actions */}
         {!isPlaceholder && (
-          <div className="flex flex-wrap gap-2 pt-1 border-t border-zinc-900/60">
+          <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-zinc-900/60">
             <button
               type="button"
               onClick={() => onLearnMore(project)}
-              className="inline-flex h-7 items-center gap-1 rounded-lg border border-zinc-800 bg-transparent hover:bg-zinc-900 text-[11px] font-mono text-zinc-300 px-2.5 transition-colors"
+              className="inline-flex h-7 items-center gap-1 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent hover:bg-slate-100 dark:hover:bg-zinc-900 text-[11px] font-mono text-slate-700 dark:text-zinc-300 px-2.5 transition-colors shadow-xs"
             >
               Details ↗
             </button>
@@ -740,7 +740,7 @@ export default function Projects() {
     });
 
   return (
-    <section id="projects" className="py-16 border-b border-zinc-900">
+    <section id="projects" className="py-16 border-b border-slate-200 dark:border-zinc-900">
       {/* Section Tag */}
       <motion.div
         initial={{ opacity: 0, x: -10 }}
@@ -758,10 +758,10 @@ export default function Projects() {
         transition={{ duration: 0.4 }}
         className="mb-8"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           Things I've Built
         </h2>
-        <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
           Not every project started with a perfect specification. Some started as school projects. Some started as assessments. Some started because there was a problem worth solving. What they have in common is that each one taught me something new about building software.
         </p>
       </motion.div>
@@ -773,35 +773,35 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.45 }}
-          className="mb-10 rounded-xl border border-zinc-800 bg-[#0d0e12] overflow-hidden glow-card"
+          className="mb-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#0d0e12] overflow-hidden shadow-sm dark:shadow-none hover:shadow-md transition-all duration-200 glow-card"
         >
           <div className="grid lg:grid-cols-[1.1fr_1fr] xl:grid-cols-[1.05fr_1.15fr] gap-0 items-stretch">
             <div className="p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300">
                     FEATURED PROJECT
                   </span>
-                  <span className="text-[11px] font-mono text-zinc-400">
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-400">
                     {featuredProject.subtitle || featuredProject.category || 'Production · Platform'}
                   </span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                   {featuredProject.name || featuredProject.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-zinc-300 mt-3 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 mt-3 leading-relaxed">
                   {featuredProject.longDescription || featuredProject.summary || featuredProject.description}
                 </p>
 
                 {featuredProject.highlights && (
                   <div className="mt-4 space-y-1.5">
-                    <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Highlights</p>
+                    <p className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">Highlights</p>
                     <ul className="grid sm:grid-cols-2 gap-1.5">
                       {featuredProject.highlights.map((h, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-xs text-zinc-400">
-                          <span className="text-zinc-600">▪</span>
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-zinc-400">
+                          <span className="text-slate-400 dark:text-zinc-600">▪</span>
                           <span>{h}</span>
                         </li>
                       ))}
@@ -810,12 +810,12 @@ export default function Projects() {
                 )}
               </div>
 
-              <div className="mt-6 pt-6 border-t border-zinc-900 space-y-4">
+              <div className="mt-6 pt-6 border-t border-slate-100 dark:border-zinc-900 space-y-4">
                 <div className="flex flex-wrap gap-1.5">
                   {(featuredProject.technologies || []).map((tech) => (
                     <span
                       key={tech}
-                      className="px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-300"
+                      className="px-2.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
                     >
                       {tech}
                     </span>
@@ -826,7 +826,7 @@ export default function Projects() {
                   <button
                     type="button"
                     onClick={() => handleOpenProject(featuredProject)}
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-zinc-700 bg-white text-zinc-900 font-semibold px-4 text-xs font-mono hover:bg-zinc-200 transition-colors"
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-slate-900 dark:bg-white text-white dark:text-zinc-900 font-semibold px-4 text-xs font-mono hover:bg-slate-800 dark:hover:bg-zinc-200 transition-colors shadow-sm"
                   >
                     View Case Study ↗
                   </button>
@@ -855,7 +855,7 @@ export default function Projects() {
               </div>
             </div>
 
-            <div className="p-4 sm:p-6 lg:p-8 bg-[#08090b] border-t lg:border-t-0 lg:border-l border-zinc-900 flex flex-col justify-center items-center">
+            <div className="p-4 sm:p-6 lg:p-8 bg-slate-50 dark:bg-[#08090b] border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-zinc-900 flex flex-col justify-center items-center">
               {featuredProject.screenshots && (
                 <ScreenshotCarousel screenshots={featuredProject.screenshots} />
               )}
