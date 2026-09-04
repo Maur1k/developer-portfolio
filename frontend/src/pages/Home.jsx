@@ -12,6 +12,7 @@ import ScrollProgressBar from '../components/ScrollProgressBar';
 import CopilotModal from '../components/CopilotModal';
 import CopilotFloatingTrigger from '../components/CopilotFloatingTrigger';
 import { useCopilot } from '../context/CopilotContext';
+import { useTheme } from '../context/ThemeContext';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -19,6 +20,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 export default function Home() {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
   const { openCopilot, pendingAction, consumePendingAction } = useCopilot();
+  const { isDark, toggleTheme } = useTheme();
   const [activeSection, setActiveSection] = useState('about');
   const [isShortcutOpen, setIsShortcutOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
@@ -92,7 +94,7 @@ export default function Home() {
   }, [openCopilot]);
 
   return (
-    <div className="min-h-screen bg-[#050507] text-[#ededed]">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#050507] text-zinc-900 dark:text-[#ededed] transition-colors duration-200">
       {/* Scroll Progress Bar at very top */}
       <ScrollProgressBar />
 
@@ -203,6 +205,21 @@ export default function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                     </svg>
                     <span>{copied ? 'Copied Email!' : 'Copy Email'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggleTheme();
+                      setIsShortcutOpen(false);
+                    }}
+                    className="col-span-2 flex items-center justify-between px-3 py-2.5 rounded-lg border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-200 hover:text-white text-left transition"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-amber-400">{isDark ? '☼' : '☾'}</span>
+                      <span>{isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</span>
+                    </span>
+                    <kbd className="keycap">T</kbd>
                   </button>
                 </div>
 

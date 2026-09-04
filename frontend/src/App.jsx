@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { CopilotProvider } from './context/CopilotContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { trackEvent } from './services/analytics';
 
 const AdminLayout = React.lazy(() => import('./admin/AdminApp'));
@@ -37,7 +38,7 @@ function App() {
   }, [location.pathname, isAdminRoute, isHomePage]);
 
   return (
-    <div className="min-h-screen bg-[#050507] text-[#ededed] flex flex-col selection:bg-orange-500 selection:text-black">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#050507] text-zinc-900 dark:text-[#ededed] flex flex-col selection:bg-orange-500 selection:text-white dark:selection:text-black transition-colors duration-200">
       {!isAdminRoute && !isHomePage && <Navigation />}
       <main className="flex-grow">
         <Suspense fallback={<AdminFallback />}>
@@ -67,11 +68,13 @@ function App() {
 export default function AppShell() {
   return (
     <Router>
-      <AuthProvider>
-        <CopilotProvider>
-          <App />
-        </CopilotProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <CopilotProvider>
+            <App />
+          </CopilotProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,24 +72,30 @@ export default function Navigation() {
                 {link.label} ↗
               </Link>
             ))}
+            <div className="pl-2 border-l border-zinc-300 dark:border-zinc-800">
+              <ThemeToggle variant="icon" />
+            </div>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            type="button"
-            className="md:hidden text-zinc-400 hover:text-white p-1 rounded"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
-              />
-            </svg>
-          </button>
+          {/* Mobile Menu & Theme Toggle */}
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle variant="icon" />
+            <button
+              type="button"
+              className="text-zinc-400 hover:text-white p-1 rounded"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}

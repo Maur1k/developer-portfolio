@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
 import { useCopilot } from '../context/CopilotContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Hero({ onThemeToggle }) {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
@@ -31,15 +32,18 @@ export default function Hero({ onThemeToggle }) {
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           <span>[About]</span>
         </div>
-        <button
-          type="button"
-          onClick={onThemeToggle}
-          className="key-badge hover:text-zinc-200 hover:border-zinc-700 transition-all cursor-pointer group"
-          title="Press M or click for More options"
-        >
-          <span className="text-zinc-500 group-hover:text-zinc-300">press</span>
-          <kbd className="keycap group-hover:bg-zinc-800 group-hover:text-white">M</kbd>
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle variant="badge" />
+          <button
+            type="button"
+            onClick={onThemeToggle}
+            className="key-badge hover:text-zinc-900 dark:hover:text-zinc-200 transition-all cursor-pointer group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-zinc-300 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/60 hover:bg-zinc-200 dark:hover:bg-zinc-850"
+            title="Press M or click for More options / AI Copilot"
+          >
+            <span className="text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 text-[11px] font-mono">press</span>
+            <kbd className="keycap group-hover:bg-zinc-300 dark:group-hover:bg-zinc-800 group-hover:text-zinc-900 dark:group-hover:text-white">M</kbd>
+          </button>
+        </div>
       </div>
 
       {/* Role Subtitle */}

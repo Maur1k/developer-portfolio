@@ -1,5 +1,6 @@
 import React from 'react';
 import { trackEvent } from '../services/analytics';
+import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar({ profile, activeSection, onNavigate, onOpenResume, onOpenPhoto }) {
   const navLinks = [
@@ -178,6 +179,9 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
           </svg>
           Resume
         </button>
+
+        {/* Theme Toggle (Light / Dark) */}
+        <ThemeToggle variant="icon" />
 
         {/* LinkedIn */}
         <a
