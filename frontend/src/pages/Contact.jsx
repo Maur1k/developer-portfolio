@@ -63,7 +63,7 @@ export default function Contact() {
               <a
                 href={`mailto:${profile.contact?.email}`}
                 onClick={() => trackEvent('contact_click', 'Send Email Link')}
-                className="flex-1 inline-flex h-8 items-center justify-center gap-1 rounded bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-mono font-medium hover:bg-slate-800 dark:hover:bg-white transition shadow-sm"
+                className="flex-1 inline-flex h-8 items-center justify-center gap-1 rounded border border-amber-600/30 dark:border-transparent bg-amber-500 hover:bg-amber-600 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-mono font-medium dark:hover:bg-white transition shadow-sm"
               >
                 Send Email ↗
               </a>

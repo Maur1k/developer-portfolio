@@ -43,10 +43,10 @@ function Icon({ name, className = 'h-4 w-4' }) {
 }
 
 function ActionButton({ href, children, icon, variant = 'secondary', disabledLabel, projectTitle }) {
-  const base = 'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 text-xs font-mono transition-all duration-200';
+  const base = 'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3.5 text-xs font-mono transition-all duration-200 cursor-pointer';
   const styles =
     variant === 'primary'
-      ? 'bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold hover:bg-slate-800 dark:hover:bg-white shadow-sm'
+      ? 'border border-amber-600/30 dark:border-transparent bg-amber-500 hover:bg-amber-600 dark:bg-white text-white dark:text-zinc-900 font-semibold dark:hover:bg-zinc-200 shadow-sm'
       : 'border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#121318] text-slate-700 dark:text-zinc-300 hover:border-slate-300 dark:hover:border-zinc-700 hover:text-slate-900 dark:hover:text-white shadow-sm';
 
   if (!href) {
@@ -118,7 +118,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
 
   return (
     <div className="space-y-2 w-full select-none">
-      <div className="relative overflow-hidden rounded-xl border border-zinc-800/80 bg-[#07080b] group shadow-lg">
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-100 dark:bg-[#07080b] group shadow-lg">
         {/* Ambient blurred background for seamless framing on any screen aspect ratio */}
         {imageSrc && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -128,7 +128,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
               aria-hidden="true"
               className="w-full h-full object-cover blur-2xl opacity-20 scale-125 transform transition-all duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#07080b] via-[#07080b]/60 to-[#07080b]/80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-200/50 via-slate-100/30 to-transparent dark:from-[#07080b] dark:via-[#07080b]/60 dark:to-[#07080b]/80" />
           </div>
         )}
 
@@ -145,7 +145,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
               loading="lazy"
             />
           ) : (
-            <div className="flex items-center justify-center bg-zinc-900 text-xs font-mono text-zinc-500">
+            <div className="flex items-center justify-center bg-slate-200 dark:bg-zinc-900 text-xs font-mono text-slate-500 dark:text-zinc-500">
               No screenshot preview
             </div>
           )}
@@ -159,14 +159,14 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
 
           {items.length > 1 && (
             <div className="absolute inset-x-2.5 bottom-2.5 z-20 flex items-center justify-between pointer-events-none">
-              <span className="rounded-md bg-black/85 px-2.5 py-1 text-[10px] font-mono text-zinc-300 backdrop-blur-md border border-zinc-800 shadow-md">
+              <span className="rounded-md bg-white/95 dark:bg-black/85 px-2.5 py-1 text-[10px] font-mono text-slate-800 dark:text-zinc-300 backdrop-blur-md border border-slate-200 dark:border-zinc-800 shadow-md">
                 {activeScreenshot.title || 'Screen'} ({activeIndex + 1}/{items.length})
               </span>
               <div className="flex gap-1.5 pointer-events-auto">
                 <button
                   type="button"
                   onClick={goToPrevious}
-                  className="p-1.5 rounded-md bg-black/85 text-zinc-300 hover:text-white border border-zinc-800 backdrop-blur-md transition hover:bg-zinc-800 shadow-md"
+                  className="p-1.5 rounded-md bg-white/95 dark:bg-black/85 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-zinc-800 backdrop-blur-md transition hover:bg-slate-50 dark:hover:bg-zinc-800 shadow-md cursor-pointer"
                   aria-label="Previous"
                 >
                   <Icon name="chevronLeft" className="w-3.5 h-3.5" />
@@ -174,7 +174,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
                 <button
                   type="button"
                   onClick={goToNext}
-                  className="p-1.5 rounded-md bg-black/85 text-zinc-300 hover:text-white border border-zinc-800 backdrop-blur-md transition hover:bg-zinc-800 shadow-md"
+                  className="p-1.5 rounded-md bg-white/95 dark:bg-black/85 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-zinc-800 backdrop-blur-md transition hover:bg-slate-50 dark:hover:bg-zinc-800 shadow-md cursor-pointer"
                   aria-label="Next"
                 >
                   <Icon name="chevronRight" className="w-3.5 h-3.5" />
@@ -826,7 +826,7 @@ export default function Projects() {
                   <button
                     type="button"
                     onClick={() => handleOpenProject(featuredProject)}
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-slate-900 dark:bg-white text-white dark:text-zinc-900 font-semibold px-4 text-xs font-mono hover:bg-slate-800 dark:hover:bg-zinc-200 transition-colors shadow-sm"
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-600/30 dark:border-transparent bg-amber-500 hover:bg-amber-600 dark:bg-white text-white dark:text-zinc-900 font-semibold px-4 text-xs font-mono dark:hover:bg-zinc-200 transition-colors shadow-sm cursor-pointer"
                   >
                     View Case Study ↗
                   </button>
@@ -886,7 +886,7 @@ export default function Projects() {
               <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400/60">Playground</span>
               <span className="h-px flex-1 min-w-[24px] bg-amber-400/10" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
               Small Projects & Experiments
             </h3>
             <p className="text-xs text-zinc-500 mt-1 max-w-lg leading-relaxed">

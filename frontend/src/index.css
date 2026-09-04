@@ -337,11 +337,7 @@ html.light .hover\:border-\[\#3f3f4d\]:hover {
   border-color: #94a3b8;
 }
 
-/* Text Utility Overrides for Light Mode */
-html.light .text-white {
-  color: #0f172a;
-}
-
+/* Text Utility Overrides for Light Mode (Preserving intentional text-white for buttons & badges) */
 html.light .text-\[\#ededed\] {
   color: #0f172a;
 }
@@ -361,10 +357,6 @@ html.light .text-zinc-400 {
 
 html.light .text-zinc-500 {
   color: #64748b;
-}
-
-html.light .hover\:text-white:hover {
-  color: #0f172a;
 }
 
 html.light .hover\:text-zinc-200:hover,
