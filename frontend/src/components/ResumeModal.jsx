@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trackEvent } from '../services/analytics';
 
-export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/Resume.jpg' }) {
+export default function ResumeModal({ isOpen, onClose, resumeUrl = '/files/CV.pdf' }) {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {

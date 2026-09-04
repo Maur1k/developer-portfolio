@@ -137,7 +137,7 @@ export default function Home() {
       <ResumeModal
         isOpen={isResumeOpen}
         onClose={() => setIsResumeOpen(false)}
-        resumeUrl={profile.resumeUrl || '/files/Resume.jpg'}
+        resumeUrl={profile.resumeUrl || '/files/CV.pdf'}
       />
 
       {/* Keyboard Shortcut / Developer Palette Modal (Press M) */}
