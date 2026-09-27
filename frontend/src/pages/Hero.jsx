@@ -3,9 +3,8 @@ import { motion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
 import { fallbackProfile } from '../data/fallbackPortfolio';
 import { useCopilot } from '../context/CopilotContext';
-import ThemeToggle from '../components/ThemeToggle';
 
-export default function Hero({ onThemeToggle }) {
+export default function Hero({ onOpenRecruiterMatch }) {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
   const { openCopilot } = useCopilot();
 
@@ -17,88 +16,68 @@ export default function Hero({ onThemeToggle }) {
     }
   };
 
-  const approachCards = profile.approach || [
-    { title: 'Curious', description: 'Always learning something new.' },
-    { title: 'Practical', description: 'I build for real problems, not just demos.' },
-    { title: 'Full Stack', description: 'From interface to API to database.' },
-    { title: 'AI-Assisted', description: 'Using AI to move faster, think deeper, and automate the repetitive.' },
-  ];
+  const handleRecruiterMatch = onOpenRecruiterMatch || (() => openCopilot('match'));
 
   return (
-    <section id="about" className="pt-6 sm:pt-10 pb-16 border-b border-slate-200 dark:border-zinc-900">
-      {/* Top Header Tag & Keyboard Shortcut */}
-      <div className="flex items-center justify-between pb-8">
+    <section id="about" className="pt-4 lg:pt-12 pb-20 lg:pb-28 border-b border-slate-200 dark:border-zinc-900">
+      {/* Top Meta Row */}
+      <div className="flex items-center justify-between pb-10 lg:pb-16">
         <div className="section-tag flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           <span>[About]</span>
         </div>
-        <div className="flex items-center gap-3">
-          <ThemeToggle variant="badge" />
-          <button
-            type="button"
-            onClick={onThemeToggle}
-            className="key-badge hover:text-zinc-900 dark:hover:text-zinc-200 transition-all cursor-pointer group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-zinc-300 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/60 hover:bg-zinc-200 dark:hover:bg-zinc-850"
-            title="Press M or click for More options / AI Copilot"
-          >
-            <span className="text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 text-[11px] font-mono">press</span>
-            <kbd className="keycap group-hover:bg-zinc-300 dark:group-hover:bg-zinc-800 group-hover:text-zinc-900 dark:group-hover:text-white">M</kbd>
-          </button>
-        </div>
+
+        <button
+          type="button"
+          onClick={handleRecruiterMatch}
+          className="key-badge hover:text-zinc-900 dark:hover:text-zinc-200 transition-all cursor-pointer group flex items-center gap-1.5"
+          title="Recruiter Match — paste a job description (or press M)"
+        >
+          <span className="text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 text-[11px] font-mono">
+            Recruiter Match
+          </span>
+          <kbd className="keycap group-hover:bg-zinc-300 dark:group-hover:bg-zinc-800 group-hover:text-zinc-900 dark:group-hover:text-white">
+            M
+          </kbd>
+        </button>
       </div>
 
       {/* Role Subtitle */}
-      <div className="mb-3">
+      <div className="mb-4">
         <span className="text-xs sm:text-sm font-mono text-slate-500 dark:text-zinc-400 font-medium">
-          Software Developer · Full Stack · Web & Mobile
+          {profile.professionalTitle || 'Software Developer'}
+          {profile.subtitle ? ` · ${profile.subtitle}` : ''}
         </span>
       </div>
 
-      {/* Main Large Headline */}
+      {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+        <h1 className="max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
           {profile.headline || 'I build things, break things, and figure out how to make them work.'}
         </h1>
       </motion.div>
 
-      {/* Bio Narrative */}
-      <motion.div
+      {/* Concise Intro */}
+      <motion.p
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-6 space-y-4 text-sm sm:text-base text-slate-600 dark:text-zinc-300 leading-relaxed"
+        className="mt-6 max-w-xl text-sm sm:text-base text-slate-600 dark:text-zinc-300 leading-relaxed"
       >
-        <p>
-          Hi, I'm <strong className="font-semibold text-slate-900 dark:text-white">Maurik Angelo L. Fernandez</strong>, a software developer specializing in <strong className="font-semibold text-slate-900 dark:text-white">full-stack web and mobile development</strong>.
-        </p>
+        {profile.heroDescription ||
+          "Hi, I'm Maurik Angelo L. Fernandez, a software developer specializing in full-stack web and mobile development."}
+      </motion.p>
 
-        <p className="text-slate-600 dark:text-zinc-400">
-          I've worked on production applications across web, Android, and iOS, with experience spanning frontend development, backend services, REST APIs, databases, payments, notifications, and administrative systems.
-        </p>
-
-        <p className="text-slate-600 dark:text-zinc-400">
-          I work primarily with <strong className="font-medium text-slate-800 dark:text-zinc-200">React, Flutter, Node.js, Laravel, PHP, MySQL, Firebase, and REST APIs</strong>, while using AI-assisted and agentic workflows to make development faster without losing control of the engineering behind it.
-        </p>
-      </motion.div>
-
-      {/* CTA Buttons + Recruiter Match Banner */}
-      <div className="flex flex-wrap items-center gap-3 mt-6">
-        <button
-          type="button"
-          onClick={() => openCopilot('match')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-zinc-950 font-mono text-xs font-bold hover:brightness-110 transition-all shadow-md cursor-pointer"
-        >
-          <span>Recruiter Match — Paste JD</span>
-          <span>↗</span>
-        </button>
-
+      {/* Primary + Secondary CTA */}
+      <div className="flex flex-wrap items-center gap-6 mt-10">
         <button
           type="button"
           onClick={() => scrollTo('projects')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 dark:border-transparent bg-white text-zinc-950 font-mono text-xs font-semibold hover:bg-slate-100 dark:hover:bg-zinc-200 transition-all shadow-sm cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 dark:bg-white dark:hover:bg-zinc-200 text-zinc-950 dark:text-zinc-950 font-mono text-xs font-semibold transition-colors cursor-pointer"
         >
           <span>View My Work</span>
           <span>↓</span>
@@ -107,48 +86,24 @@ export default function Hero({ onThemeToggle }) {
         <button
           type="button"
           onClick={() => scrollTo('contact')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#121318] text-slate-700 dark:text-zinc-300 font-mono text-xs font-medium hover:bg-slate-50 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-white transition-colors shadow-sm cursor-pointer"
+          className="text-xs font-mono text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
         >
-          <span>Get In Touch</span>
-          <span>↗</span>
+          Get In Touch ↗
         </button>
       </div>
 
-      {/* Quote / Ethos Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="mt-8"
-      >
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-800/80 bg-white dark:bg-[#09090b] font-mono text-xs text-slate-600 dark:text-zinc-400 shadow-sm">
-          <span className="text-amber-500 dark:text-zinc-600">✦</span>
-          <span>{profile.tagline || 'build. break. learn. repeat.'}</span>
-        </div>
-      </motion.div>
-
-      {/* 4 Approach Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-8">
-        {approachCards.map((item, idx) => (
-          <motion.div
-            key={item.title}
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 * idx }}
-            className="p-3.5 rounded-xl border border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/80 hover:border-slate-300 dark:hover:border-zinc-700/80 hover:bg-slate-50/90 dark:hover:bg-[#0c0d12] shadow-sm dark:shadow-none transition-all duration-200 group glow-card"
-          >
-            <p className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors">
-              {item.title}
-            </p>
-            <p className="text-[11px] text-slate-500 dark:text-zinc-500 mt-1 leading-snug">
-              {item.description}
-            </p>
-          </motion.div>
-        ))}
-      </div>
+      {/* Tagline */}
+      {profile.tagline && (
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="mt-14 text-xs font-mono text-slate-400 dark:text-zinc-600"
+        >
+          <span className="text-amber-500 dark:text-zinc-600">✦</span> {profile.tagline}
+        </motion.p>
+      )}
     </section>
   );
 }
-

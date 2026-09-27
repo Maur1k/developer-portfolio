@@ -99,7 +99,7 @@ export default function Home() {
       <ScrollProgressBar />
 
       <div className="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="flex flex-col lg:flex-row lg:gap-8 xl:gap-12">
+        <div className="flex flex-col lg:flex-row lg:gap-14 xl:gap-20">
           {/* Left Column: Fixed / Sticky Profile Sidebar */}
           <Sidebar
             profile={profile}
@@ -111,7 +111,7 @@ export default function Home() {
 
           {/* Right Column: Main Content Stream */}
           <main className="flex-1 min-w-0 py-6 lg:py-10 w-full">
-            <Hero onThemeToggle={() => openCopilot('match')} />
+            <Hero onOpenRecruiterMatch={() => openCopilot('match')} />
             <Experience />
             <Projects />
             <Skills />
