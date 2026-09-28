@@ -1,321 +1,291 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useId, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useCollectionData } from '../hooks/useFirestoreData';
 import { fallbackExperience, fallbackEducation, fallbackCertificates } from '../data/fallbackPortfolio';
+
+/*
+  Shared editorial grid for every row (experience, education, credentials).
+  Columns: year | role/company (flexible) | period/location (fixed) | expand control (fixed)
+  Every row and every expanded panel uses the same template, so columns start at
+  identical x-positions regardless of content length.
+  Mobile collapses to: year | role/company | control, with period/location stacked beneath.
+*/
+const ROW_GRID =
+  'grid grid-cols-[2.5rem_minmax(0,1fr)_1.5rem] md:grid-cols-[3rem_minmax(0,1fr)_12rem_1.5rem] gap-x-4';
+
+// Existing education panel content (previously hard-coded in this component)
+const EDUCATION_FALLBACK_DESCRIPTION =
+  'Bachelor of Science in Information Technology specializing in Web and Mobile Technologies from Pangasinan State University – Urdaneta Campus.';
+const EDUCATION_TAGS = ['Web & Mobile Technologies', 'Full-Stack Architecture', 'Database Systems', 'Software Engineering'];
+
+function Chevron({ open }) {
+  return (
+    <svg
+      className={`w-3.5 h-3.5 transition-transform duration-200 motion-reduce:transition-none ${open ? 'rotate-90' : ''}`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function EntryRow({ entry, isExpanded, onToggle, reduceMotion }) {
+  const panelId = useId();
+  const expandable = Boolean(entry.lead || entry.list.length > 0 || entry.tags.length > 0);
+
+  const rowClasses = `group ${ROW_GRID} gap-y-2 w-full py-6 md:py-7 text-left md:items-baseline`;
+
+  const cells = (
+    <>
+      <span className="col-start-1 row-start-1 pt-1 md:pt-0 font-mono text-xs tabular-nums text-slate-400 dark:text-zinc-600 group-hover:text-slate-600 dark:group-hover:text-zinc-400 transition-colors">
+        {entry.year}
+      </span>
+
+      <span className="col-start-2 row-start-1 block min-w-0">
+        <span className="block text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none">
+          {entry.title}
+          {entry.note && (
+            <span className="ml-2 font-mono text-xs font-normal text-slate-500 dark:text-zinc-500">
+              ({entry.note})
+            </span>
+          )}
+        </span>
+        <span className="mt-1 block text-sm text-slate-600 dark:text-zinc-400">
+          <span className="font-medium text-slate-800 dark:text-zinc-300">{entry.primary}</span>
+          {entry.secondary && <span className="text-slate-500 dark:text-zinc-500"> · {entry.secondary}</span>}
+        </span>
+      </span>
+
+      <span className="col-start-2 col-span-2 row-start-2 md:col-span-1 md:col-start-3 md:row-start-1 block min-w-0 font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
+        {entry.side1 && <span className="block text-slate-700 dark:text-zinc-300">{entry.side1}</span>}
+        {entry.side2 && <span className="block">{entry.side2}</span>}
+      </span>
+
+      {expandable && (
+        <span className="col-start-3 row-start-1 md:col-start-4 justify-self-end pt-1 md:pt-0 text-slate-400 dark:text-zinc-600 group-hover:text-slate-700 dark:group-hover:text-zinc-300 transition-colors">
+          <Chevron open={isExpanded} />
+        </span>
+      )}
+    </>
+  );
+
+  return (
+    <li className="border-b border-slate-200 dark:border-zinc-900">
+      {expandable ? (
+        <h3 className="m-0">
+          <button
+            type="button"
+            onClick={() => onToggle(entry.id)}
+            aria-expanded={isExpanded}
+            aria-controls={panelId}
+            className={`${rowClasses} cursor-pointer focus:outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-amber-500/70`}
+          >
+            {cells}
+          </button>
+        </h3>
+      ) : (
+        <div className={rowClasses}>{cells}</div>
+      )}
+
+      <AnimatePresence initial={false}>
+        {expandable && isExpanded && (
+          <motion.div
+            id={panelId}
+            initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={reduceMotion ? { opacity: 0, transition: { duration: 0 } } : { height: 0, opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className={ROW_GRID}>
+              <div className="col-start-2 col-span-2 min-w-0 pb-8 md:pb-10">
+                <div className="max-w-2xl space-y-6">
+                  {entry.lead && (
+                    <p className="text-sm sm:text-base leading-relaxed text-slate-700 dark:text-zinc-300">
+                      {entry.lead}
+                    </p>
+                  )}
+
+                  {entry.list.length > 0 && (
+                    <div>
+                      <p className="mb-3 font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
+                        {entry.listLabel}
+                      </p>
+                      <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
+                        {entry.list.map((item, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm text-slate-600 dark:text-zinc-400">
+                            <span className="mt-1 select-none text-slate-400 dark:text-zinc-600">▪</span>
+                            <span className="leading-normal">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {entry.tags.length > 0 && (
+                    <p className="font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
+                      {entry.tags.join(' · ')}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </li>
+  );
+}
+
+function CredentialRow({ cert }) {
+  const credUrl = cert.credentialUrl || cert.credential_url;
+  const pdf = cert.pdfUrl || cert.pdf_url;
+  const img = cert.imageUrl || cert.image_url;
+
+  const linkClasses =
+    'inline-flex items-center gap-1 font-mono text-xs text-slate-500 dark:text-zinc-400 underline decoration-slate-300 dark:decoration-zinc-700 underline-offset-4 hover:text-slate-900 dark:hover:text-white hover:decoration-current transition-colors';
+
+  return (
+    <li className="border-b border-slate-200 dark:border-zinc-900">
+      <div className={`${ROW_GRID} gap-y-2 py-6 md:py-7 md:items-baseline`}>
+        <div className="col-start-2 row-start-1 min-w-0">
+          <h4 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            {cert.title}
+          </h4>
+          {cert.issuer && (
+            <p className="mt-1 text-sm text-slate-600 dark:text-zinc-400">{cert.issuer}</p>
+          )}
+          {img && (
+            <img
+              src={img}
+              alt={cert.title}
+              className="mt-4 h-28 w-auto max-w-full border border-slate-200 dark:border-zinc-800 object-cover"
+            />
+          )}
+        </div>
+
+        <div className="col-start-2 col-span-2 row-start-2 md:col-span-1 md:col-start-3 md:row-start-1 min-w-0 font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
+          {cert.date && <span className="block text-slate-700 dark:text-zinc-300">{cert.date}</span>}
+          {(credUrl || pdf) && (
+            <div className="mt-1.5 flex flex-col items-start gap-1.5">
+              {credUrl && (
+                <a href={credUrl} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+                  <span>Verify Credential</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              {pdf && (
+                <a href={pdf} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+                  <span>View PDF</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
 
 export default function Experience() {
   const { items: experiences } = useCollectionData('experience', fallbackExperience, { orderBy: 'displayOrder' });
   const { items: education } = useCollectionData('education', fallbackEducation, { orderBy: 'displayOrder' });
   const { items: certificates } = useCollectionData('certificates', fallbackCertificates, { orderBy: 'displayOrder' });
   const [expandedId, setExpandedId] = useState(experiences[0]?.id || 'when-in-baguio-contract');
+  const reduceMotion = useReducedMotion();
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
 
-  return (
-    <section id="experience" className="py-16 border-b border-slate-200 dark:border-zinc-900">
-      {/* Section Tag */}
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        className="section-tag mb-4"
-      >
-        [Experience]
-      </motion.div>
+  // Normalize both record types into one row shape so they share the same grid
+  const experienceEntries = experiences.map((exp) => ({
+    id: exp.id,
+    year: exp.year || '2026',
+    title: exp.position,
+    note: null,
+    primary: exp.company,
+    secondary: null,
+    side1: exp.period,
+    side2: exp.location,
+    lead: exp.leadSummary,
+    listLabel: 'Key Responsibilities',
+    list: exp.responsibilities || [],
+    tags: exp.technologies || [],
+  }));
 
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
+  const educationEntries = education.map((edu) => ({
+    id: edu.id,
+    year: edu.year || '2026',
+    title: edu.degree,
+    note: edu.major,
+    primary: edu.institution,
+    secondary: edu.campus,
+    side1: edu.period || edu.duration,
+    side2: edu.location,
+    lead: edu.description || EDUCATION_FALLBACK_DESCRIPTION,
+    listLabel: '',
+    list: [],
+    tags: EDUCATION_TAGS,
+  }));
+
+  const entries = [...experienceEntries, ...educationEntries];
+
+  return (
+    <section id="experience" className="py-20 lg:py-28 border-b border-slate-200 dark:border-zinc-900">
+      {/* Section header — single, quiet fade (no translate) */}
+      <motion.header
+        initial={reduceMotion ? false : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.4 }}
-        className="mb-8"
+        transition={{ duration: 0.5 }}
+        className="mb-14 lg:mb-20"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <p className="section-tag mb-5">02 — EXPERIENCE</p>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
           Where I've Been Building
         </h2>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
+        <p className="mt-5 max-w-xl text-sm sm:text-base text-slate-600 dark:text-zinc-400 leading-relaxed">
           My professional journey started with an internship and quickly turned into an opportunity to continue working on production software.
         </p>
-      </motion.div>
+      </motion.header>
 
-      <div className="space-y-3">
-        {/* Experience Entries */}
-        {experiences.map((exp, idx) => {
-          const isExpanded = expandedId === exp.id;
-          return (
-            <motion.div
-              key={exp.id}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.35, delay: idx * 0.08 }}
-              className={`rounded-xl border transition-all duration-200 ${
-                isExpanded
-                  ? 'border-slate-300 dark:border-zinc-700/80 bg-white dark:bg-[#0d0e12] shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
-                  : 'border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/60 hover:border-slate-300 dark:hover:border-zinc-700/80 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-xs'
-              }`}
-            >
-              {/* Header / Clickable Row */}
-              <button
-                type="button"
-                onClick={() => toggleExpand(exp.id)}
-                className="w-full p-4 sm:p-5 flex items-start sm:items-center justify-between text-left gap-4"
-              >
-                <div className="flex items-start sm:items-center gap-4 sm:gap-6 min-w-0">
-                  <span className="font-mono text-xs sm:text-sm text-slate-500 dark:text-zinc-500 font-semibold shrink-0 pt-0.5 sm:pt-0">
-                    {exp.year || '2026'}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                      <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
-                        {exp.position}
-                      </h3>
-                      {exp.period && (
-                        <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
-                          ({exp.period})
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-0.5">
-                      <span className="text-slate-800 dark:text-zinc-300 font-medium">{exp.company}</span>
-                      {exp.location && <span className="text-slate-500 dark:text-zinc-400"> · {exp.location}</span>}
-                    </p>
-                  </div>
-                </div>
+      {/* Experience + education rows */}
+      <ul className="border-t border-slate-200 dark:border-zinc-900">
+        {entries.map((entry) => (
+          <EntryRow
+            key={entry.id}
+            entry={entry}
+            isExpanded={expandedId === entry.id}
+            onToggle={toggleExpand}
+            reduceMotion={reduceMotion}
+          />
+        ))}
+      </ul>
 
-                <div className="flex items-center gap-2 shrink-0 pt-0.5 sm:pt-0">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 transition-transform duration-200 ${
-                      isExpanded ? 'rotate-90 text-slate-900 dark:text-white border-slate-400 dark:border-zinc-600' : ''
-                    }`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </button>
-
-              {/* Expandable Content */}
-              <AnimatePresence initial={false}>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-slate-100 dark:border-zinc-900/80 space-y-4">
-                      {exp.leadSummary && (
-                        <p className="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 font-medium leading-relaxed">
-                          {exp.leadSummary}
-                        </p>
-                      )}
-
-                      {exp.responsibilities && exp.responsibilities.length > 0 && (
-                        <div>
-                          <p className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500 mb-2">
-                            Key Responsibilities
-                          </p>
-                          <ul className="space-y-1.5">
-                            {exp.responsibilities.map((resp, idx) => (
-                              <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
-                                <span className="text-slate-400 dark:text-zinc-600 select-none mt-1">▪</span>
-                                <span className="leading-normal">{resp}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {exp.technologies && exp.technologies.length > 0 && (
-                        <div className="pt-2 flex flex-wrap gap-1.5">
-                          {exp.technologies.map((tech) => (
-                            <span
-                              key={tech}
-                              className="px-2.5 py-1 rounded bg-slate-100 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          );
-        })}
-
-        {/* Education Timeline Row */}
-        {education.map((edu, idx) => {
-          const isExpanded = expandedId === edu.id;
-          return (
-            <motion.div
-              key={edu.id}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.35, delay: (experiences.length + idx) * 0.08 }}
-              className={`rounded-xl border transition-all duration-200 ${
-                isExpanded
-                  ? 'border-slate-300 dark:border-zinc-700/80 bg-white dark:bg-[#0d0e12] shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
-                  : 'border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/60 hover:border-slate-300 dark:hover:border-zinc-700/80 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-xs'
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => toggleExpand(edu.id)}
-                className="w-full p-4 sm:p-5 flex items-start sm:items-center justify-between text-left gap-4"
-              >
-                <div className="flex items-start sm:items-center gap-4 sm:gap-6 min-w-0">
-                  <span className="font-mono text-xs sm:text-sm text-slate-500 dark:text-zinc-500 font-semibold shrink-0 pt-0.5 sm:pt-0">
-                    {edu.year || '2026'}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                      <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
-                        {edu.degree}
-                      </h3>
-                      {edu.major && (
-                        <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
-                          ({edu.major})
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-0.5">
-                      <span className="text-slate-800 dark:text-zinc-300 font-medium">{edu.institution}</span>
-                      {edu.campus && <span className="text-slate-500 dark:text-zinc-400"> · {edu.campus}</span>}
-                      {edu.duration && <span className="text-slate-500 dark:text-zinc-400"> · {edu.duration}</span>}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0 pt-0.5 sm:pt-0">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 transition-transform duration-200 ${
-                      isExpanded ? 'rotate-90 text-slate-900 dark:text-white border-slate-400 dark:border-zinc-600' : ''
-                    }`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </button>
-
-              <AnimatePresence initial={false}>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-slate-100 dark:border-zinc-900/80 space-y-3">
-                      <p className="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
-                        {edu.description ||
-                          'Bachelor of Science in Information Technology specializing in Web and Mobile Technologies from Pangasinan State University – Urdaneta Campus.'}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {['Web & Mobile Technologies', 'Full-Stack Architecture', 'Database Systems', 'Software Engineering'].map((item) => (
-                          <span
-                            key={item}
-                            className="px-2.5 py-1 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Certificates & Credentials Section */}
+      {/* Certificates & Credentials */}
       {certificates.length > 0 && (
-        <div className="mt-12 pt-8 border-t border-slate-200 dark:border-zinc-900">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-mono font-semibold uppercase tracking-wider text-slate-600 dark:text-zinc-400">
+        <div className="mt-16 lg:mt-24">
+          <div className="mb-6 flex items-baseline justify-between gap-4">
+            <h3 className="font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
               Certificates & Credentials
             </h3>
-            <span className="text-xs font-mono text-slate-500 dark:text-zinc-500">
+            <span className="font-mono text-xs text-slate-500 dark:text-zinc-500">
               {certificates.length} {certificates.length === 1 ? 'Credential' : 'Credentials'}
             </span>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            {certificates.map((cert) => {
-              const credUrl = cert.credentialUrl || cert.credential_url;
-              const pdf = cert.pdfUrl || cert.pdf_url;
-              const img = cert.imageUrl || cert.image_url;
-
-              return (
-                <div
-                  key={cert.id}
-                  className="p-5 rounded-xl border border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/80 flex flex-col justify-between transition hover:border-amber-400/40 hover:bg-slate-50/80 dark:hover:bg-[#0c0d10] shadow-sm"
-                >
-                  <div>
-                    {img && (
-                      <img
-                        src={img}
-                        alt={cert.title}
-                        className="w-full h-36 object-cover rounded-lg mb-3 border border-slate-200 dark:border-zinc-800"
-                      />
-                    )}
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-slate-900 dark:text-white leading-snug">{cert.title}</h4>
-                      {cert.date && (
-                        <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700/50">
-                          {cert.date}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1">{cert.issuer}</p>
-                  </div>
-
-                  {(credUrl || pdf) && (
-                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-zinc-800/60">
-                      {credUrl && (
-                        <a
-                          href={credUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition"
-                        >
-                          <span>Verify Credential</span>
-                          <span className="text-[10px]">↗</span>
-                        </a>
-                      )}
-                      {pdf && (
-                        <a
-                          href={pdf}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition"
-                        >
-                          <span>View PDF</span>
-                          <span className="text-[10px]">↗</span>
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <ul className="border-t border-slate-200 dark:border-zinc-900">
+            {certificates.map((cert) => (
+              <CredentialRow key={cert.id} cert={cert} />
+            ))}
+          </ul>
         </div>
       )}
     </section>
   );
 }
-
