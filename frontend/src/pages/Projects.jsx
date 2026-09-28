@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useCollectionData } from '../hooks/useFirestoreData';
 import { fallbackProjects, fallbackPlaygroundProjects } from '../data/fallbackPortfolio';
 import ProjectArchitectureAI from '../components/ProjectArchitectureAI';
@@ -74,7 +74,38 @@ function ActionButton({ href, children, icon, variant = 'secondary', disabledLab
   );
 }
 
-function ScreenshotCarousel({ screenshots = [], compact = false }) {
+/**
+ * Minimal inline link used by the editorial featured block and list rows.
+ * Same tracking event as ActionButton, without the button chrome.
+ */
+function TextLink({ href, children, projectTitle }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      onClick={() => {
+        trackEvent('project_click', projectTitle || 'Project Link', { url: href });
+      }}
+      className="inline-flex items-center gap-1 text-xs font-mono text-slate-500 dark:text-zinc-400 underline decoration-slate-300 dark:decoration-zinc-700 underline-offset-4 hover:text-slate-900 dark:hover:text-white hover:decoration-current transition-colors"
+    >
+      <span>{children}</span>
+      <span aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
+// Only returns links that actually exist on the project record.
+function getProjectLinks(project) {
+  return [
+    project.repositoryUrl && { label: 'GitHub', href: project.repositoryUrl },
+    project.appStoreUrl && { label: 'App Store', href: project.appStoreUrl },
+    project.playStoreUrl && { label: 'Google Play', href: project.playStoreUrl },
+    project.liveDemoUrl && { label: 'Live Demo', href: project.liveDemoUrl },
+  ].filter(Boolean);
+}
+
+function ScreenshotCarousel({ screenshots = [], compact = false, editorial = false }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
@@ -118,7 +149,13 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
 
   return (
     <div className="space-y-2 w-full select-none">
-      <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-100 dark:bg-[#07080b] group shadow-lg">
+      <div
+        className={`relative overflow-hidden group ${
+          editorial
+            ? 'border border-slate-200 dark:border-zinc-900 bg-slate-50 dark:bg-[#07080b]'
+            : 'rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-100 dark:bg-[#07080b] shadow-lg'
+        }`}
+      >
         {/* Ambient blurred background for seamless framing on any screen aspect ratio */}
         {imageSrc && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -139,9 +176,9 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
               src={imageSrc}
               alt={activeScreenshot.alt || 'Project screenshot'}
               onLoad={handleImageLoad}
-              className={`relative z-10 max-h-full max-w-full w-auto h-auto object-contain rounded-lg shadow-2xl transition-all duration-300 ${
-                isPortrait ? 'max-w-[85%] sm:max-w-[70%]' : 'w-full'
-              }`}
+              className={`relative z-10 max-h-full max-w-full w-auto h-auto object-contain transition-all duration-300 ${
+                editorial ? '' : 'rounded-lg shadow-2xl'
+              } ${isPortrait ? 'max-w-[85%] sm:max-w-[70%]' : 'w-full'}`}
               loading="lazy"
             />
           ) : (
@@ -218,95 +255,196 @@ function ScreenshotCarousel({ screenshots = [], compact = false }) {
   );
 }
 
-function ProjectCard({ project, index, onLearnMore }) {
-  const screenshots = project.screenshots || [];
+/* ─────────────────────────────────────────────────────────────
+   Editorial pieces
+   ───────────────────────────────────────────────────────────── */
+
+function FeaturedProject({ project, onOpen, reduceMotion }) {
+  const links = getProjectLinks(project);
+  const description = project.shortDescription || project.summary || project.description;
   const technologies = project.technologies || [];
+  const projectTitle = project.title || project.name;
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.4, delay: (index % 2) * 0.1 }}
-      className="rounded-xl border border-slate-200 dark:border-zinc-900 bg-white dark:bg-[#09090b]/80 hover:border-slate-300 dark:hover:border-zinc-700/80 shadow-sm dark:shadow-none hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden glow-card"
-    >
-      {screenshots.length > 0 && (
-        <div className="p-3 border-b border-slate-100 dark:border-zinc-900/80">
-          <ScreenshotCarousel screenshots={screenshots} compact />
-        </div>
-      )}
+    <article className="grid lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-16 items-center border-t border-slate-200 dark:border-zinc-900 pt-10 lg:pt-14">
+      {/* Visual */}
+      <motion.div
+        className="lg:col-span-7 min-w-0"
+        initial={reduceMotion ? false : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
+        {project.screenshots && <ScreenshotCarousel screenshots={project.screenshots} editorial />}
+      </motion.div>
 
-      <div className="p-5 sm:p-6 flex flex-col flex-1">
-        <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">
-            Project {String(index + 1).padStart(2, '0')}
-          </span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-900">
-            {project.status || 'Production'}
-          </span>
-        </div>
-
-        <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-          {project.name}
-        </h3>
-
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed flex-1">
-          {project.summary || project.shortDescription || project.description}
+      {/* Information */}
+      <div className="lg:col-span-5 min-w-0">
+        <p className="font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
+          01 — Featured
         </p>
 
-        {/* Highlights */}
-        {project.highlights && (
-          <ul className="mt-4 space-y-1">
-            {project.highlights.slice(0, 3).map((item, idx) => (
-              <li key={idx} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-zinc-400">
-                <span className="text-slate-400 dark:text-zinc-600 select-none">▪</span>
-                <span className="leading-tight">{item}</span>
-              </li>
-            ))}
-          </ul>
+        <h3 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight leading-[1.1] text-slate-900 dark:text-white">
+          {project.name || project.title}
+        </h3>
+
+        {(project.category || project.subtitle) && (
+          <p className="mt-3 font-mono text-xs text-slate-500 dark:text-zinc-400">
+            {project.category || project.subtitle}
+          </p>
         )}
 
-        {/* Tech Stack Tags */}
-        <div className="flex flex-wrap gap-1.5 mt-5 pt-4 border-t border-slate-100 dark:border-zinc-900">
-          {technologies.map((tech) => (
-            <span
-              key={tech}
-              className="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
+        <p className="mt-6 max-w-md text-sm sm:text-base leading-relaxed text-slate-600 dark:text-zinc-300">
+          {description}
+        </p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-2 mt-5 pt-2">
+        {technologies.length > 0 && (
+          <p className="mt-6 max-w-md font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
+            {technologies.join(' · ')}
+          </p>
+        )}
+
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <button
             type="button"
-            onClick={() => onLearnMore(project)}
-            className="flex-1 inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#121318] hover:bg-slate-50 dark:hover:bg-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 text-xs font-mono text-slate-800 dark:text-white transition-colors shadow-sm"
+            onClick={() => onOpen(project)}
+            className="inline-flex items-center gap-2 border-b border-slate-900 dark:border-white pb-1 font-mono text-xs font-semibold text-slate-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-600 dark:hover:border-amber-400 transition-colors cursor-pointer"
           >
-            <span>Learn More</span>
-            <span className="text-[11px] opacity-70">↗</span>
+            <span>View Case Study</span>
+            <span aria-hidden="true">→</span>
           </button>
 
-          {project.repositoryUrl && (
-            <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />}>
-              GitHub
-            </ActionButton>
-          )}
-          {project.appStoreUrl && (
-            <ActionButton href={project.appStoreUrl} icon={<Icon name="external" />}>
-              App Store
-            </ActionButton>
-          )}
-          {project.playStoreUrl && (
-            <ActionButton href={project.playStoreUrl} icon={<Icon name="external" />}>
-              Google Play
-            </ActionButton>
-          )}
+          {links.map((link) => (
+            <TextLink key={link.label} href={link.href} projectTitle={projectTitle}>
+              {link.label}
+            </TextLink>
+          ))}
         </div>
       </div>
-    </motion.article>
+    </article>
+  );
+}
+
+function ProjectRow({ project, number, onOpen }) {
+  const links = getProjectLinks(project);
+  const meta = project.category || project.subtitle;
+  const techLine = (project.technologies || []).slice(0, 4).join(' · ');
+  const projectTitle = project.title || project.name;
+
+  return (
+    <li className="group border-b border-slate-200 dark:border-zinc-900">
+      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] md:grid-cols-[3rem_minmax(0,1.3fr)_minmax(0,1fr)_auto] gap-x-4 gap-y-3 py-6 md:py-7 md:items-baseline">
+        <span className="pt-1.5 md:pt-0 font-mono text-xs tabular-nums text-slate-400 dark:text-zinc-600 group-hover:text-slate-600 dark:group-hover:text-zinc-400 transition-colors">
+          {number}
+        </span>
+
+        <div className="min-w-0">
+          <h4 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            {/* Mouse convenience only — the "Case Study" action below is the keyboard target */}
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => onOpen(project)}
+              className="text-left cursor-pointer transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none"
+            >
+              {project.name}
+            </button>
+          </h4>
+          {meta && (
+            <p className="mt-1 font-mono text-xs text-slate-500 dark:text-zinc-500">{meta}</p>
+          )}
+        </div>
+
+        {techLine && (
+          <p className="col-start-2 md:col-start-auto font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
+            {techLine}
+          </p>
+        )}
+
+        <div className="col-start-2 md:col-start-auto md:justify-self-end flex flex-wrap items-center gap-x-5 gap-y-2">
+          <button
+            type="button"
+            onClick={() => onOpen(project)}
+            className="inline-flex items-center gap-1 font-mono text-xs text-slate-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer"
+          >
+            <span>Case Study</span>
+            <span aria-hidden="true">→</span>
+          </button>
+
+          {links.map((link) => (
+            <TextLink key={link.label} href={link.href} projectTitle={projectTitle}>
+              {link.label}
+            </TextLink>
+          ))}
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function PlaygroundRow({ project, onOpen }) {
+  const isPlaceholder = project.id === 'playground-placeholder';
+  const links = getProjectLinks(project);
+  const description = project.summary || project.shortDescription || project.description;
+  const techLine = (project.technologies || []).slice(0, 4).join(' · ');
+  const projectTitle = project.title || project.name;
+
+  if (isPlaceholder) {
+    return (
+      <li className="border-b border-slate-200 dark:border-zinc-900">
+        <div className="py-5">
+          <p className="text-sm font-medium text-slate-400 dark:text-zinc-600">{project.name}</p>
+          {description && (
+            <p className="mt-1 max-w-lg text-xs leading-relaxed text-slate-400 dark:text-zinc-600">
+              {description}
+            </p>
+          )}
+        </div>
+      </li>
+    );
+  }
+
+  return (
+    <li className="group border-b border-slate-200 dark:border-zinc-900">
+      <div className="grid md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_auto] gap-x-6 gap-y-2 py-5 md:items-baseline">
+        <div className="min-w-0">
+          <h4 className="text-base font-semibold tracking-tight text-slate-900 dark:text-white">
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => onOpen(project)}
+              className="text-left cursor-pointer transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none"
+            >
+              {project.name}
+            </button>
+          </h4>
+          <p className="mt-1 font-mono text-xs text-slate-500 dark:text-zinc-500">
+            {[project.category, project.status].filter(Boolean).join(' · ')}
+          </p>
+        </div>
+
+        {techLine && (
+          <p className="font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">{techLine}</p>
+        )}
+
+        <div className="md:justify-self-end flex flex-wrap items-center gap-x-5 gap-y-2">
+          <button
+            type="button"
+            onClick={() => onOpen(project)}
+            className="inline-flex items-center gap-1 font-mono text-xs text-slate-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer"
+          >
+            <span>Details</span>
+            <span aria-hidden="true">→</span>
+          </button>
+
+          {links.map((link) => (
+            <TextLink key={link.label} href={link.href} projectTitle={projectTitle}>
+              {link.label}
+            </TextLink>
+          ))}
+        </div>
+      </div>
+    </li>
   );
 }
 
@@ -551,115 +689,11 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
   );
 }
 
-function PlaygroundCard({ project, onLearnMore }) {
-  const technologies = project.technologies || [];
-  const isPlaceholder = project.id === 'playground-placeholder';
-  const thumbnail = project.thumbnailImage || project.thumbnail_image;
-  const screenshots = project.screenshots || [];
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 15 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-30px' }}
-      transition={{ duration: 0.35 }}
-      className={`relative rounded-xl border bg-white dark:bg-[#09090b]/60 flex flex-col transition-all duration-200 overflow-hidden shadow-sm dark:shadow-none glow-card
-        ${isPlaceholder
-          ? 'border-dashed border-slate-300 dark:border-zinc-800 opacity-60'
-          : 'border-slate-200 dark:border-zinc-900 hover:border-slate-300 dark:hover:border-zinc-700'
-        }`}
-    >
-      {/* Top accent bar */}
-      {!isPlaceholder && (
-        <div className="h-0.5 w-full bg-gradient-to-r from-amber-500/0 via-amber-400/40 to-amber-500/0" />
-      )}
-
-      {/* Thumbnail image */}
-      {!isPlaceholder && (thumbnail || screenshots.length > 0) && (
-        <div className="relative w-full aspect-video overflow-hidden bg-slate-100 dark:bg-zinc-950 border-b border-slate-200 dark:border-zinc-900">
-          <img
-            src={thumbnail || screenshots[0]?.src}
-            alt={project.name}
-            className="w-full h-full object-cover object-top"
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.parentElement.style.display = 'none';
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 dark:from-[#09090b]/60 to-transparent pointer-events-none" />
-        </div>
-      )}
-
-      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
-        {/* Header row */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400/70">
-                {project.category || 'Playground'}
-              </span>
-            </div>
-            <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
-              {project.name}
-            </h4>
-          </div>
-          {!isPlaceholder && (
-            <span className="shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-500 bg-slate-100 dark:bg-zinc-900">
-              {project.status || 'Done'}
-            </span>
-          )}
-        </div>
-
-        {/* Description */}
-        <p className="text-xs text-slate-500 dark:text-zinc-500 leading-relaxed flex-1">
-          {project.summary || project.shortDescription || project.description}
-        </p>
-
-        {/* Tech tags */}
-        {technologies.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {technologies.map((tech) => (
-              <span
-                key={tech}
-                className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/60 text-[10px] font-mono text-slate-600 dark:text-zinc-400"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Actions */}
-        {!isPlaceholder && (
-          <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-zinc-900/60">
-            <button
-              type="button"
-              onClick={() => onLearnMore(project)}
-              className="inline-flex h-7 items-center gap-1 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent hover:bg-slate-100 dark:hover:bg-zinc-900 text-[11px] font-mono text-slate-700 dark:text-zinc-300 px-2.5 transition-colors shadow-xs"
-            >
-              Details ↗
-            </button>
-            {project.repositoryUrl && (
-              <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />}>
-                GitHub
-              </ActionButton>
-            )}
-            {project.liveDemoUrl && (
-              <ActionButton href={project.liveDemoUrl} icon={<Icon name="external" />} variant="primary">
-                Demo
-              </ActionButton>
-            )}
-          </div>
-        )}
-      </div>
-    </motion.article>
-  );
-}
-
 export default function Projects() {
   const { items: allProjects, loading } = useCollectionData('projects', [...fallbackProjects, ...fallbackPlaygroundProjects], { orderBy: 'displayOrder' });
   const [selectedProject, setSelectedProject] = useState(null);
   const { pendingAction, consumePendingAction } = useCopilot();
+  const reduceMotion = useReducedMotion();
 
   const handleOpenProject = (project) => {
     if (project) {
@@ -696,8 +730,8 @@ export default function Projects() {
   };
 
   const rawMainProjects = allProjects.filter((p) => !isPlayground(p));
-  
-  // Deduplicate main projects (prevent duplicate WIBE customer mobile app cards)
+
+  // Deduplicate main projects (prevent duplicate WIBE customer mobile app entries)
   const mainProjects = useMemo(() => {
     const seenWibCustomerApp = { seen: false };
     const seenIds = new Set();
@@ -740,170 +774,70 @@ export default function Projects() {
     });
 
   return (
-    <section id="projects" className="py-16 border-b border-slate-200 dark:border-zinc-900">
-      {/* Section Tag */}
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
+    <section id="projects" className="py-20 lg:py-28 border-b border-slate-200 dark:border-zinc-900">
+      {/* Section header — single, quiet fade (no translate) */}
+      <motion.header
+        initial={reduceMotion ? false : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="section-tag mb-4"
+        transition={{ duration: 0.5 }}
+        className="mb-14 lg:mb-20"
       >
-        [Projects]
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.4 }}
-        className="mb-8"
-      >
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <p className="section-tag mb-5">03 — SELECTED PROJECTS</p>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
           Things I've Built
         </h2>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
+        <p className="mt-5 max-w-xl text-sm sm:text-base text-slate-600 dark:text-zinc-400 leading-relaxed">
           Not every project started with a perfect specification. Some started as school projects. Some started as assessments. Some started because there was a problem worth solving. What they have in common is that each one taught me something new about building software.
         </p>
-      </motion.div>
+      </motion.header>
 
-      {/* Featured Main Project */}
+      {/* Featured project */}
       {featuredProject && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.45 }}
-          className="mb-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#0d0e12] overflow-hidden shadow-sm dark:shadow-none hover:shadow-md transition-all duration-200 glow-card"
-        >
-          <div className="grid lg:grid-cols-[1.1fr_1fr] xl:grid-cols-[1.05fr_1.15fr] gap-0 items-stretch">
-            <div className="p-6 sm:p-8 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300">
-                    FEATURED PROJECT
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-400">
-                    {featuredProject.subtitle || featuredProject.category || 'Production · Platform'}
-                  </span>
-                </div>
-
-                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                  {featuredProject.name || featuredProject.title}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 mt-3 leading-relaxed">
-                  {featuredProject.longDescription || featuredProject.summary || featuredProject.description}
-                </p>
-
-                {featuredProject.highlights && (
-                  <div className="mt-4 space-y-1.5">
-                    <p className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">Highlights</p>
-                    <ul className="grid sm:grid-cols-2 gap-1.5">
-                      {featuredProject.highlights.map((h, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-zinc-400">
-                          <span className="text-slate-400 dark:text-zinc-600">▪</span>
-                          <span>{h}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-slate-100 dark:border-zinc-900 space-y-4">
-                <div className="flex flex-wrap gap-1.5">
-                  {(featuredProject.technologies || []).map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-2.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[11px] font-mono text-slate-700 dark:text-zinc-300"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenProject(featuredProject)}
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-600/30 dark:border-transparent bg-amber-500 hover:bg-amber-600 dark:bg-white text-white dark:text-zinc-900 font-semibold px-4 text-xs font-mono dark:hover:bg-zinc-200 transition-colors shadow-sm cursor-pointer"
-                  >
-                    View Case Study ↗
-                  </button>
-
-                  {featuredProject.repositoryUrl && (
-                    <ActionButton href={featuredProject.repositoryUrl} projectTitle={featuredProject.title} icon={<Icon name="github" />}>
-                      GitHub
-                    </ActionButton>
-                  )}
-                  {featuredProject.appStoreUrl && (
-                    <ActionButton href={featuredProject.appStoreUrl} projectTitle={featuredProject.title} icon={<Icon name="external" />}>
-                      App Store
-                    </ActionButton>
-                  )}
-                  {featuredProject.playStoreUrl && (
-                    <ActionButton href={featuredProject.playStoreUrl} projectTitle={featuredProject.title} icon={<Icon name="external" />}>
-                      Google Play
-                    </ActionButton>
-                  )}
-                  {featuredProject.liveDemoUrl && (
-                    <ActionButton href={featuredProject.liveDemoUrl} projectTitle={featuredProject.title} icon={<Icon name="external" />}>
-                      Live Demo
-                    </ActionButton>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 sm:p-6 lg:p-8 bg-slate-50 dark:bg-[#08090b] border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-zinc-900 flex flex-col justify-center items-center">
-              {featuredProject.screenshots && (
-                <ScreenshotCarousel screenshots={featuredProject.screenshots} />
-              )}
-            </div>
-          </div>
-        </motion.div>
+        <FeaturedProject
+          project={featuredProject}
+          onOpen={handleOpenProject}
+          reduceMotion={reduceMotion}
+        />
       )}
 
-      {/* Other Selected Projects Grid */}
+      {/* Remaining projects — editorial list */}
       {otherProjects.length > 0 && (
-        <div className="grid md:grid-cols-2 gap-4">
+        <ul className="mt-16 lg:mt-24 border-t border-slate-200 dark:border-zinc-900">
           {otherProjects.map((project, index) => (
-            <ProjectCard
+            <ProjectRow
               key={project.id || project.name}
               project={project}
-              index={index + 1}
-              onLearnMore={handleOpenProject}
+              number={String(index + 2).padStart(2, '0')}
+              onOpen={handleOpenProject}
             />
           ))}
-        </div>
+        </ul>
       )}
 
-      {/* ── Playground Section ─────────────────────────────────── */}
-      <div className="mt-16 pt-10 border-t border-zinc-900/60">
-        <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400/60">Playground</span>
-              <span className="h-px flex-1 min-w-[24px] bg-amber-400/10" />
-            </div>
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Small Projects & Experiments
-            </h3>
-            <p className="text-xs text-zinc-500 mt-1 max-w-lg leading-relaxed">
-              Side builds, school projects, and quick experiments I've worked on for fun or learning — not production-grade, but each one taught me something.
-            </p>
-          </div>
+      {/* Playground — smaller secondary list */}
+      <div className="mt-20 lg:mt-28">
+        <div className="mb-6 max-w-xl">
+          <p className="font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
+            Playground
+          </p>
+          <h3 className="mt-2 text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Small Projects & Experiments
+          </h3>
+          <p className="mt-2 text-sm text-slate-500 dark:text-zinc-500 leading-relaxed">
+            Side builds, school projects, and quick experiments I've worked on for fun or learning — not production-grade, but each one taught me something.
+          </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <ul className="border-t border-slate-200 dark:border-zinc-900">
           {playgroundItems.map((project) => (
-            <PlaygroundCard
+            <PlaygroundRow
               key={project.id || project.name}
               project={project}
-              onLearnMore={handleOpenProject}
+              onOpen={handleOpenProject}
             />
           ))}
-        </div>
+        </ul>
       </div>
 
       <AnimatePresence>
