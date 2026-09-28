@@ -333,12 +333,12 @@ function ProjectRow({ project, number, onOpen }) {
 
   return (
     <li className="group border-b border-slate-200 dark:border-zinc-900">
-      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] md:grid-cols-[3rem_minmax(0,1.3fr)_minmax(0,1fr)_auto] gap-x-4 gap-y-3 py-6 md:py-7 md:items-baseline">
-        <span className="pt-1.5 md:pt-0 font-mono text-xs tabular-nums text-slate-400 dark:text-zinc-600 group-hover:text-slate-600 dark:group-hover:text-zinc-400 transition-colors">
+      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] md:grid-cols-[3rem_minmax(0,1fr)_10rem_9rem] xl:grid-cols-[3rem_minmax(0,1fr)_14rem_12rem] gap-x-4 gap-y-3 py-6 md:py-7 md:items-baseline">
+        <span className="md:col-start-1 md:row-start-1 pt-1.5 md:pt-0 font-mono text-xs tabular-nums text-slate-400 dark:text-zinc-600 group-hover:text-slate-600 dark:group-hover:text-zinc-400 transition-colors">
           {number}
         </span>
 
-        <div className="min-w-0">
+        <div className="min-w-0 md:col-start-2 md:row-start-1">
           <h4 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
             {/* Mouse convenience only — the "Case Study" action below is the keyboard target */}
             <button
@@ -356,12 +356,12 @@ function ProjectRow({ project, number, onOpen }) {
         </div>
 
         {techLine && (
-          <p className="col-start-2 md:col-start-auto font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
+          <p className="col-start-2 md:col-start-3 md:row-start-1 font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
             {techLine}
           </p>
         )}
 
-        <div className="col-start-2 md:col-start-auto md:justify-self-end flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="col-start-2 md:col-start-4 md:row-start-1 flex flex-wrap items-center gap-x-5 gap-y-2">
           <button
             type="button"
             onClick={() => onOpen(project)}
@@ -406,8 +406,8 @@ function PlaygroundRow({ project, onOpen }) {
 
   return (
     <li className="group border-b border-slate-200 dark:border-zinc-900">
-      <div className="grid md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_auto] gap-x-6 gap-y-2 py-5 md:items-baseline">
-        <div className="min-w-0">
+      <div className="grid md:grid-cols-[3rem_minmax(0,1fr)_10rem_9rem] xl:grid-cols-[3rem_minmax(0,1fr)_14rem_12rem] gap-x-4 gap-y-2 py-5 md:items-baseline">
+        <div className="min-w-0 md:col-start-2 md:row-start-1">
           <h4 className="text-base font-semibold tracking-tight text-slate-900 dark:text-white">
             <button
               type="button"
@@ -424,10 +424,10 @@ function PlaygroundRow({ project, onOpen }) {
         </div>
 
         {techLine && (
-          <p className="font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">{techLine}</p>
+          <p className="md:col-start-3 md:row-start-1 font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">{techLine}</p>
         )}
 
-        <div className="md:justify-self-end flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="md:col-start-4 md:row-start-1 flex flex-wrap items-center gap-x-5 gap-y-2">
           <button
             type="button"
             onClick={() => onOpen(project)}
