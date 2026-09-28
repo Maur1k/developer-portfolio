@@ -73,7 +73,7 @@ export default function Sidebar({ profile, activeSection, onNavigate, onOpenResu
                   trackEvent('page_view', `Section: ${link.label}`);
                   onNavigate(link.id);
                 }}
-                className={`group w-full flex items-center gap-3 py-2 pl-3 -ml-3 border-l-2 text-left transition-colors duration-200 ${
+                className={`group w-full flex items-center gap-3 py-2 pl-3 -ml-3 border-l-2 bg-transparent text-left outline-none focus:outline-none focus-visible:outline-none focus-visible:border-amber-500 focus-visible:text-slate-900 dark:focus-visible:text-white transition-colors duration-200 ${
                   isActive
                     ? 'border-amber-500 text-slate-900 dark:text-white'
                     : 'border-transparent text-slate-500 dark:text-zinc-500 hover:border-slate-300 dark:hover:border-zinc-700 hover:text-slate-800 dark:hover:text-zinc-300'

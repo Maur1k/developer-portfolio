@@ -1,18 +1,15 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useDocumentData } from '../hooks/useFirestoreData';
-import { fallbackSkills } from '../data/fallbackPortfolio';
+import { fallbackProfile } from '../data/fallbackPortfolio';
 import { useCopilot } from '../context/CopilotContext';
 
-const coreSkillsMeta = [
-  { key: 'react', title: 'React', subtitle: 'Frontend Development' },
-  { key: 'flutter', title: 'Flutter', subtitle: 'Mobile Development' },
-  { key: 'nodejs', title: 'Node.js', subtitle: 'Backend Development' },
-  { key: 'laravel', title: 'Laravel / PHP', subtitle: 'Web & API Development' },
-  { key: 'mysql', title: 'MySQL', subtitle: 'Database Development' },
-  { key: 'firebase', title: 'Firebase', subtitle: 'Backend & Cloud Services' },
-  { key: 'restapis', title: 'REST APIs', subtitle: 'API Development & Integration' },
-  { key: 'aidev', title: 'AI-Assisted Development', subtitle: 'Modern Engineering Workflows' },
+// Categories map 1:1 to the keys in profile.stackBreakdown.
+const stackCategories = [
+  { key: 'frontend', label: 'Frontend' },
+  { key: 'mobile', label: 'Mobile' },
+  { key: 'backend', label: 'Backend' },
+  { key: 'data', label: 'Data' },
 ];
 
 /*
@@ -20,27 +17,37 @@ const coreSkillsMeta = [
   The left padding on desktop lines the category column up with the title
   column used by the Projects and Experience rows. Mobile stacks the two.
 */
-const ROW_GRID = 'grid gap-y-4 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-x-8 md:pl-16';
+const ROW_GRID = 'grid gap-y-2 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-x-8 md:pl-16 md:items-baseline';
 
 export default function Skills() {
-  const { data: skills } = useDocumentData('siteContent', 'skills', fallbackSkills);
+  const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
   const { highlightedSkills } = useCopilot();
   const reduceMotion = useReducedMotion();
 
-  const isCategoryHighlighted = (category, items) => {
-    if (!highlightedSkills || highlightedSkills.length === 0) return false;
-    const catLower = category.title.toLowerCase();
-    const keyLower = category.key.toLowerCase();
-    return highlightedSkills.some((h) => {
-      const hLower = h.toLowerCase();
-      return (
-        catLower.includes(hLower) ||
-        hLower.includes(catLower) ||
-        keyLower.includes(hLower) ||
-        items.some((it) => it.toLowerCase().includes(hLower))
-      );
-    });
+  const stack = profile?.stackBreakdown || fallbackProfile.stackBreakdown || {};
+  const highlights = (highlightedSkills || []).map((h) => String(h).toLowerCase().trim()).filter(Boolean);
+
+  // A single technology is highlighted when a Copilot-highlighted skill names it
+  const isTechHighlighted = (tech) => {
+    if (highlights.length === 0) return false;
+    const t = tech.toLowerCase();
+    return highlights.some((h) => t.includes(h) || h.includes(t));
   };
+
+  // A row is highlighted when the category itself or any of its technologies matches
+  const isCategoryHighlighted = (category, items) => {
+    if (highlights.length === 0) return false;
+    const labelLower = category.label.toLowerCase();
+    const keyLower = category.key.toLowerCase();
+    const categoryMatch = highlights.some(
+      (h) => labelLower.includes(h) || h.includes(labelLower) || keyLower.includes(h)
+    );
+    return categoryMatch || items.some(isTechHighlighted);
+  };
+
+  const rows = stackCategories
+    .map((category) => ({ ...category, items: stack[category.key] || [] }))
+    .filter((category) => category.items.length > 0);
 
   return (
     <section id="skills" className="py-20 lg:py-28 border-b border-slate-200 dark:border-zinc-900">
@@ -62,7 +69,7 @@ export default function Skills() {
       </motion.header>
 
       {/* Column labels (desktop only) */}
-      <div className={`hidden md:grid md:grid-cols-[13rem_minmax(0,1fr)] md:gap-x-8 md:pl-16 pb-4 font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600`}>
+      <div className="hidden md:grid md:grid-cols-[13rem_minmax(0,1fr)] md:gap-x-8 md:pl-16 pb-4 font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
         <span>Category</span>
         <span>Technologies</span>
       </div>
@@ -75,51 +82,52 @@ export default function Skills() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="border-t border-slate-200 dark:border-zinc-900"
       >
-        {coreSkillsMeta.map((category) => {
-          const items = skills?.[category.key] || fallbackSkills[category.key] || [];
-          const isHighlighted = isCategoryHighlighted(category, items);
+        {rows.map((category) => {
+          const isHighlighted = isCategoryHighlighted(category, category.items);
 
           return (
             <li
               key={category.key}
-              className={`group border-b transition-colors duration-300 ${
+              className={`border-b transition-colors duration-300 ${
                 isHighlighted ? 'border-amber-500/40' : 'border-slate-200 dark:border-zinc-900'
               }`}
             >
-              <div className={`${ROW_GRID} py-7 md:py-8`}>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2.5">
-                    <h3
-                      className={`text-lg font-semibold tracking-tight transition-colors duration-300 ${
-                        isHighlighted ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-white'
-                      }`}
-                    >
-                      {category.title}
-                      {isHighlighted && <span className="sr-only"> (highlighted)</span>}
-                    </h3>
-                    {isHighlighted && (
-                      <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
-                        <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60 motion-safe:animate-ping" />
-                        <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1 font-mono text-xs text-slate-500 dark:text-zinc-500 transition-colors group-hover:text-slate-700 dark:group-hover:text-zinc-400">
-                    {category.subtitle}
-                  </p>
+              <div className={`${ROW_GRID} py-5 md:py-6`}>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <h3
+                    className={`text-lg font-semibold tracking-tight transition-colors duration-300 ${
+                      isHighlighted ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    {category.label}
+                    {isHighlighted && <span className="sr-only"> (highlighted)</span>}
+                  </h3>
+                  {isHighlighted && (
+                    <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60 motion-safe:animate-ping" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
+                    </span>
+                  )}
                 </div>
 
-                <ul className="min-w-0 space-y-2">
-                  {items.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-start gap-2.5 text-sm sm:text-[15px] leading-relaxed text-slate-600 dark:text-zinc-400"
-                    >
-                      <span className="mt-1 select-none text-slate-400 dark:text-zinc-600" aria-hidden="true">▪</span>
-                      <span>{item}</span>
-                    </li>
+                <p className="min-w-0 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-zinc-400">
+                  {category.items.map((tech, index) => (
+                    <React.Fragment key={tech}>
+                      <span className="whitespace-nowrap">
+                        <span
+                          className={
+                            isTechHighlighted(tech) ? 'font-medium text-amber-600 dark:text-amber-400' : undefined
+                          }
+                        >
+                          {tech}
+                        </span>
+                        {index < category.items.length - 1 && (
+                          <span className="mx-2 text-slate-300 dark:text-zinc-700" aria-hidden="true">·</span>
+                        )}
+                      </span>{' '}
+                    </React.Fragment>
                   ))}
-                </ul>
+                </p>
               </div>
             </li>
           );
