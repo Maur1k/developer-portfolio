@@ -4,6 +4,7 @@ import Hero from './Hero';
 import Experience from './Experience';
 import Projects from './Projects';
 import Skills from './Skills';
+import About from './About';
 import Contact from './Contact';
 import Footer from '../components/Footer';
 import ResumeModal from '../components/ResumeModal';
@@ -21,7 +22,7 @@ export default function Home() {
   const { data: profile } = useDocumentData('siteContent', 'profile', fallbackProfile);
   const { openCopilot, pendingAction, consumePendingAction } = useCopilot();
   const { isDark, toggleTheme } = useTheme();
-  const [activeSection, setActiveSection] = useState('about');
+  const [activeSection, setActiveSection] = useState('experience');
   const [isShortcutOpen, setIsShortcutOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
@@ -53,7 +54,8 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'experience', 'projects', 'skills', 'contact'];
+      // Order matches DOM order in the render below so scroll-spy resolves correctly
+      const sections = ['experience', 'projects', 'skills', 'about', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -115,6 +117,7 @@ export default function Home() {
             <Experience />
             <Projects />
             <Skills />
+            <About />
             <Contact />
             <Footer />
           </main>

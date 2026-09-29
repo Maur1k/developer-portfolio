@@ -19,7 +19,7 @@ export default function Hero({ onOpenRecruiterMatch }) {
   const handleRecruiterMatch = onOpenRecruiterMatch || (() => openCopilot('match'));
 
   return (
-    <section id="about" className="pt-4 lg:pt-12 pb-20 lg:pb-28 border-b border-slate-200 dark:border-zinc-900">
+    <section className="pt-4 lg:pt-12 pb-20 lg:pb-28 border-b border-slate-200 dark:border-zinc-900">
       {/* Top Meta Row */}
       <div className="flex items-center justify-between pb-10 lg:pb-16">
         <div className="section-tag flex items-center gap-2">
