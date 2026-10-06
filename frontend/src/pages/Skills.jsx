@@ -266,7 +266,7 @@ export default function Skills() {
         <div className="w-10 h-px bg-amber-500 mb-5" aria-hidden="true" />
         <p className="section-tag mb-4">04 — TECH STACK</p>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100 leading-tight mb-5">
-          Technologies<br className="hidden sm:block" /> We Are Using
+          The tools I work with
         </h2>
         <p className="max-w-xl text-sm sm:text-base text-zinc-500 leading-relaxed">
           The tools I work with to build robust, scalable, and beautiful digital
