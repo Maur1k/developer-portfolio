@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import portfolioRoutes from './routes/portfolio.js';
 import copilotRoutes from './routes/copilot.js';
 import cvSyncRoutes from './routes/cvSync.js';
+import githubRoutes from './routes/github.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', portfolioRoutes);
 app.use('/api/copilot', copilotRoutes);
 app.use('/api/admin', cvSyncRoutes);
+app.use('/api/github', githubRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

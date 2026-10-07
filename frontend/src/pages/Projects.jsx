@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useCollectionData } from '../hooks/useFirestoreData';
 import { fallbackProjects, fallbackPlaygroundProjects } from '../data/fallbackPortfolio';
 import ProjectArchitectureAI from '../components/ProjectArchitectureAI';
+import GithubCalendar from '../components/GithubCalendar';
 import { useCopilot } from '../context/CopilotContext';
 import { trackEvent } from '../services/analytics';
 
@@ -839,6 +840,9 @@ export default function Projects() {
           ))}
         </ul>
       </div>
+
+      {/* GitHub Contribution Calendar */}
+      <GithubCalendar />
 
       <AnimatePresence>
         {selectedProject && (
