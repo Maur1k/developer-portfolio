@@ -98,28 +98,44 @@ export default function Home() {
       {/* Scroll Progress Bar at very top */}
       <ScrollProgressBar />
 
-      <div className="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="flex flex-col lg:flex-row lg:gap-14 xl:gap-20">
-          {/* Left Column: Fixed / Sticky Profile Sidebar */}
-          <Sidebar
-            profile={profile}
-            activeSection={activeSection}
-            onNavigate={scrollToSection}
-            onOpenResume={() => setIsResumeOpen(true)}
-            onOpenPhoto={() => setIsPhotoOpen(true)}
-          />
-
-          {/* Right Column: Main Content Stream */}
-          <main className="flex-1 min-w-0 py-6 lg:py-10 w-full">
-            <Hero onOpenRecruiterMatch={() => openCopilot('match')} />
-            <Experience />
-            <Projects />
-            <Skills />
-            <Contact />
-            <Footer />
-          </main>
-        </div>
+      {/* ── Mobile layout: top bar (rendered by Sidebar) + full-width main ── */}
+      <div className="lg:hidden">
+        <Sidebar
+          profile={profile}
+          activeSection={activeSection}
+          onNavigate={scrollToSection}
+          onOpenResume={() => setIsResumeOpen(true)}
+          onOpenPhoto={() => setIsPhotoOpen(true)}
+        />
+        <main className="w-full px-4 sm:px-6 py-6">
+          <Hero onOpenRecruiterMatch={() => openCopilot('match')} />
+          <Experience />
+          <Projects />
+          <Skills />
+          <Contact />
+          <Footer />
+        </main>
       </div>
+
+      {/* ── Desktop layout: sticky sidebar + main content side by side ───── */}
+      <div className="hidden lg:flex w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-8 xl:px-10 gap-14 xl:gap-20">
+        <Sidebar
+          profile={profile}
+          activeSection={activeSection}
+          onNavigate={scrollToSection}
+          onOpenResume={() => setIsResumeOpen(true)}
+          onOpenPhoto={() => setIsPhotoOpen(true)}
+        />
+        <main className="flex-1 min-w-0 py-10 w-full">
+          <Hero onOpenRecruiterMatch={() => openCopilot('match')} />
+          <Experience />
+          <Projects />
+          <Skills />
+          <Contact />
+          <Footer />
+        </main>
+      </div>
+
 
       {/* Profile Photo Lightbox Modal */}
       <ProfilePhotoModal
