@@ -97,9 +97,13 @@ export default function Home() {
     <div className="min-h-screen bg-[#f8fafc] dark:bg-[#050507] text-zinc-900 dark:text-[#ededed] transition-colors duration-200">
       {/* Scroll Progress Bar at very top */}
       <ScrollProgressBar />
-
-      {/* ── Mobile layout: top bar (rendered by Sidebar) + full-width main ── */}
-      <div className="lg:hidden">
+      {/* Layout wrapper: 
+          On mobile: block layout, padded main content.
+          On desktop: flex row, max-width centered, sticky sidebar on left. 
+      */}
+      <div className="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto flex flex-col lg:flex-row lg:gap-14 xl:gap-20 lg:px-8 xl:px-10">
+        
+        {/* Sidebar automatically handles its own responsive rendering (mobile top bar vs desktop sticky sidebar) */}
         <Sidebar
           profile={profile}
           activeSection={activeSection}
@@ -107,26 +111,9 @@ export default function Home() {
           onOpenResume={() => setIsResumeOpen(true)}
           onOpenPhoto={() => setIsPhotoOpen(true)}
         />
-        <main className="w-full px-4 sm:px-6 py-6">
-          <Hero onOpenRecruiterMatch={() => openCopilot('match')} />
-          <Experience />
-          <Projects />
-          <Skills />
-          <Contact />
-          <Footer />
-        </main>
-      </div>
 
-      {/* ── Desktop layout: sticky sidebar + main content side by side ───── */}
-      <div className="hidden lg:flex w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto px-8 xl:px-10 gap-14 xl:gap-20">
-        <Sidebar
-          profile={profile}
-          activeSection={activeSection}
-          onNavigate={scrollToSection}
-          onOpenResume={() => setIsResumeOpen(true)}
-          onOpenPhoto={() => setIsPhotoOpen(true)}
-        />
-        <main className="flex-1 min-w-0 py-10 w-full">
+        {/* Main Content Stream */}
+        <main className="flex-1 min-w-0 w-full px-4 sm:px-6 py-6 lg:px-0 lg:py-10">
           <Hero onOpenRecruiterMatch={() => openCopilot('match')} />
           <Experience />
           <Projects />
