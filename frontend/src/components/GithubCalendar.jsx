@@ -65,10 +65,17 @@ export default function GithubCalendar() {
 
   const { totalContributions, weeks } = data;
 
+  // Slice weeks to begin at the first week of June (month index 5)
+  const juneStartIndex = weeks.findIndex(week => {
+    const first = week.contributionDays[0];
+    return first && new Date(first.date).getUTCMonth() === 5; // 5 = June
+  });
+  const visibleWeeks = juneStartIndex !== -1 ? weeks.slice(juneStartIndex) : weeks;
+
   // Month labels: find the first week of each new month
   const monthLabels = [];
   let currentMonth = -1;
-  weeks.forEach((week, index) => {
+  visibleWeeks.forEach((week, index) => {
     const first = week.contributionDays[0];
     if (first) {
       const month = new Date(first.date).getUTCMonth();
@@ -120,7 +127,7 @@ export default function GithubCalendar() {
 
             {/* Month labels row */}
             <div className="flex ml-7 mb-[5px]">
-              {weeks.map((_, wIndex) => {
+              {visibleWeeks.map((_, wIndex) => {
                 const match = monthLabels.find(m => m.index === wIndex);
                 return (
                   <div key={wIndex} style={{ width: 14, marginRight: 3, flexShrink: 0 }}>
@@ -145,7 +152,7 @@ export default function GithubCalendar() {
 
               {/* Week columns */}
               <div className="flex gap-[3px]">
-                {weeks.map((week, wIndex) => (
+                {visibleWeeks.map((week, wIndex) => (
                   <div key={wIndex} className="flex flex-col gap-[3px]">
                     {[0, 1, 2, 3, 4, 5, 6].map((dayOfWeek) => {
                       const day = week.contributionDays.find(
