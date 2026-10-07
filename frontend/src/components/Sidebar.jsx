@@ -134,16 +134,7 @@ function MobileNav({ profile, activeSection, onNavigate, onOpenResume, onOpenPho
                     {firstNames} {lastName}
                   </span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  aria-label="Close menu"
-                  className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-current fill-none" strokeWidth="2" strokeLinecap="round">
-                    <path d="M18 6L6 18M6 6l12 12"/>
-                  </svg>
-                </button>
+
               </div>
 
               {/* Identity block */}
