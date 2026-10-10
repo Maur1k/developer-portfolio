@@ -486,6 +486,70 @@ export const fallbackPlaygroundProjects = [
     ],
   },
   {
+    id: 'mjc-gadgethub',
+    title: 'MJC Gadget Hub — E-Commerce Platform',
+    name: 'MJC Gadget Hub',
+    subtitle: 'Consumer Electronics E-Commerce Platform',
+    tagline: 'Academic Project · Full Stack Web Application',
+    shortDescription:
+      'A Flask and MySQL e-commerce platform for consumer electronics with customer registration, catalog browsing, cart management, checkout with payment-proof uploads, order tracking, and a full administrator dashboard for product, order, and user management.',
+    longDescription:
+      'MJC Gadget Hub is a full-stack e-commerce web application built with Flask, PyMySQL, and Jinja2. It provides a complete customer shopping experience: registration, authentication, catalog browsing with category filtering and search, shopping cart, checkout with COD and manual payment-proof upload, and order tracking.\n\nAn administrator dashboard handles product and category management, order lifecycle transitions (approve, decline, ship, deliver), user activation controls, admin password resets, and sales reporting. The system uses Flask-Login for session-based authentication, Werkzeug for password hashing, Pillow for image processing, and parameterized PyMySQL queries throughout.',
+    description:
+      'A Flask and MySQL e-commerce platform for consumer electronics with customer registration, catalog browsing, cart management, checkout with payment-proof uploads, order tracking, and a full administrator dashboard for product, order, and user management.',
+    summary:
+      'A full-stack Flask/MySQL e-commerce platform with customer and administrator workflows, role-based access control, parameterized database queries, relational order/cart modeling, and server-rendered Jinja2 interfaces.',
+    category: 'Academic Project · Full Stack App',
+    status: 'Completed',
+    projectType: 'playground',
+    repositoryUrl: '',
+    liveDemoUrl: '',
+    featured: false,
+    displayOrder: 4,
+    thumbnailImage: '/projects/mjc-gadgethub/home.png',
+    technologies: ['Python', 'Flask', 'MySQL', 'PyMySQL', 'Jinja2', 'Flask-Login', 'Werkzeug', 'Pillow', 'Bootstrap'],
+    highlights: [
+      'Customer and administrator role separation with Flask-Login session authentication',
+      'Full commerce workflow: catalog, search, cart, checkout, and order tracking',
+      'COD and manual payment-proof upload checkout flows',
+      'Admin order lifecycle management: approve, decline, ship, and deliver transitions',
+      'Parameterized SQL queries and Werkzeug password hashing throughout',
+      'Relational schema with foreign-key relationships across users, products, carts, and orders',
+    ],
+    results: [
+      'End-to-End Commerce: Functional shopping experience from browsing to order delivery',
+      'Role-Based Admin: Full product, order, and user management dashboard',
+      'Secure Auth: Session-based login with hashed passwords and ownership checks on cart/orders',
+    ],
+    galleryImages: [
+      '/projects/mjc-gadgethub/home.png',
+    ],
+    screenshots: [
+      { src: '/projects/mjc-gadgethub/home.png', alt: 'MJC Gadget Hub storefront', title: 'Storefront' },
+    ],
+    problem:
+      'Academic requirement to build a functional e-commerce platform that demonstrates full-stack web development including authentication, relational data modeling, file uploads, and role-based administrative workflows.',
+    solution:
+      'Built a Flask application-factory project with separate blueprints for authentication, customer store, admin management, and JSON API routes — backed by a MySQL relational database and server-rendered Jinja2 templates.',
+    features: [
+      'Customer registration, login & session management',
+      'Product catalog with category filtering & search',
+      'Shopping cart add, update & remove',
+      'Checkout with COD & payment-proof upload',
+      'Customer order history & tracking',
+      'Admin product, category & order management',
+      'Admin user activation & password reset',
+      'Sales reporting & JSON API endpoints',
+    ],
+    contributions: [
+      'Architected Flask application factory with customer, admin, auth, and API blueprints',
+      'Implemented session-based authentication with Flask-Login and Werkzeug password hashing',
+      'Designed relational MySQL schema for users, products, categories, carts, orders, and order items',
+      'Built full cart and checkout workflows with stock validation and payment-proof upload handling',
+      'Developed admin dashboard with order lifecycle transitions and user management controls',
+    ],
+  },
+  {
     id: 'playground-placeholder',
     title: 'More coming soon',
     name: 'More coming soon',
@@ -496,7 +560,7 @@ export const fallbackPlaygroundProjects = [
     category: 'Playground',
     status: 'In Progress',
     projectType: 'playground',
-    displayOrder: 4,
+    displayOrder: 5,
     technologies: [],
     highlights: [],
     galleryImages: [],
