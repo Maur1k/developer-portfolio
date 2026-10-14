@@ -140,46 +140,129 @@ function EntryRow({ entry, isExpanded, onToggle, reduceMotion }) {
   );
 }
 
+function CertificateBadge({ cert }) {
+  const [imageError, setImageError] = useState(false);
+  const img = cert.imageUrl || cert.image_url;
+  const url = cert.credentialUrl || cert.credential_url || '';
+  const isCredly = url.includes('credly.com') || (cert.issuer || '').toLowerCase().includes('cisco');
+
+  if (img && !imageError) {
+    return (
+      <img
+        src={img}
+        alt={cert.title}
+        onError={() => setImageError(true)}
+        className="w-10 h-10 md:w-11 md:h-11 object-contain rounded-lg p-0.5 bg-white/5 border border-slate-200 dark:border-zinc-800 shrink-0 shadow-sm"
+      />
+    );
+  }
+
+  if (isCredly) {
+    return (
+      <div
+        className="w-10 h-10 md:w-11 md:h-11 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-sm"
+        title="Credly Verified Badge"
+      >
+        <svg viewBox="0 0 24 24" className="w-5 h-5 text-amber-500" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l7.5 4.3v8.6L12 22l-7.5-4.3V6.3L12 2zm0 2.3L6.5 7.4v6.8L12 17.4l5.5-3.2V7.4L12 4.3z" />
+          <path d="M11 13.8l-2.4-2.4 1.4-1.4 1 1 3.2-3.2 1.4 1.4z" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="w-10 h-10 md:w-11 md:h-11 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center shrink-0 shadow-sm"
+      title="LinkedIn Certified"
+    >
+      <svg viewBox="0 0 24 24" className="w-5 h-5 text-sky-400" fill="currentColor" aria-hidden="true">
+        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 15l-4-4 1.41-1.41L10 13.17l6.59-6.59L18 8l-8 8z" />
+      </svg>
+    </div>
+  );
+}
+
+function CredentialPill({ cert }) {
+  const url = cert.credentialUrl || cert.credential_url || '';
+  const isCredly = url.includes('credly.com') || (cert.platform || '').toLowerCase().includes('credly');
+  const isLinkedIn = url.includes('linkedin.com') || url.includes('lnkd.in') || (cert.platform || '').toLowerCase().includes('linkedin');
+
+  if (isCredly) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/20">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+        Credly Badge
+      </span>
+    );
+  }
+
+  if (isLinkedIn) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+        <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+        LinkedIn Certified
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+      Verified
+    </span>
+  );
+}
+
 function CredentialRow({ cert }) {
   const credUrl = cert.credentialUrl || cert.credential_url;
   const pdf = cert.pdfUrl || cert.pdf_url;
-  const img = cert.imageUrl || cert.image_url;
-
-  const linkClasses =
-    'inline-flex items-center gap-1 font-mono text-xs text-slate-500 dark:text-zinc-400 underline decoration-slate-300 dark:decoration-zinc-700 underline-offset-4 hover:text-slate-900 dark:hover:text-white hover:decoration-current transition-colors';
 
   return (
-    <li className="border-b border-slate-200 dark:border-zinc-900">
-      <div className={`${ROW_GRID} gap-y-2 py-6 md:py-7 md:items-baseline`}>
-        <div className="col-start-2 row-start-1 min-w-0">
-          <h4 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            {cert.title}
-          </h4>
+    <li className="border-b border-slate-200 dark:border-zinc-900 group">
+      <div className={`${ROW_GRID} gap-y-3 py-6 md:py-7 md:items-center`}>
+        {/* Badge Icon Column */}
+        <div className="col-start-1 row-start-1 flex items-start pt-0.5">
+          <CertificateBadge cert={cert} />
+        </div>
+
+        {/* Title, Issuer & Pill Column */}
+        <div className="col-start-2 row-start-1 min-w-0 pr-4">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <h4 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
+              {cert.title}
+            </h4>
+            <CredentialPill cert={cert} />
+          </div>
           {cert.issuer && (
-            <p className="mt-1 text-sm text-slate-600 dark:text-zinc-400">{cert.issuer}</p>
-          )}
-          {img && (
-            <img
-              src={img}
-              alt={cert.title}
-              className="mt-4 h-28 w-auto max-w-full border border-slate-200 dark:border-zinc-800 object-cover"
-            />
+            <p className="text-sm text-slate-600 dark:text-zinc-400">{cert.issuer}</p>
           )}
         </div>
 
-        <div className="col-start-2 col-span-2 row-start-2 md:col-span-1 md:col-start-3 md:row-start-1 min-w-0 font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500">
-          {cert.date && <span className="block text-slate-700 dark:text-zinc-300">{cert.date}</span>}
+        {/* Date & Verification CTA */}
+        <div className="col-start-2 col-span-2 row-start-2 md:col-span-1 md:col-start-3 md:row-start-1 min-w-0 font-mono text-xs leading-relaxed text-slate-500 dark:text-zinc-500 flex md:flex-col items-start md:items-end justify-between md:justify-center gap-2">
+          {cert.date && <span className="text-slate-700 dark:text-zinc-400 font-medium">{cert.date}</span>}
           {(credUrl || pdf) && (
-            <div className="mt-1.5 flex flex-col items-start gap-1.5">
+            <div className="flex items-center gap-2">
               {credUrl && (
-                <a href={credUrl} target="_blank" rel="noopener noreferrer" className={linkClasses}>
-                  <span>Verify Credential</span>
+                <a
+                  href={credUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-slate-700 dark:text-zinc-300 hover:border-amber-500/50 hover:text-amber-500 transition-all shadow-sm"
+                >
+                  <span>Verify</span>
                   <span aria-hidden="true">↗</span>
                 </a>
               )}
               {pdf && (
-                <a href={pdf} target="_blank" rel="noopener noreferrer" className={linkClasses}>
-                  <span>View PDF</span>
+                <a
+                  href={pdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                >
+                  <span>PDF</span>
                   <span aria-hidden="true">↗</span>
                 </a>
               )}

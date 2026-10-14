@@ -121,6 +121,36 @@ const portfolioKnowledge = {
       'Spring Boot', 'Microservices architecture', 'CI/CD pipelines', 'Terraform', 'Kafka', 'Stripe'
     ],
   },
+  certifications: [
+    {
+      title: 'Networking Basics',
+      issuer: 'Cisco',
+      platform: 'Credly',
+      year: '2026',
+      credentialUrl: 'https://www.credly.com/badges/886e562b-b78b-4cb8-8a34-2def92d3a864',
+    },
+    {
+      title: 'Hardware and Upgrade Support',
+      issuer: 'Cisco',
+      platform: 'Credly',
+      year: '2026',
+      credentialUrl: 'https://www.credly.com/badges/25b32a78-9ea4-4a99-aab9-7ef3163fd498',
+    },
+    {
+      title: 'Generative AI Productivity Skills',
+      issuer: 'Microsoft & LinkedIn Learning',
+      platform: 'LinkedIn Learning',
+      year: '2026',
+      credentialUrl: 'https://www.linkedin.com/learning/certificates/6cf26569b6e070c875be9be437bc4b3c195a8343891ceb642bf2af50bd7ee454',
+    },
+    {
+      title: 'Microsoft Azure AI Essentials',
+      issuer: 'Microsoft & LinkedIn',
+      platform: 'LinkedIn Learning',
+      year: '2026',
+      credentialUrl: 'https://lnkd.in/geYdUKpw',
+    },
+  ],
 };
 
 const SYSTEM_PROMPT = `You are Maurik AI, the portfolio copilot and technical representative for Maurik Angelo L. Fernandez — a Software Developer specializing in Full-Stack Web and Mobile Development, and an AI-augmented developer proficient in AI-assisted & agentic workflows.

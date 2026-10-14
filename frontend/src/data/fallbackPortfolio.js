@@ -701,12 +701,41 @@ export const fallbackEducation = [
 
 export const fallbackCertificates = [
   {
+    id: 'networking-basics',
+    title: 'Networking Basics',
+    issuer: 'Cisco',
+    platform: 'Credly',
+    date: '2026',
+    credentialUrl: 'https://www.credly.com/badges/886e562b-b78b-4cb8-8a34-2def92d3a864',
+    imageUrl: 'https://images.credly.com/images/5bdd6a39-3e03-4444-9510-ecff80c9ce79/linkedin_thumb_image.png',
+    displayOrder: 1,
+  },
+  {
+    id: 'hardware-and-upgrade-support',
+    title: 'Hardware and Upgrade Support',
+    issuer: 'Cisco',
+    platform: 'Credly',
+    date: '2026',
+    credentialUrl: 'https://www.credly.com/badges/25b32a78-9ea4-4a99-aab9-7ef3163fd498',
+    displayOrder: 2,
+  },
+  {
+    id: 'gen-ai-productivity-skills',
+    title: 'Generative AI Productivity Skills',
+    issuer: 'Microsoft & LinkedIn Learning',
+    platform: 'LinkedIn Learning',
+    date: '2026',
+    credentialUrl: 'https://www.linkedin.com/learning/certificates/6cf26569b6e070c875be9be437bc4b3c195a8343891ceb642bf2af50bd7ee454',
+    displayOrder: 3,
+  },
+  {
     id: 'azure-ai-essentials',
     title: 'Microsoft Azure AI Essentials',
     issuer: 'Microsoft & LinkedIn',
+    platform: 'LinkedIn Learning',
     date: '2026',
     credentialUrl: 'https://lnkd.in/geYdUKpw',
-    displayOrder: 1,
+    displayOrder: 4,
   },
 ];
 
