@@ -28,6 +28,13 @@ const TECH_GRID = [
   { name: 'Codemagic',    category: 'Tooling',     icon: IconCodemagic    },
 ];
 
+const DESIGN_GRID = [
+  { name: 'Figma',        category: 'UI/UX Design',    icon: IconFigma    },
+  { name: 'Canva',        category: 'Graphic Design',  icon: IconCanva    },
+  { name: 'CapCut',       category: 'Video & Motion',  icon: IconCapCut   },
+];
+
+
 // ─────────────────────────────────────────────────────────────────
 // SVG ICON COMPONENTS — recognisable single-colour marks, 28×28
 // ─────────────────────────────────────────────────────────────────
@@ -197,6 +204,46 @@ function IconCodemagic() {
     </svg>
   );
 }
+function IconFigma() {
+  return (
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+      <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z" fill="#F24E1E"/>
+      <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z" fill="#FF7262"/>
+      <circle cx="15.5" cy="12.5" r="3.5" fill="#1ABCFE"/>
+      <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" fill="#A259FF"/>
+      <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z" fill="#0ACF83"/>
+    </svg>
+  );
+}
+function IconCanva() {
+  return (
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+      <defs>
+        <linearGradient id="canvaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#00C4CC" />
+          <stop offset="50%" stopColor="#2E69FF" />
+          <stop offset="100%" stopColor="#7D2AE8" />
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="10.5" fill="url(#canvaGrad)" />
+      <path
+        d="M14.8 8.2c-.6-.4-1.5-.6-2.5-.6-2.9 0-5.1 2.1-5.1 5.1s2 5.1 5 5.1c1.3 0 2.4-.4 3.2-1.2.3-.3.3-.8-.1-1.1-.3-.3-.8-.2-1.1.1-.6.6-1.4.9-2.1.9-2 0-3.5-1.4-3.5-3.8 0-2.2 1.4-3.8 3.6-3.8 1.1 0 1.8.3 2.3.8.3.3.8.3 1.1 0 .4-.3.4-.8.2-1.1z"
+        fill="#FFFFFF"
+      />
+    </svg>
+  );
+}
+function IconCapCut() {
+  return (
+    <svg viewBox="0 0 25 24" width="28" height="28" aria-hidden="true">
+      <path
+        d="M24.189 6.442V2.671l-4.535 2.383V4.91c.002-1.505-1.078-2.411-2.638-2.411H2.64C.993 2.5 0 3.407 0 4.91V8.72L6.354 12 0 15.316v3.8C0 20.595 1 21.5 2.64 21.5h14.373c1.56 0 2.639-.907 2.639-2.382v-.197l4.536 2.409v-3.828L13.64 12 24.19 6.443zM9.982 13.873l7.797 4.083H2.157l7.825-4.083zm7.741-7.828l-7.742 4.057-7.825-4.057h15.567z"
+        fill="#FFFFFF"
+      />
+    </svg>
+  );
+}
+
 
 // ─────────────────────────────────────────────────────────────────
 // TECH CELL
@@ -274,13 +321,20 @@ export default function Skills() {
         </p>
       </motion.header>
 
-      {/* ── Grid ─────────────────────────────────────────────── */}
+      {/* ── Development Tools Grid ──────────────────────────── */}
       <motion.div
         initial={reduceMotion ? false : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.55, ease: 'easeOut' }}
       >
+        <div className="flex items-center gap-3 mb-4">
+          <span className="font-mono text-xs uppercase tracking-widest text-zinc-500 font-semibold">
+            Development &amp; Engineering
+          </span>
+          <div className="h-px flex-1 bg-zinc-800/60" aria-hidden="true" />
+        </div>
+
         {/*
           gap-px collapses the 1px gutters between cells into hairline
           separators without a wrapping border box.
@@ -288,9 +342,37 @@ export default function Skills() {
         <div
           className="grid gap-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 bg-zinc-800/40"
           role="list"
-          aria-label="Technology list"
+          aria-label="Development technology list"
         >
           {TECH_GRID.map((tech) => (
+            <div key={tech.name} role="listitem">
+              <TechCell tech={tech} isHighlighted={isTechHighlighted(tech)} />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Design Tech & Graphic Stack ──────────────────────── */}
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.55, ease: 'easeOut', delay: 0.1 }}
+        className="mt-12 lg:mt-16"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <span className="font-mono text-xs uppercase tracking-widest text-zinc-500 font-semibold">
+            Graphic Design &amp; Multimedia Stack
+          </span>
+          <div className="h-px flex-1 bg-zinc-800/60" aria-hidden="true" />
+        </div>
+
+        <div
+          className="grid gap-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:w-3/5 bg-zinc-800/40"
+          role="list"
+          aria-label="Design and multimedia tools list"
+        >
+          {DESIGN_GRID.map((tech) => (
             <div key={tech.name} role="listitem">
               <TechCell tech={tech} isHighlighted={isTechHighlighted(tech)} />
             </div>

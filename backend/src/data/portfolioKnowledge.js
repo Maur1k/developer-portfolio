@@ -25,7 +25,8 @@ export const portfolioKnowledge = {
     aiAssistedDevelopment: ['Cursor', 'GitHub Copilot', 'Claude Code', 'OpenAI Codex', 'ChatGPT', 'Gemini', 'Agentic Workflows', 'Prompt Engineering', 'Rapid AI Prototyping', 'AI Debugging & Refactoring'],
     practices: ['Unit Testing', 'Code Review', 'Technical Documentation', 'Agile Development', 'API Integration', 'Testing & Debugging'],
     apisAndIntegrations: ['REST APIs', 'PayMongo (GCash, Maya, Cards)', 'Firebase Cloud Messaging (FCM HTTP v1)', 'Leaflet GIS', 'Google Maps API', 'Axios', 'Postman'],
-    developmentTools: ['Git', 'GitHub', 'Postman', 'VS Code', 'cPanel', 'Vite'],
+    developmentTools: ['Git', 'GitHub', 'Postman', 'VS Code', 'cPanel', 'Vite', 'Codemagic'],
+    designAndCreative: ['Figma', 'Canva', 'CapCut'],
   },
   experience: [
     {

@@ -38,6 +38,7 @@ export const fallbackProfile = {
     mobile: ['Flutter', 'Dart', 'Android', 'iOS'],
     backend: ['Node.js', 'Express', 'Laravel', 'PHP', 'REST APIs'],
     data: ['MySQL', 'Firebase', 'Firestore'],
+    design: ['Figma', 'Canva', 'CapCut'],
   },
 };
 
