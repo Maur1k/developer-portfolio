@@ -40,21 +40,21 @@ const DESIGN_GRID = [
 // ─────────────────────────────────────────────────────────────────
 function IconReact() {
   return (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="2.05" fill="#61DAFB"/>
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="#61DAFB" strokeWidth="1.2"/>
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="#61DAFB" strokeWidth="1.2" transform="rotate(60 12 12)"/>
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="#61DAFB" strokeWidth="1.2" transform="rotate(120 12 12)"/>
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true" className="text-[#087ea4] dark:text-[#61DAFB]">
+      <circle cx="12" cy="12" r="2.05" fill="currentColor"/>
+      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" strokeWidth="1.2"/>
+      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" strokeWidth="1.2" transform="rotate(60 12 12)"/>
+      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" strokeWidth="1.2" transform="rotate(120 12 12)"/>
     </svg>
   );
 }
 function IconReactNative() {
   return (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="2.05" fill="#61DAFB"/>
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="#61DAFB" strokeWidth="1.2"/>
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="#61DAFB" strokeWidth="1.2" transform="rotate(60 12 12)"/>
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="#61DAFB" strokeWidth="1.2" transform="rotate(120 12 12)"/>
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true" className="text-[#087ea4] dark:text-[#61DAFB]">
+      <circle cx="12" cy="12" r="2.05" fill="currentColor"/>
+      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" strokeWidth="1.2"/>
+      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" strokeWidth="1.2" transform="rotate(60 12 12)"/>
+      <ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" strokeWidth="1.2" transform="rotate(120 12 12)"/>
     </svg>
   );
 }
@@ -161,15 +161,15 @@ function IconFirestore() {
 function IconREST() {
   return (
     <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-      <rect x="2" y="7" width="20" height="10" rx="5" fill="none" stroke="#71717A" strokeWidth="1.5"/>
-      <text x="4.5" y="14.5" fontFamily="Arial,sans-serif" fontSize="6.5" fontWeight="bold" fill="#A1A1AA">REST</text>
+      <rect x="2" y="7" width="20" height="10" rx="5" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-400 dark:text-zinc-600" />
+      <text x="4.5" y="14.5" fontFamily="Arial,sans-serif" fontSize="6.5" fontWeight="bold" fill="currentColor" className="text-slate-600 dark:text-zinc-400">REST</text>
     </svg>
   );
 }
 function IconGitHub() {
   return (
-    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-      <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.48 2 2 6.59 2 12.25c0 4.53 2.87 8.37 6.84 9.72.5.09.68-.22.68-.49v-1.7C6.73 20.36 6.14 18.37 6.14 18.37c-.46-1.19-1.12-1.5-1.12-1.5-.91-.64.07-.62.07-.62 1.01.07 1.54 1.06 1.54 1.06.9 1.57 2.36 1.12 2.93.85.09-.66.35-1.12.64-1.37-2.24-.26-4.59-1.15-4.59-5.1 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.4 9.4 0 012.5-.34c.85 0 1.7.11 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.96-2.35 4.84-4.59 5.1.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49C19.13 20.62 22 16.78 22 12.25 22 6.59 17.52 2 12 2z" fill="#E4E4E7"/>
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" className="text-slate-900 dark:text-zinc-200">
+      <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.48 2 2 6.59 2 12.25c0 4.53 2.87 8.37 6.84 9.72.5.09.68-.22.68-.49v-1.7C6.73 20.36 6.14 18.37 6.14 18.37c-.46-1.19-1.12-1.5-1.12-1.5-.91-.64.07-.62.07-.62 1.01.07 1.54 1.06 1.54 1.06.9 1.57 2.36 1.12 2.93.85.09-.66.35-1.12.64-1.37-2.24-.26-4.59-1.15-4.59-5.1 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.4 9.4 0 012.5-.34c.85 0 1.7.11 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.96-2.35 4.84-4.59 5.1.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49C19.13 20.62 22 16.78 22 12.25 22 6.59 17.52 2 12 2z" fill="currentColor"/>
     </svg>
   );
 }
@@ -235,10 +235,10 @@ function IconCanva() {
 }
 function IconCapCut() {
   return (
-    <svg viewBox="0 0 25 24" width="28" height="28" aria-hidden="true">
+    <svg viewBox="0 0 25 24" width="28" height="28" aria-hidden="true" className="text-slate-900 dark:text-white">
       <path
         d="M24.189 6.442V2.671l-4.535 2.383V4.91c.002-1.505-1.078-2.411-2.638-2.411H2.64C.993 2.5 0 3.407 0 4.91V8.72L6.354 12 0 15.316v3.8C0 20.595 1 21.5 2.64 21.5h14.373c1.56 0 2.639-.907 2.639-2.382v-.197l4.536 2.409v-3.828L13.64 12 24.19 6.443zM9.982 13.873l7.797 4.083H2.157l7.825-4.083zm7.741-7.828l-7.742 4.057-7.825-4.057h15.567z"
-        fill="#FFFFFF"
+        fill="currentColor"
       />
     </svg>
   );
@@ -253,26 +253,26 @@ function TechCell({ tech, isHighlighted }) {
   return (
     <div
       className={[
-        'group flex flex-col gap-2.5 p-4 h-full border transition-colors duration-200',
+        'group flex flex-col gap-2.5 p-4 h-full border transition-all duration-200',
         isHighlighted
-          ? 'border-amber-500/40 bg-amber-500/[0.03]'
-          : 'border-zinc-800 bg-[#0e0e10] hover:border-zinc-700 hover:bg-[#111113]',
+          ? 'border-amber-500/50 bg-amber-500/[0.05] dark:border-amber-500/40 dark:bg-amber-500/[0.03]'
+          : 'border-slate-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#0e0e10] hover:border-slate-300 dark:hover:border-zinc-700 hover:bg-slate-50/80 dark:hover:bg-[#111113] shadow-[0_1px_2px_rgba(0,0,0,0.03)] dark:shadow-none',
       ].join(' ')}
     >
-      <div className="w-7 h-7 shrink-0">
+      <div className="w-7 h-7 shrink-0 flex items-center justify-center">
         <Icon />
       </div>
       <p
         className={[
-          'text-sm leading-tight transition-colors duration-200',
+          'text-sm font-medium leading-tight transition-colors duration-200',
           isHighlighted
-            ? 'text-amber-400'
-            : 'text-zinc-200 group-hover:text-white',
+            ? 'text-amber-600 dark:text-amber-400 font-semibold'
+            : 'text-slate-800 dark:text-zinc-200 group-hover:text-slate-950 dark:group-hover:text-white',
         ].join(' ')}
       >
         {tech.name}
       </p>
-      <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-600 mt-auto">
+      <span className="font-mono text-[9px] uppercase tracking-widest text-slate-500 dark:text-zinc-500 group-hover:text-slate-700 dark:group-hover:text-zinc-400 mt-auto transition-colors">
         {tech.category}
       </span>
     </div>
@@ -299,7 +299,7 @@ export default function Skills() {
   return (
     <section
       id="skills"
-      className="py-20 lg:py-28 border-b border-zinc-900"
+      className="py-20 lg:py-28 border-b border-slate-200 dark:border-zinc-900"
       aria-label="Tech Stack"
     >
       {/* ── Header ───────────────────────────────────────────── */}
@@ -312,10 +312,10 @@ export default function Skills() {
       >
         <div className="w-10 h-px bg-amber-500 mb-5" aria-hidden="true" />
         <p className="section-tag mb-4">04 — TECH STACK</p>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100 leading-tight mb-5">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-zinc-100 leading-tight mb-5">
           The tools I work with
         </h2>
-        <p className="max-w-xl text-sm sm:text-base text-zinc-500 leading-relaxed">
+        <p className="max-w-xl text-sm sm:text-base text-slate-600 dark:text-zinc-400 leading-relaxed">
           The tools I work with to build robust, scalable, and beautiful digital
           experiences.
         </p>
@@ -329,10 +329,10 @@ export default function Skills() {
         transition={{ duration: 0.55, ease: 'easeOut' }}
       >
         <div className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-xs uppercase tracking-widest text-zinc-500 font-semibold">
+          <span className="font-mono text-xs uppercase tracking-widest text-slate-500 dark:text-zinc-400 font-semibold">
             Development &amp; Engineering
           </span>
-          <div className="h-px flex-1 bg-zinc-800/60" aria-hidden="true" />
+          <div className="h-px flex-1 bg-slate-200 dark:bg-zinc-800/60" aria-hidden="true" />
         </div>
 
         {/*
@@ -340,7 +340,7 @@ export default function Skills() {
           separators without a wrapping border box.
         */}
         <div
-          className="grid gap-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 bg-zinc-800/40"
+          className="grid gap-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 bg-slate-200/80 dark:bg-zinc-800/40"
           role="list"
           aria-label="Development technology list"
         >
@@ -361,14 +361,14 @@ export default function Skills() {
         className="mt-12 lg:mt-16"
       >
         <div className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-xs uppercase tracking-widest text-zinc-500 font-semibold">
+          <span className="font-mono text-xs uppercase tracking-widest text-slate-500 dark:text-zinc-400 font-semibold">
             Graphic Design &amp; Multimedia Stack
           </span>
-          <div className="h-px flex-1 bg-zinc-800/60" aria-hidden="true" />
+          <div className="h-px flex-1 bg-slate-200 dark:bg-zinc-800/60" aria-hidden="true" />
         </div>
 
         <div
-          className="grid gap-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:w-3/5 bg-zinc-800/40"
+          className="grid gap-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:w-3/5 bg-slate-200/80 dark:bg-zinc-800/40"
           role="list"
           aria-label="Design and multimedia tools list"
         >
@@ -381,7 +381,7 @@ export default function Skills() {
       </motion.div>
 
       {/* ── Footer note ──────────────────────────────────────── */}
-      <p className="mt-8 font-mono text-[10px] uppercase tracking-widest text-zinc-700">
+      <p className="mt-8 font-mono text-[10px] uppercase tracking-widest text-slate-400 dark:text-zinc-600">
         04 — Design System · Technology Showcase
       </p>
     </section>
