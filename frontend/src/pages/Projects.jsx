@@ -500,11 +500,16 @@ function WorkInProgressSpotlight({ project, onOpen, reduceMotion }) {
     <article className="border-t border-slate-200 dark:border-zinc-900 pt-12 lg:pt-16 mt-16 lg:mt-24">
       {/* Eyebrow and Status */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <p className="font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
             02 — Spotlight
           </p>
           <StatusBadge status={project.status || 'Work in Progress'} />
+          {project.progress && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-0.5 text-[11px] font-mono text-sky-700 dark:text-sky-300 font-medium">
+              Phase 5 Complete · Phase 6 in Progress
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 font-mono text-xs text-slate-500 dark:text-zinc-500">
           <span>Author: <strong className="text-slate-800 dark:text-zinc-300 font-semibold">{project.author || 'Maur1k'}</strong></span>
@@ -545,6 +550,17 @@ function WorkInProgressSpotlight({ project, onOpen, reduceMotion }) {
             </p>
           </div>
 
+          {/* Development Progress Banner */}
+          {project.progress && (
+            <div className="rounded-lg border border-sky-500/20 bg-sky-500/5 p-3 text-xs font-mono text-slate-600 dark:text-zinc-300 leading-relaxed">
+              <span className="font-semibold text-sky-700 dark:text-sky-300">Progress: </span>
+              {project.progress}
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">
+                (Committed to GitHub; publication to the live demo site is unverified)
+              </p>
+            </div>
+          )}
+
           {/* Feature Breakdown: Implemented vs In Development */}
           <div className="space-y-3 pt-1">
             {implemented.length > 0 && (
@@ -552,7 +568,7 @@ function WorkInProgressSpotlight({ project, onOpen, reduceMotion }) {
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-emerald-500" />
                   <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                    Currently Implemented
+                    Currently Implemented (Phase 5 GitHub)
                   </h4>
                 </div>
                 <ul className="space-y-1 text-xs text-slate-700 dark:text-zinc-300">
@@ -571,7 +587,7 @@ function WorkInProgressSpotlight({ project, onOpen, reduceMotion }) {
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
                   <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-                    In Development
+                    In Development (Phase 6)
                   </h4>
                 </div>
                 <ul className="space-y-1 text-xs text-slate-700 dark:text-zinc-300">
@@ -586,7 +602,7 @@ function WorkInProgressSpotlight({ project, onOpen, reduceMotion }) {
             )}
 
             <p className="text-[11px] font-mono text-slate-500 dark:text-zinc-500 leading-normal italic">
-              * Study & lesson demo screens depict sample demonstrations. PDF-to-quiz generation is actively being engineered.
+              * Quizzes currently use sample question sets; automated AI generation from PDFs is actively in development. Screenshots reflect earlier design previews. Mobile view is a responsive viewport simulation, not a physical phone test.
             </p>
           </div>
 
@@ -817,11 +833,16 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
         {/* Header */}
         <div className="flex items-center justify-between gap-4 border-b border-slate-200 dark:border-zinc-800/80 px-5 py-4 bg-slate-50 dark:bg-[#09090b]">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                 {project.subtitle || project.category || 'Project Details'}
               </span>
               {project.status && <StatusBadge status={project.status} />}
+              {project.progress && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 dark:bg-sky-400/10 px-2 py-0.5 text-[10px] font-mono text-sky-700 dark:text-sky-300 font-medium">
+                  Phase 5 Complete
+                </span>
+              )}
             </div>
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <h3 id={titleId} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
@@ -918,6 +939,14 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
                 <ScreenshotCarousel screenshots={project.screenshots} />
               )}
 
+              {/* Development Progress Note */}
+              {project.progress && (
+                <div className="p-3 rounded-lg border border-sky-500/25 bg-sky-500/5 text-xs font-mono text-slate-600 dark:text-zinc-300 leading-relaxed">
+                  <span className="font-semibold text-sky-700 dark:text-sky-300">Development Progress: </span>
+                  {project.progress} <span className="text-[11px] text-slate-500 dark:text-zinc-400">(Committed on GitHub; publication to live demo site unverified)</span>
+                </div>
+              )}
+
               {/* Feature Breakdown: Implemented vs In Development */}
               {(project.implementedFeatures || project.inDevelopmentFeatures) && (
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -926,7 +955,7 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
                       <div className="flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-emerald-500" />
                         <h4 className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold">
-                          Currently Implemented
+                          Currently Implemented (Phase 5 GitHub)
                         </h4>
                       </div>
                       <ul className="space-y-1.5 text-xs text-slate-700 dark:text-zinc-300">
@@ -945,7 +974,7 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
                       <div className="flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
                         <h4 className="text-xs font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold">
-                          In Development
+                          In Development (Phase 6)
                         </h4>
                       </div>
                       <ul className="space-y-1.5 text-xs text-slate-700 dark:text-zinc-300">

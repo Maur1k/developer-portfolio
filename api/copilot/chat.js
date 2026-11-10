@@ -71,14 +71,14 @@ const portfolioKnowledge = {
     {
       id: 'proofquest',
       name: 'ProofQuest',
-      type: 'Work in Progress (Open Source)',
-      summary: 'An open-source study app being developed to turn PDFs into quizzes, tests, and results — built with React, TypeScript, TanStack Start, and PDF.js under the MIT License.',
-      technologies: ['React', 'TypeScript', 'TanStack Start', 'PDF.js'],
+      type: 'Work in Progress (Open Source · Phase 5 Complete)',
+      summary: 'An MIT-licensed, open-source study app being developed to turn PDFs into quizzes, tests, and explained results — built with React, TypeScript, TanStack Start, PDF.js, and IndexedDB.',
+      technologies: ['React', 'TypeScript', 'TanStack Start', 'PDF.js', 'IndexedDB'],
       evidencePoints: [
         'Open-source study app under MIT license authored by Maur1k.',
-        'Client-side PDF document loading, selected-page text extraction, and original-page previews using PDF.js.',
-        'Browser-based saving and reopening of documents locally.',
-        'In development: interactive practice and test modes, quiz results/history, and AI question generation.',
+        'Phase 5 complete on GitHub: full multiple-choice quiz lifecycle with Practice and Test modes, answer tracking, correct/incorrect/skipped scoring, explanations, and backup export/import.',
+        'Client-side PDF document loading, selected-page text extraction, and original-page previews using PDF.js with IndexedDB persistence.',
+        'Phase 6 in development: AI question generation foundation, provider integration, and cost controls.',
       ],
     },
     {
