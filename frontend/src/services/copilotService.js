@@ -31,6 +31,8 @@ function localMatch(jd) {
     { skill: 'Python Programming', key: 'python', proj: 'backops-wib', evidence: 'Core language proficiency in Python for scripting, rapid prototyping, and backend integrations.' },
     { skill: 'Firebase & FCM Push Notifications', key: 'firebase', proj: 'backops-wib', evidence: 'Engineered high-reliability FCM HTTP v1 push pipeline with token normalization.' },
     { skill: 'REST APIs & Payment Webhooks', key: 'api', proj: 'backops-wib', evidence: 'Designed and consumed production REST APIs with PayMongo payment webhooks.' },
+    { skill: 'TanStack Start & Full-Stack React', key: 'tanstack', proj: 'proofquest', evidence: 'Building ProofQuest with React, TypeScript, TanStack Start, and PDF.js under an open-source MIT License.' },
+    { skill: 'PDF.js & Client-Side Document Extraction', key: 'pdf', proj: 'proofquest', evidence: 'Implemented local PDF parsing, page selection, and text extraction with PDF.js for ProofQuest.' },
   ];
 
   for (const c of checks) {

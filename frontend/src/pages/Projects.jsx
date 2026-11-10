@@ -99,17 +99,73 @@ function TextLink({ href, children, projectTitle }) {
 // Only returns links that actually exist on the project record.
 function getProjectLinks(project) {
   return [
-    project.repositoryUrl && { label: 'GitHub', href: project.repositoryUrl },
+    project.liveDemoUrl && { label: project.liveDemoLabel || 'Live Demo', href: project.liveDemoUrl },
+    project.repositoryUrl && { label: project.repositoryLabel || 'GitHub', href: project.repositoryUrl },
     project.appStoreUrl && { label: 'App Store', href: project.appStoreUrl },
     project.playStoreUrl && { label: 'Google Play', href: project.playStoreUrl },
-    project.liveDemoUrl && { label: 'Live Demo', href: project.liveDemoUrl },
   ].filter(Boolean);
 }
 
-function ScreenshotCarousel({ screenshots = [], compact = false, editorial = false }) {
+function StatusBadge({ status }) {
+  if (!status) return null;
+  const isWip = status.toLowerCase().includes('progress');
+  const isProduction = status.toLowerCase().includes('production');
+  const isLive = status.toLowerCase() === 'live';
+
+  if (isWip) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 dark:bg-amber-400/10 px-2.5 py-0.5 text-[11px] font-mono text-amber-700 dark:text-amber-400 font-semibold shadow-sm">
+        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" aria-hidden="true" />
+        {status}
+      </span>
+    );
+  }
+
+  if (isProduction || isLive) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-mono text-emerald-700 dark:text-emerald-400 font-medium">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+        {status}
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 dark:border-zinc-700 bg-slate-100 dark:bg-zinc-800/60 px-2.5 py-0.5 text-[11px] font-mono text-slate-700 dark:text-zinc-300">
+      {status}
+    </span>
+  );
+}
+
+function ScreenshotCarousel({ screenshots = [], compact = false, editorial = false, showThumbnails = true }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
+
+  const items = screenshots;
+  const activeScreenshot = items[activeIndex] || items[0];
+  const imageSrc = activeScreenshot?.src ? encodeURI(activeScreenshot.src) : '';
+
+  useEffect(() => {
+    if (activeScreenshot?.isPortrait !== undefined) {
+      setIsPortrait(activeScreenshot.isPortrait);
+    }
+  }, [activeIndex, activeScreenshot]);
+
+  useEffect(() => {
+    if (!isFullscreenOpen) return;
+    const handleKey = (e) => {
+      if (e.key === 'ArrowRight') {
+        setActiveIndex((c) => (c + 1) % items.length);
+      } else if (e.key === 'ArrowLeft') {
+        setActiveIndex((c) => (c - 1 + items.length) % items.length);
+      } else if (e.key === 'Escape') {
+        setIsFullscreenOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isFullscreenOpen, items.length]);
 
   if (!screenshots.length) {
     return (
@@ -118,10 +174,6 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
       </div>
     );
   }
-
-  const items = screenshots;
-  const activeScreenshot = items[activeIndex] || items[0];
-  const imageSrc = activeScreenshot?.src ? encodeURI(activeScreenshot.src) : '';
 
   const goToNext = (e) => {
     e?.stopPropagation();
@@ -139,17 +191,19 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
     }
   };
 
+  const isCurrentPortrait = activeScreenshot?.isPortrait ?? isPortrait;
+
   // Height adapts dynamically based on orientation and viewport
   const containerHeight = compact
-    ? isPortrait
+    ? isCurrentPortrait
       ? 'h-[290px] xs:h-[330px] sm:h-[360px]'
       : 'h-[190px] xs:h-[220px] sm:h-[250px]'
-    : isPortrait
+    : isCurrentPortrait
       ? 'h-[360px] xs:h-[420px] sm:h-[480px] md:h-[530px] max-h-[65vh]'
       : 'h-[230px] xs:h-[280px] sm:h-[340px] md:h-[390px] lg:h-[430px] max-h-[60vh]';
 
   return (
-    <div className="space-y-2 w-full select-none">
+    <div className="space-y-3 w-full select-none">
       <div
         className={`relative overflow-hidden group ${
           editorial
@@ -179,7 +233,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
               onLoad={handleImageLoad}
               className={`relative z-10 max-h-full max-w-full w-auto h-auto object-contain transition-all duration-300 ${
                 editorial ? '' : 'rounded-lg shadow-2xl'
-              } ${isPortrait ? 'max-w-[85%] sm:max-w-[70%]' : 'w-full'}`}
+              } ${isCurrentPortrait ? 'max-w-[85%] sm:max-w-[70%]' : 'w-full'}`}
               loading="lazy"
             />
           ) : (
@@ -188,12 +242,30 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
             </div>
           )}
 
+          {/* Click to enlarge overlay button */}
           <button
             type="button"
-            aria-label="Open fullscreen image"
+            aria-label="Click to enlarge image"
             onClick={() => setIsFullscreenOpen(true)}
             className="absolute inset-0 z-10 cursor-zoom-in"
           />
+
+          {/* Top-right zoom hint */}
+          <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none">
+            <span className="inline-flex items-center gap-1 rounded-md bg-white/90 dark:bg-black/80 px-2 py-1 text-[10px] font-mono text-slate-700 dark:text-zinc-300 backdrop-blur-md border border-slate-200 dark:border-zinc-800 shadow-sm opacity-80 group-hover:opacity-100 transition-opacity">
+              <span>Zoom</span>
+              <span aria-hidden="true">⤢</span>
+            </span>
+          </div>
+
+          {/* Visible Demo tag inside the preview frame if it's demo content */}
+          {(activeScreenshot.badge || activeScreenshot.isDemo) && (
+            <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
+              <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/95 text-white dark:bg-amber-400 dark:text-zinc-950 px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase shadow-md backdrop-blur-sm">
+                <span>Demo</span>
+              </span>
+            </div>
+          )}
 
           {items.length > 1 && (
             <div className="absolute inset-x-2.5 bottom-2.5 z-20 flex items-center justify-between pointer-events-none">
@@ -205,7 +277,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
                   type="button"
                   onClick={goToPrevious}
                   className="p-1.5 rounded-md bg-white/95 dark:bg-black/85 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-zinc-800 backdrop-blur-md transition hover:bg-slate-50 dark:hover:bg-zinc-800 shadow-md cursor-pointer"
-                  aria-label="Previous"
+                  aria-label="Previous image"
                 >
                   <Icon name="chevronLeft" className="w-3.5 h-3.5" />
                 </button>
@@ -213,7 +285,7 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
                   type="button"
                   onClick={goToNext}
                   className="p-1.5 rounded-md bg-white/95 dark:bg-black/85 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-zinc-800 backdrop-blur-md transition hover:bg-slate-50 dark:hover:bg-zinc-800 shadow-md cursor-pointer"
-                  aria-label="Next"
+                  aria-label="Next image"
                 >
                   <Icon name="chevronRight" className="w-3.5 h-3.5" />
                 </button>
@@ -223,32 +295,122 @@ function ScreenshotCarousel({ screenshots = [], compact = false, editorial = fal
         </div>
       </div>
 
+      {/* Caption & Context Bar */}
+      {activeScreenshot.caption && (
+        <div className="flex items-start gap-2 px-1 pt-0.5">
+          {(activeScreenshot.badge || activeScreenshot.isDemo) && (
+            <span className="shrink-0 rounded bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 text-[10px] font-mono font-semibold uppercase">
+              Demo
+            </span>
+          )}
+          <p className="text-xs font-mono text-slate-500 dark:text-zinc-400 leading-relaxed">
+            {activeScreenshot.caption}
+          </p>
+        </div>
+      )}
+
+      {/* Thumbnail Strip */}
+      {showThumbnails && items.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+          {items.map((s, idx) => {
+            const isActive = idx === activeIndex;
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveIndex(idx)}
+                className={`relative shrink-0 rounded-md overflow-hidden border transition-all cursor-pointer ${
+                  s.isPortrait ? 'w-12 h-16' : 'w-20 h-13'
+                } ${
+                  isActive
+                    ? 'border-amber-500 dark:border-amber-400 ring-2 ring-amber-500/40 opacity-100 shadow-sm'
+                    : 'border-slate-200 dark:border-zinc-800 opacity-60 hover:opacity-100 hover:border-slate-400 dark:hover:border-zinc-600'
+                }`}
+                aria-label={`View screenshot ${idx + 1}: ${s.title || ''}`}
+              >
+                <img
+                  src={s.src}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+                {(s.badge || s.isDemo) && (
+                  <span className="absolute top-0.5 right-0.5 px-1 rounded bg-amber-500 text-[8px] font-mono font-bold text-white uppercase leading-none py-0.5">
+                    Demo
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Fullscreen Lightbox Modal */}
       <AnimatePresence>
         {isFullscreenOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] bg-black/95 backdrop-blur-md flex flex-col p-4 sm:p-8"
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col p-4 sm:p-6"
             onClick={() => setIsFullscreenOpen(false)}
           >
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-800" onClick={(e) => e.stopPropagation()}>
-              <span className="text-sm font-mono text-zinc-300">{activeScreenshot.title || 'Preview'}</span>
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-mono text-zinc-200 font-semibold">{activeScreenshot.title || 'Preview'}</span>
+                <span className="text-xs font-mono text-zinc-500">
+                  ({activeIndex + 1} of {items.length})
+                </span>
+                {(activeScreenshot.badge || activeScreenshot.isDemo) && (
+                  <span className="rounded bg-amber-500 text-black px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase">
+                    Demo
+                  </span>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={() => setIsFullscreenOpen(false)}
-                className="px-3 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900 text-xs font-mono text-zinc-300 hover:text-white"
+                className="px-3 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900 text-xs font-mono text-zinc-300 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
               >
                 Close (ESC)
               </button>
             </div>
-            <div className="flex-1 flex items-center justify-center py-4 overflow-hidden" onClick={(e) => e.stopPropagation()}>
+
+            <div className="relative flex-1 flex items-center justify-center py-4 overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <img
                 src={imageSrc}
                 alt={activeScreenshot.alt || 'Full preview'}
-                className="max-h-[85vh] max-w-full object-contain rounded-lg border border-zinc-800 shadow-2xl"
+                className="max-h-[80vh] max-w-full object-contain rounded-lg border border-zinc-800 shadow-2xl"
               />
+
+              {items.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={goToPrevious}
+                    className="absolute left-2 sm:left-4 p-2.5 rounded-full bg-zinc-900/90 text-zinc-200 hover:text-white border border-zinc-700 hover:bg-zinc-800 backdrop-blur-md transition shadow-lg cursor-pointer"
+                    aria-label="Previous image"
+                  >
+                    <Icon name="chevronLeft" className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNext}
+                    className="absolute right-2 sm:right-4 p-2.5 rounded-full bg-zinc-900/90 text-zinc-200 hover:text-white border border-zinc-700 hover:bg-zinc-800 backdrop-blur-md transition shadow-lg cursor-pointer"
+                    aria-label="Next image"
+                  >
+                    <Icon name="chevronRight" className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
+
+            {activeScreenshot.caption && (
+              <div className="pt-3 border-t border-zinc-800/80 text-center" onClick={(e) => e.stopPropagation()}>
+                <p className="text-xs font-mono text-zinc-400 max-w-2xl mx-auto">
+                  {activeScreenshot.caption}
+                </p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -326,6 +488,165 @@ function FeaturedProject({ project, onOpen, reduceMotion }) {
   );
 }
 
+function WorkInProgressSpotlight({ project, onOpen, reduceMotion }) {
+  if (!project) return null;
+  const projectTitle = project.title || project.name;
+  const description = project.shortDescription || project.description || project.summary;
+  const technologies = project.technologies || [];
+  const implemented = project.implementedFeatures || [];
+  const inDevelopment = project.inDevelopmentFeatures || [];
+
+  return (
+    <article className="border-t border-slate-200 dark:border-zinc-900 pt-12 lg:pt-16 mt-16 lg:mt-24">
+      {/* Eyebrow and Status */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <p className="font-mono text-xs uppercase tracking-widest text-slate-400 dark:text-zinc-600">
+            02 — Spotlight
+          </p>
+          <StatusBadge status={project.status || 'Work in Progress'} />
+        </div>
+        <div className="flex items-center gap-2 font-mono text-xs text-slate-500 dark:text-zinc-500">
+          <span>Author: <strong className="text-slate-800 dark:text-zinc-300 font-semibold">{project.author || 'Maur1k'}</strong></span>
+          <span>·</span>
+          <span className="inline-flex items-center gap-1 rounded bg-slate-100 dark:bg-zinc-900 px-2 py-0.5 border border-slate-200 dark:border-zinc-800 text-[11px]">
+            {project.license || 'MIT License'}
+          </span>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-16 items-start">
+        {/* Visual Gallery / Carousel */}
+        <motion.div
+          className="lg:col-span-7 min-w-0"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+        >
+          {project.screenshots && (
+            <ScreenshotCarousel screenshots={project.screenshots} editorial={false} />
+          )}
+        </motion.div>
+
+        {/* Information */}
+        <div className="lg:col-span-5 min-w-0 space-y-6">
+          <div>
+            <h3 className="text-3xl sm:text-4xl font-bold tracking-tight leading-[1.1] text-slate-900 dark:text-white">
+              {project.name || project.title}
+            </h3>
+            {project.subtitle && (
+              <p className="mt-2 font-mono text-xs text-slate-500 dark:text-zinc-400">
+                {project.subtitle}
+              </p>
+            )}
+            <p className="mt-4 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-zinc-300">
+              {description}
+            </p>
+          </div>
+
+          {/* Feature Breakdown: Implemented vs In Development */}
+          <div className="space-y-3 pt-1">
+            {implemented.length > 0 && (
+              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3.5 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                    Currently Implemented
+                  </h4>
+                </div>
+                <ul className="space-y-1 text-xs text-slate-700 dark:text-zinc-300">
+                  {implemented.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-emerald-500 font-bold select-none">✓</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {inDevelopment.length > 0 && (
+              <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-3.5 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                  <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                    In Development
+                  </h4>
+                </div>
+                <ul className="space-y-1 text-xs text-slate-700 dark:text-zinc-300">
+                  {inDevelopment.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-amber-500 select-none">⏳</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <p className="text-[11px] font-mono text-slate-500 dark:text-zinc-500 leading-normal italic">
+              * Study & lesson demo screens depict sample demonstrations. PDF-to-quiz generation is actively being engineered.
+            </p>
+          </div>
+
+          {/* Tech Tags */}
+          {technologies.length > 0 && (
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-zinc-600">
+                Tech Stack
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {technologies.map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-2.5 py-1 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs font-mono text-slate-700 dark:text-zinc-300"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Action Links */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            {project.liveDemoUrl && (
+              <ActionButton
+                href={project.liveDemoUrl}
+                icon={<Icon name="external" />}
+                variant="primary"
+                projectTitle={projectTitle}
+              >
+                {project.liveDemoLabel || 'View Live Project'}
+              </ActionButton>
+            )}
+
+            {project.repositoryUrl && (
+              <ActionButton
+                href={project.repositoryUrl}
+                icon={<Icon name="github" />}
+                projectTitle={projectTitle}
+              >
+                {project.repositoryLabel || 'View Source'}
+              </ActionButton>
+            )}
+
+            <button
+              type="button"
+              onClick={() => onOpen(project)}
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer ml-1"
+            >
+              <span>Case Study</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function ProjectRow({ project, number, onOpen }) {
   const links = getProjectLinks(project);
   const meta = project.category || project.subtitle;
@@ -340,17 +661,20 @@ function ProjectRow({ project, number, onOpen }) {
         </span>
 
         <div className="min-w-0 md:col-start-2 md:row-start-1">
-          <h4 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            {/* Mouse convenience only — the "Case Study" action below is the keyboard target */}
-            <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => onOpen(project)}
-              className="text-left cursor-pointer transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none"
-            >
-              {project.name}
-            </button>
-          </h4>
+          <div className="flex flex-wrap items-center gap-2">
+            <h4 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              {/* Mouse convenience only — the "Case Study" action below is the keyboard target */}
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => onOpen(project)}
+                className="text-left cursor-pointer transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none"
+              >
+                {project.name}
+              </button>
+            </h4>
+            {project.status && <StatusBadge status={project.status} />}
+          </div>
           {meta && (
             <p className="mt-1 font-mono text-xs text-slate-500 dark:text-zinc-500">{meta}</p>
           )}
@@ -493,12 +817,24 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
         {/* Header */}
         <div className="flex items-center justify-between gap-4 border-b border-slate-200 dark:border-zinc-800/80 px-5 py-4 bg-slate-50 dark:bg-[#09090b]">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">
-              {project.subtitle || project.category || 'Project Details'}
-            </span>
-            <h3 id={titleId} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-              {project.name}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-500">
+                {project.subtitle || project.category || 'Project Details'}
+              </span>
+              {project.status && <StatusBadge status={project.status} />}
+            </div>
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h3 id={titleId} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                {project.name}
+              </h3>
+              {(project.author || project.license) && (
+                <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
+                  {project.author && `By ${project.author}`}
+                  {project.author && project.license && ' · '}
+                  {project.license}
+                </span>
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -582,6 +918,56 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
                 <ScreenshotCarousel screenshots={project.screenshots} />
               )}
 
+              {/* Feature Breakdown: Implemented vs In Development */}
+              {(project.implementedFeatures || project.inDevelopmentFeatures) && (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {project.implementedFeatures && (
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <h4 className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold">
+                          Currently Implemented
+                        </h4>
+                      </div>
+                      <ul className="space-y-1.5 text-xs text-slate-700 dark:text-zinc-300">
+                        {project.implementedFeatures.map((feat, idx) => (
+                          <li key={idx} className="flex items-start gap-1.5">
+                            <span className="text-emerald-500 font-bold select-none">✓</span>
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {project.inDevelopmentFeatures && (
+                    <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                        <h4 className="text-xs font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold">
+                          In Development
+                        </h4>
+                      </div>
+                      <ul className="space-y-1.5 text-xs text-slate-700 dark:text-zinc-300">
+                        {project.inDevelopmentFeatures.map((feat, idx) => (
+                          <li key={idx} className="flex items-start gap-1.5">
+                            <span className="text-amber-500 select-none">⏳</span>
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {project.disclaimer && (
+                <div className="p-3 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60 text-xs font-mono text-slate-500 dark:text-zinc-400 leading-relaxed">
+                  <span className="font-semibold text-slate-700 dark:text-zinc-300">Note: </span>
+                  {project.disclaimer}
+                </div>
+              )}
+
               <div>
                 <h4 className="text-xs font-mono uppercase text-zinc-500 mb-2">Overview</h4>
                 <p className="text-sm text-zinc-300 leading-relaxed">
@@ -662,25 +1048,25 @@ function ProjectModal({ project, onClose, initialTab = 'overview' }) {
           )}
 
           {/* Links */}
-          <div className="flex flex-wrap gap-3 pt-4 border-t border-zinc-800">
+          <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
+            {project.liveDemoUrl && (
+              <ActionButton href={project.liveDemoUrl} icon={<Icon name="external" />} variant="primary" projectTitle={project.name}>
+                {project.liveDemoLabel || 'View Live Project'}
+              </ActionButton>
+            )}
             {project.repositoryUrl && (
-              <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />}>
-                View GitHub Repository
+              <ActionButton href={project.repositoryUrl} icon={<Icon name="github" />} projectTitle={project.name}>
+                {project.repositoryLabel || 'View Source'}
               </ActionButton>
             )}
             {project.appStoreUrl && (
-              <ActionButton href={project.appStoreUrl} icon={<Icon name="external" />} variant="primary">
+              <ActionButton href={project.appStoreUrl} icon={<Icon name="external" />} variant="primary" projectTitle={project.name}>
                 View on App Store
               </ActionButton>
             )}
             {project.playStoreUrl && (
-              <ActionButton href={project.playStoreUrl} icon={<Icon name="external" />} variant="primary">
+              <ActionButton href={project.playStoreUrl} icon={<Icon name="external" />} variant="primary" projectTitle={project.name}>
                 View on Google Play
-              </ActionButton>
-            )}
-            {project.liveDemoUrl && (
-              <ActionButton href={project.liveDemoUrl} icon={<Icon name="external" />} variant="primary">
-                Live Demo
               </ActionButton>
             )}
           </div>
@@ -763,8 +1149,13 @@ export default function Projects() {
     mainProjects.find((p) => p.featured && !isWibCustomerApp(p)) ||
     mainProjects[0];
 
+  // ProofQuest - Work in Progress Spotlight
+  const wipProject =
+    mainProjects.find((p) => p.id === 'proofquest') ||
+    allProjects.find((p) => p.id === 'proofquest');
+
   const otherProjects = mainProjects
-    .filter((p) => p.id !== featuredProject?.id && p !== featuredProject)
+    .filter((p) => p.id !== featuredProject?.id && p !== featuredProject && p.id !== wipProject?.id && p !== wipProject)
     .sort((a, b) => {
       const getOrder = (p) => {
         if (isWibCustomerApp(p)) return 1;
@@ -802,6 +1193,15 @@ export default function Projects() {
         />
       )}
 
+      {/* Work in Progress Spotlight */}
+      {wipProject && (
+        <WorkInProgressSpotlight
+          project={wipProject}
+          onOpen={handleOpenProject}
+          reduceMotion={reduceMotion}
+        />
+      )}
+
       {/* Remaining projects — editorial list */}
       {otherProjects.length > 0 && (
         <ul className="mt-16 lg:mt-24 border-t border-slate-200 dark:border-zinc-900">
@@ -809,7 +1209,7 @@ export default function Projects() {
             <ProjectRow
               key={project.id || project.name}
               project={project}
-              number={String(index + 2).padStart(2, '0')}
+              number={String(index + 3).padStart(2, '0')}
               onOpen={handleOpenProject}
             />
           ))}

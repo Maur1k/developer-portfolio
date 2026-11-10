@@ -9,6 +9,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules/firebase')) return 'firebase';
           if (id.includes('/src/admin/')) return 'admin';
+          if (id.includes('/src/data/')) return 'portfolio-data';
         },
       },
     },

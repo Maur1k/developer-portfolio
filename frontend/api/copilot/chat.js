@@ -69,6 +69,19 @@ const portfolioKnowledge = {
       ],
     },
     {
+      id: 'proofquest',
+      name: 'ProofQuest',
+      type: 'Work in Progress (Open Source)',
+      summary: 'An open-source study app being developed to turn PDFs into quizzes, tests, and results — built with React, TypeScript, TanStack Start, and PDF.js under the MIT License.',
+      technologies: ['React', 'TypeScript', 'TanStack Start', 'PDF.js'],
+      evidencePoints: [
+        'Open-source study app under MIT license authored by Maur1k.',
+        'Client-side PDF document loading, selected-page text extraction, and original-page previews using PDF.js.',
+        'Browser-based saving and reopening of documents locally.',
+        'In development: interactive practice and test modes, quiz results/history, and AI question generation.',
+      ],
+    },
+    {
       id: 'client-project-tracker',
       name: 'ProjeX — Client Project Management',
       type: 'Technical Assessment / SaaS Project',
